@@ -48,7 +48,7 @@
           <button
             x-data
             x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()"
-            @click="!isMenuVisible ? $store.popup.showPopup('menu', true) : $store.popup.hidePopup('menu')"
+            @click.stop="$store.main.isMobile ? (!isMenuVisible ? $store.popup.showPopup('menu', true) : $store.popup.hidePopup('menu')) : ($store.resizable.isVisible('menu-desktop') ? $store.resizable.hide('menu-desktop') : $store.resizable.show('menu-desktop'))"
             type="button"
             aria-label="{{ 'sections.header.open_menu' | t }}"
             :aria-controls="$store.main.isMobile ? 'menu' : 'menu-desktop'"
