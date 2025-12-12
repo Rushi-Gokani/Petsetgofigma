@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {% style %}
   .bg-white {
     background-color: #ffffff !important;
@@ -8,8 +7,6 @@
   }
 {% endstyle %}
 
-=======
->>>>>>> f4f8d9a982fc5866d782f5edd9645b9e9e4ff6eb
 <div class="contents">
   <div
     x-intersect:enter="$store.main.isHeaderShadowVisible = false"
@@ -106,6 +103,56 @@
             {{ shop.name }}
           {% endif %}
         </a>
+      </div>
+      
+      <div class="col-start-3 hidden md:flex items-center justify-center">
+          <a
+            href="{{ routes.root_url }}"
+            x-element-transition-trigger
+            class="heading pointer-events-auto rounded-sm px-3 py-2 text-xl text-primary-500 transition-all"
+            tabindex="3"
+            x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()"
+            :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}"
+            aria-label="{{ shop.name }}"
+          >
+            {% if settings.logo == blank %}
+              {% assign text_length = shop.name | size %}
+              {% assign estimated_width = text_length | times: 13 %}
+              <svg
+                viewBox="0 0 {{ estimated_width }} 25"
+                class="m-auto h-[40px] w-2/3"
+              >
+                <text
+                  text-anchor="middle"
+                  x="50%"
+                  y="20"
+                  {% if settings.with_logo_border %}
+                    filter="url(#border)"
+                  {% endif %}
+                >{{ shop.name }}</text>
+              </svg>
+            {% else %}
+              {%- assign alt = settings.logo.alt | default: shop.name -%}
+              {% assign float_logo_width = settings.logo.width | times: 1.0 %}
+              {% assign logo_ratio = settings.logo_width | divided_by: float_logo_width %}
+              {% assign logo_height = logo_ratio | times: settings.logo.height %}
+              <img
+                width="{{ settings.logo_width }}"
+                height="auto"
+                class="max-md:height-[56px] w-auto transition-all"
+                alt="{{ alt }}"
+                src="{{ settings.logo | image_url }}"
+                style="{% if settings.with_logo_border %}filter:url(#border);{% endif %} max-width:{{ settings.logo_width }}px"
+                {% if logo_height > 56 %}
+                  :style="
+                    {
+                      'height': $store.main.isHeaderShadowVisible ? '56px' : '{{ logo_height }}px',
+                    }
+                  "
+                {% endif %}
+              >
+            {% endif %}
+          </a>
       </div>
       <div class="contents md:flex md:flex-grow md:justify-end">
         <div
@@ -248,60 +295,7 @@
     <div id="end-of-header"></div>
   </header>
 
-  <div
-    class="pointer-events-none {% if section.settings.enable_sticky_header %}sticky{% else %}static{% endif %} top-[88px] z-30 h-[1px] max-md:hidden"
-    :style="`opacity: ${$store.main.opacityOnZoom}`"
-  >
-    <div class="{% if section.settings.enable_sticky_header %}absolute{% else %}relative{% endif %} inset-x-0 -top-[72px] col-start-3 flex min-h-[56px] items-center justify-center text-primary-500">
-      <a
-        href="{{ routes.root_url }}"
-        x-element-transition-trigger
-        class="heading pointer-events-auto rounded-sm px-3 py-2 text-xl text-primary-500 transition-all"
-        tabindex="3"
-        x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()"
-        :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}"
-        aria-label="{{ shop.name }}"
-      >
-        {% if settings.logo == blank %}
-          {% assign text_length = shop.name | size %}
-          {% assign estimated_width = text_length | times: 13 %}
-          <svg
-            viewBox="0 0 {{ estimated_width }} 25"
-            class="m-auto h-[40px] w-2/3"
-          >
-            <text
-              text-anchor="middle"
-              x="50%"
-              y="20"
-              {% if settings.with_logo_border %}
-                filter="url(#border)"
-              {% endif %}
-            >{{ shop.name }}</text>
-          </svg>
-        {% else %}
-          {%- assign alt = settings.logo.alt | default: shop.name -%}
-          {% assign float_logo_width = settings.logo.width | times: 1.0 %}
-          {% assign logo_ratio = settings.logo_width | divided_by: float_logo_width %}
-          {% assign logo_height = logo_ratio | times: settings.logo.height %}
-          <img
-            width="{{ settings.logo_width }}"
-            height="auto"
-            class="max-md:height-[56px] w-auto transition-all"
-            alt="{{ alt }}"
-            src="{{ settings.logo | image_url }}"
-            style="{% if settings.with_logo_border %}filter:url(#border);{% endif %} max-width:{{ settings.logo_width }}px"
-            {% if logo_height > 56 %}
-              :style="
-                {
-                  'height': $store.main.isHeaderShadowVisible ? '56px' : '{{ logo_height }}px',
-                }
-              "
-            {% endif %}
-          >
-        {% endif %}
-      </a>
-    </div>
-  </div>
+
 
   {% comment %}
     <ul class="header__menu-nav hidden md:flex">
