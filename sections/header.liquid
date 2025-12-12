@@ -157,7 +157,7 @@
       </div>
       <div class="contents md:flex md:flex-grow md:justify-end">
         <div
-          class="col-start-5 transition-all md:flex md:items-center"
+          class="col-start-5 transition-all md:flex md:items-center gap-4"
           :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}"
         >
           {%- capture search -%}
@@ -174,7 +174,7 @@
           </button>
           <button
             tabindex="0"
-            class="md:hidden contrast-border button button--ghost-primary icon-button icon-button--size-lg text-primary-600"
+            class="md:hidden contrast-border button button--ghost-primary icon-button icon-button--size-lg text-black"
             aria-label="{{ 'sections.header.open_search' | t }}"
             @click="$store.resizable.show('search-desktop')"
             >
@@ -194,7 +194,7 @@
           {%- capture account -%}
           <button
             tabindex="0"
-            class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-primary-600 account-button-header relative"
+            class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-black account-button-header relative"
             aria-label="{{ 'customer.account_fallback' | t }}"
             @keydown.space.prevent="$store.resizable.show('account-desktop')" @keydown.enter.prevent="$store.resizable.show('account-desktop')"
             x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()">
@@ -226,7 +226,7 @@
                   $store.cart.isCartInitialized = true;
                 }
               "
-              class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-primary-600 col-start-5 relative"
+              class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-black col-start-5 relative"
               x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()"
               href="{{ routes.cart_url }}"
               {% if settings.cart_type == 'page' %}
