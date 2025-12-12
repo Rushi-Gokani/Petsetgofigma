@@ -173,30 +173,13 @@
             </button>
           </form>
 
-          {%- capture search -%}
-          <button
-            tabindex="0"
-            class="md:hidden contrast-border button button--ghost-primary icon-button icon-button--size-lg text-black"
-            aria-label="{{ 'sections.header.open_search' | t }}"
-            @click="$store.resizable.show('search-desktop')"
-            >
-            {% render 'icon-search' %}
-          </button>
-          {%- endcapture -%}
-          {% render 'resizable',
-            content: search,
-            id: 'search-desktop',
-            initialWidth: 56,
-            initialHeight: 56,
-            right: true,
-            isNotScrollable: true,
-            class: 'resizable--search max-md:hidden md:pointer-events-auto'
-          %}
+
 
           {%- capture account -%}
           <button
             tabindex="0"
             class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-black account-button-header relative"
+            style="color: black;"
             aria-label="{{ 'customer.account_fallback' | t }}"
             @keydown.space.prevent="$store.resizable.show('account-desktop')" @keydown.enter.prevent="$store.resizable.show('account-desktop')"
             x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()">
@@ -229,6 +212,7 @@
                 }
               "
               class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-black col-start-5 relative"
+              style="color: black;"
               x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()"
               href="{{ routes.cart_url }}"
               {% if settings.cart_type == 'page' %}
