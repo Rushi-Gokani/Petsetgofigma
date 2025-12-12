@@ -40,7 +40,7 @@
       "
     ></div>
     <div
-      class="content-wrapper col-start-1 m-auto grid w-full grid-cols-header items-center bg-white rounded-md py-3 md:flex md:bg-white md:px-3"
+      class="content-wrapper col-start-1 m-auto grid w-full grid-cols-header items-center bg-white rounded-md py-3 md:flex md:bg-white md:px-3 relative"
       x-data="{n:0}"
     >
       <div class="transition-all md:flex" :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}">
@@ -105,7 +105,7 @@
         </a>
       </div>
       
-      <div class="col-start-3 hidden md:flex items-center justify-center">
+      <div class="col-start-3 hidden md:flex items-center justify-center md:absolute md:left-1/2 md:-translate-x-1/2">
           <a
             href="{{ routes.root_url }}"
             x-element-transition-trigger
