@@ -162,7 +162,7 @@
           {%- capture search -%}
           <button
             tabindex="0"
-            class="hidden md:flex items-center justify-between w-[300px] min-w-[300px] border border-gray-200 rounded-full px-4 py-2 text-gray-500 hover:border-gray-300 transition-colors shrink-0"
+            class="hidden md:flex items-center justify-between w-[400px] min-w-[400px] border border-gray-200 rounded-full px-4 py-2 text-gray-500 hover:border-gray-300 transition-colors shrink-0"
             aria-label="{{ 'sections.header.open_search' | t }}"
             @click="$store.resizable.show('search-desktop')"
             @keydown.space.prevent="$store.resizable.show('search-desktop')" @keydown.enter.prevent="$store.resizable.show('search-desktop')"
