@@ -1,4 +1,4 @@
-<div class="contents {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% if section.settings.enable_transparent_header == false %} bg-bg-500{% endif %}{% endif %}{% if section.settings.custom_color_scheme == false %}{% if section.settings.enable_transparent_header == false %}bg-bg-500{% endif %}{% endif %}">
+<div class="contents {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% endif %} {% unless section.settings.enable_transparent_header %}bg-bg-500{% endunless %}">
   <div
     x-intersect:enter="$store.main.isHeaderShadowVisible = false"
     x-intersect:leave="$store.main.isHeaderShadowVisible = true"
@@ -31,7 +31,7 @@
       "
     ></div>
     <div
-      class="content-wrapper col-start-1 m-auto grid w-full grid-cols-header items-center {% if section.settings.enable_transparent_header %}bg-transparent md:bg-transparent{% else %}rounded-md bg-bg-500 md:bg-transparent{% endif %} py-3 md:flex md:px-3"
+      class="content-wrapper col-start-1 m-auto grid w-full grid-cols-header items-center {% unless section.settings.enable_transparent_header %}rounded-md bg-bg-500{% endunless %} py-3 md:flex md:bg-transparent md:px-3"
       x-data="{n:0}"
     >
       <div class="transition-all md:flex" :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}">
