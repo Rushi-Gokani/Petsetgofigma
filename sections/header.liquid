@@ -54,6 +54,7 @@
             :aria-controls="$store.main.isMobile ? 'menu' : 'menu-desktop'"
             :aria-expanded="$store.main.isMobile ? $store.popup.currentPopup === 'menu' : $store.resizable.isVisible('menu-desktop')"
             class="mobile_menu_opener flex items-center gap-2 border border-[#F5A623] rounded-full px-6 py-2 text-black font-medium hover:bg-gray-50 transition-colors"
+            style="border: 1px solid #F5A623; border-radius: 9999px;"
             :class="{'hidden': !$store.main.isMobile && $store.resizable.isVisible('menu-desktop')}"
             tabindex="2"
           >
@@ -105,7 +106,7 @@
         </a>
       </div>
       
-      <div class="col-start-3 hidden md:flex items-center justify-center md:absolute md:left-1/2 md:-translate-x-1/2 z-20">
+      <div class="col-start-3 hidden md:flex items-center justify-center md:absolute md:left-1/2 md:-translate-x-1/2 z-20" style="position: absolute; left: 50%; transform: translateX(-50%); z-index: 20;">
           <a
             href="{{ routes.root_url }}"
             x-element-transition-trigger
@@ -163,6 +164,7 @@
           <button
             tabindex="0"
             class="hidden md:flex items-center justify-between w-[400px] min-w-[400px] border border-gray-200 rounded-full px-4 py-2 text-gray-500 hover:border-gray-300 transition-colors shrink-0"
+            style="width: 400px; min-width: 400px; border-radius: 9999px;"
             aria-label="{{ 'sections.header.open_search' | t }}"
             @click="$store.resizable.show('search-desktop')"
             @keydown.space.prevent="$store.resizable.show('search-desktop')" @keydown.enter.prevent="$store.resizable.show('search-desktop')"
