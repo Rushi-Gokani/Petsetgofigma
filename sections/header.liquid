@@ -43,7 +43,7 @@
       class="content-wrapper col-start-1 m-auto grid w-full grid-cols-header items-center bg-white rounded-md py-3 md:flex md:bg-white md:px-3 relative"
       x-data="{n:0}"
     >
-      <div class="transition-all md:flex" :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}">
+      <div class="transition-all md:flex">
         {%- capture menu -%}
           <button
             x-data
@@ -113,7 +113,6 @@
             class="heading pointer-events-auto rounded-sm px-3 py-2 text-xl text-primary-500 transition-all"
             tabindex="3"
             x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()"
-            :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}"
             aria-label="{{ shop.name }}"
           >
             {% if settings.logo == blank %}
@@ -157,11 +156,10 @@
       </div>
       <div class="contents md:flex md:flex-grow md:justify-end">
         <div
-          class="col-start-5 transition-all md:flex md:items-center gap-4"
-          :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}"
+          class="col-start-5 transition-all md:flex md:items-center gap-2"
         >
           <!-- Desktop Search Form -->
-          <form action="{{ routes.search_url }}" method="get" role="search" class="hidden md:flex items-center justify-between w-[400px] min-w-[400px] border border-gray-200 rounded-full px-4 py-2 hover:border-gray-300 transition-colors shrink-0" style="width: 400px; min-width: 400px; border-radius: 9999px;">
+          <form action="{{ routes.search_url }}" method="get" role="search" class="hidden md:flex items-center justify-between w-[400px] min-w-[400px] border border-gray-200 rounded-full px-4 py-3 hover:border-gray-300 transition-colors shrink-0 pointer-events-auto" style="width: 400px; min-width: 400px; border-radius: 9999px;">
             <input
               type="search"
               name="q"
