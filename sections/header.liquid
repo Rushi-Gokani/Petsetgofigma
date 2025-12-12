@@ -53,12 +53,12 @@
             aria-label="{{ 'sections.header.open_menu' | t }}"
             :aria-controls="$store.main.isMobile ? 'menu' : 'menu-desktop'"
             :aria-expanded="$store.main.isMobile ? $store.popup.currentPopup === 'menu' : $store.resizable.isVisible('menu-desktop')"
-            class="mobile_menu_opener contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-primary-600 md:w-auto md:gap-3 md:px-4  "
+            class="mobile_menu_opener flex items-center gap-2 border border-[#F5A623] rounded-lg px-4 py-2 text-black font-medium hover:bg-gray-50 transition-colors"
             :class="{'hidden': !$store.main.isMobile && $store.resizable.isVisible('menu-desktop')}"
             tabindex="2"
           >
             <div
-              class="contents block"
+              class="contents block text-[#F5A623]"
               :class="{
                 'invisible': isMenuVisible,
               }"
@@ -76,7 +76,7 @@
             >
               {% render 'icon-close' %}
             </div>
-            <span class="text-md font-semibold max-md:hidden">{{ 'sections.header.menu' | t }}</span>
+            <span class="text-md font-semibold text-black">{{ 'sections.header.menu' | t }}</span>
           </button>
         {%- endcapture -%}
         {% render 'resizable',
@@ -105,7 +105,7 @@
         </a>
       </div>
       
-      <div class="col-start-3 hidden md:flex items-center justify-center md:absolute md:left-1/2 md:-translate-x-1/2">
+      <div class="col-start-3 hidden md:flex items-center justify-center md:absolute md:left-1/2 md:-translate-x-1/2 z-20">
           <a
             href="{{ routes.root_url }}"
             x-element-transition-trigger
@@ -162,10 +162,20 @@
           {%- capture search -%}
           <button
             tabindex="0"
-            class="contrast-border md:button--filled-secondary button button--ghost-primary icon-button icon-button--size-lg text-primary-600"
+            class="hidden md:flex items-center justify-between w-[300px] border border-gray-200 rounded-full px-4 py-2 text-gray-500 hover:border-gray-300 transition-colors"
             aria-label="{{ 'sections.header.open_search' | t }}"
+            @click="$store.resizable.show('search-desktop')"
             @keydown.space.prevent="$store.resizable.show('search-desktop')" @keydown.enter.prevent="$store.resizable.show('search-desktop')"
             x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()">
+            <span class="text-sm">Search here</span>
+            {% render 'icon-search', class: 'w-4 h-4' %}
+          </button>
+          <button
+            tabindex="0"
+            class="md:hidden contrast-border button button--ghost-primary icon-button icon-button--size-lg text-primary-600"
+            aria-label="{{ 'sections.header.open_search' | t }}"
+            @click="$store.resizable.show('search-desktop')"
+            >
             {% render 'icon-search' %}
           </button>
           {%- endcapture -%}
