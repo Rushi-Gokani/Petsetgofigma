@@ -53,8 +53,8 @@
             aria-label="{{ 'sections.header.open_menu' | t }}"
             :aria-controls="$store.main.isMobile ? 'menu' : 'menu-desktop'"
             :aria-expanded="$store.main.isMobile ? $store.popup.currentPopup === 'menu' : $store.resizable.isVisible('menu-desktop')"
-            class="mobile_menu_opener flex items-center gap-2 border border-[#F5A623] rounded-full px-6 py-2 text-black font-medium hover:bg-gray-50 transition-colors"
-            style="border: 1px solid #F5A623; border-radius: 9999px;"
+            class="mobile_menu_opener flex items-center gap-2 border border-[#F5A623] rounded-[5px] px-6 py-2 text-black font-medium hover:bg-gray-50 transition-colors"
+            style="border: 1px solid #F5A623; border-radius: 5px;"
             :class="{'hidden': !$store.main.isMobile && $store.resizable.isVisible('menu-desktop')}"
             tabindex="2"
           >
@@ -160,18 +160,22 @@
           class="col-start-5 transition-all md:flex md:items-center gap-4"
           :class="{'md:drop-shadow-xl': $store.main.isHeaderShadowVisible}"
         >
+          <!-- Desktop Search Form -->
+          <form action="{{ routes.search_url }}" method="get" role="search" class="hidden md:flex items-center justify-between w-[400px] min-w-[400px] border border-gray-200 rounded-full px-4 py-2 hover:border-gray-300 transition-colors shrink-0" style="width: 400px; min-width: 400px; border-radius: 9999px;">
+            <input
+              type="search"
+              name="q"
+              value="{{ search.terms | escape }}"
+              placeholder="Search here"
+              class="w-full bg-transparent border-none focus:ring-0 text-sm text-gray-700 placeholder-gray-500 outline-none"
+              aria-label="{{ 'general.search.placeholder' | t }}"
+            >
+            <button type="submit" class="text-gray-500 hover:text-black">
+              {% render 'icon-search', class: 'w-4 h-4' %}
+            </button>
+          </form>
+
           {%- capture search -%}
-          <button
-            tabindex="0"
-            class="hidden md:flex items-center justify-between w-[400px] min-w-[400px] border border-gray-200 rounded-full px-4 py-2 text-gray-500 hover:border-gray-300 transition-colors shrink-0"
-            style="width: 400px; min-width: 400px; border-radius: 9999px;"
-            aria-label="{{ 'sections.header.open_search' | t }}"
-            @click="$store.resizable.show('search-desktop')"
-            @keydown.space.prevent="$store.resizable.show('search-desktop')" @keydown.enter.prevent="$store.resizable.show('search-desktop')"
-            x-a11y-trap-element="$store.transition.isPreviewActive && !$store.resizable.isVisible()">
-            <span class="text-sm whitespace-nowrap">Search here</span>
-            {% render 'icon-search', class: 'w-4 h-4' %}
-          </button>
           <button
             tabindex="0"
             class="md:hidden contrast-border button button--ghost-primary icon-button icon-button--size-lg text-black"
