@@ -1,4 +1,13 @@
-<div class="contents {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% endif %} bg-white">
+{% style %}
+  .bg-white {
+    background-color: #ffffff !important;
+  }
+  .bg-transparent {
+    background-color: transparent !important;
+  }
+{% endstyle %}
+
+<div class="contents">
   <div
     x-intersect:enter="$store.main.isHeaderShadowVisible = false"
     x-intersect:leave="$store.main.isHeaderShadowVisible = true"
@@ -17,7 +26,7 @@
         isCartVisible = value === 'cart';
       })
     "
-    class="header {% if section.settings.enable_sticky_header %}sticky{% endif %} end-0 start-0 top-0 z-[36] flex flex-col justify-items-stretch p-3 md:pointer-events-none"
+    class="header {% if section.settings.enable_transparent_header and request.page_type == 'index' %}bg-transparent{% elsif section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% else %}bg-white{% endif %} {% if section.settings.enable_sticky_header %}sticky{% endif %} end-0 start-0 top-0 z-[36] flex flex-col justify-items-stretch p-3 md:pointer-events-none"
     :style="`opacity: ${$store.main.opacityOnZoom}; --menu-width: {{ section.settings.menu_width }}px;`"
   >
     <div
