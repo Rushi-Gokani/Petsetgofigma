@@ -53,7 +53,7 @@
             aria-label="{{ 'sections.header.open_menu' | t }}"
             :aria-controls="$store.main.isMobile ? 'menu' : 'menu-desktop'"
             :aria-expanded="$store.main.isMobile ? $store.popup.currentPopup === 'menu' : $store.resizable.isVisible('menu-desktop')"
-            class="mobile_menu_opener flex items-center gap-2 border border-[#F5A623] rounded-[5px] px-6 py-2 text-black font-medium hover:bg-gray-50 transition-colors pointer-events-auto relative z-30"
+            class="mobile_menu_opener flex items-center gap-2 border border-[#F5A623] rounded-[5px] px-6 py-2 text-black font-medium hover:bg-gray-50 transition-colors"
             style="border: 1px solid #F5A623; border-radius: 5px;"
             :class="{'hidden': !$store.main.isMobile && $store.resizable.isVisible('menu-desktop')}"
             tabindex="2"
@@ -85,7 +85,7 @@
           id: 'menu-desktop',
           initialWidth: 105,
           initialHeight: 56,
-          class: 'resizable--menu md:pointer-events-auto'
+          class: 'resizable--menu md:pointer-events-auto relative z-30'
         %}
       </div>
       <div class="col-start-3 flex items-center justify-center md:hidden">
