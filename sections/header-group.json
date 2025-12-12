@@ -1,0 +1,133 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "1760693720240eaa39": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_50edcdf_YjMMaV": {
+          "type": "ai_gen_block_50edcdf",
+          "name": "Announcement bar new",
+          "settings": {
+            "enable_marquee": true,
+            "rotation_speed": 5,
+            "marquee_speed": 50,
+            "background_color": "#424242",
+            "text_color": "#f68e02",
+            "font_family": "assistant_n4",
+            "font_size": 14,
+            "font_size_mobile": 12,
+            "line_height": 1.5,
+            "bar_height": 45,
+            "bar_height_mobile": 40,
+            "padding_vertical": 12,
+            "padding_vertical_mobile": 10,
+            "padding_horizontal": 20,
+            "padding_horizontal_mobile": 15,
+            "icon_size": 18,
+            "icon_size_mobile": 16,
+            "icon_spacing": 8,
+            "item_spacing": 30,
+            "show_separator": true,
+            "separator_symbol": "•",
+            "separator_spacing": 15,
+            "countdown_bg_color": "#000000",
+            "countdown_text_color": "#ffffff",
+            "announcement_1_enabled": true,
+            "announcement_1_text": "Free shipping on orders over ₹999",
+            "announcement_1_link": "",
+            "announcement_1_icon": "truck",
+            "announcement_1_countdown_enabled": false,
+            "announcement_1_countdown_date": "2024-10-01",
+            "announcement_1_countdown_time": "23:59",
+            "announcement_2_enabled": true,
+            "announcement_2_text": "New arrivals just dropped - Shop now",
+            "announcement_2_link": "",
+            "announcement_2_icon": "sparkles",
+            "announcement_2_countdown_enabled": false,
+            "announcement_2_countdown_date": "",
+            "announcement_2_countdown_time": "23:59",
+            "announcement_3_enabled": true,
+            "announcement_3_text": "Limited time offer - 20% off everything",
+            "announcement_3_link": "",
+            "announcement_3_icon": "tag",
+            "announcement_3_countdown_enabled": true,
+            "announcement_3_countdown_date": "",
+            "announcement_3_countdown_time": "23:59",
+            "announcement_4_enabled": false,
+            "announcement_4_text": "",
+            "announcement_4_link": "",
+            "announcement_4_icon": "bell",
+            "announcement_4_countdown_enabled": false,
+            "announcement_4_countdown_date": "",
+            "announcement_4_countdown_time": "23:59",
+            "announcement_5_enabled": false,
+            "announcement_5_text": "",
+            "announcement_5_link": "",
+            "announcement_5_icon": "heart",
+            "announcement_5_countdown_enabled": false,
+            "announcement_5_countdown_date": "",
+            "announcement_5_countdown_time": "23:59"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_50edcdf_YjMMaV"
+      ],
+      "disabled": true,
+      "settings": {}
+    },
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "announcement-bar-0": {
+          "type": "announcement",
+          "settings": {
+            "text": "<p>Our Winter Collection is Live </p>"
+          }
+        },
+        "announcement_tGiFdt": {
+          "type": "announcement",
+          "disabled": true,
+          "settings": {
+            "text": "<p>what is the date today</p>"
+          }
+        }
+      },
+      "block_order": [
+        "announcement-bar-0",
+        "announcement_tGiFdt"
+      ],
+      "settings": {
+        "text_align": "center",
+        "custom_color_scheme": false,
+        "color_scheme": "scheme-1"
+      }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "menu_width": 250,
+        "enable_sticky_header": true,
+        "custom_color_scheme": false,
+        "color_scheme": "scheme-1"
+      }
+    }
+  },
+  "order": [
+    "1760693720240eaa39",
+    "announcement-bar",
+    "header"
+  ]
+}

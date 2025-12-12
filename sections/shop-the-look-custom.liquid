@@ -1,0 +1,783 @@
+<div id="shopify-section-{{ section.id }} color-{{ section.settings.color_scheme }} gradient" class="shopify-section">
+    <style>
+      
+      
+      @keyframes animation-wave {
+          100% {
+            transform: scale(1.78);
+            opacity: 0;
+          }
+        }
+        
+      
+        @keyframes slideUp {
+            from {
+              transform: translateY(100%);
+              opacity: 0;
+            }
+            to {
+              transform: translateY(0);
+              opacity: 1;
+            }
+          }
+        #shopify-section-{{ section.id }}{
+        & .section-{{ section.id }} {
+          background-color: {{ section.settings.background_color }};
+          padding-top: {{ section.settings.padding_top }}px;
+          padding-bottom: {{ section.settings.padding_bottom }}px;
+          margin-top: {{ section.settings.margin_top }}px;
+          margin-bottom: {{ section.settings.margin_bottom }}px;
+        }
+      
+        & .hotspot-item-{{ section.id }} {
+          position: absolute;
+          cursor: pointer;
+          color: {{ section.settings.hotspot_text_color }};
+          border-radius: {{ section.settings.hotspot_border_radius }}px;
+          display: flex;
+          align-items: center;
+          z-index: 2;
+          justify-content: center;
+          &.active{
+            z-index: 3;
+          }
+        }
+      
+        & .hotspot-icon.active {
+          transform: rotate(45deg);
+          transition: transform 0.3s ease;
+        }
+      
+        & .active .hotspot-content {
+          opacity: 1;
+          visibility: visible;
+        }
+      
+        & .hotspot-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+          position: relative;
+          z-index: 1;
+          border-radius: 50%;
+          padding: 4px;
+          transition: transform 0.4s ease;
+        }
+      
+        & .hotspot-icon svg {
+          width: 64px;
+          height: 64px;
+        }
+      
+        & .hotspot-icon svg path {
+          fill: {{ section.settings.icon_color }};
+        }
+      
+        & .hotspot-content {
+          opacity: 0;
+          position: absolute;
+          padding: 10px 20px;
+          backdrop-filter: blur(50px);
+          background-color:#FFF;
+          visibility: hidden;
+          transition: all 0.3s ease-in-out;
+        }
+      
+        & .btn_wrapper-{{ section.id }} {
+          display: flex;
+          gap: 16px;
+          transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+      
+        & .btn_wrapper:hover {
+          transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+      
+        & .btn-wrap-{{ section.id }} {
+          display: flex;
+          width: 217px;
+          padding: 18px 40px;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+          border-radius: 30px;
+          font-family: "Jost";
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
+        }
+      
+        & .btn-one {
+          background: #DD2C6C;
+          color: #fff;
+          font-size: 16px;
+          border: 1px solid #DD2C6C;
+        }
+      
+        & .btn-one:hover {
+          background: transparent;
+          color: #DD2C6C;
+          border: 1px solid #DD2C6C;
+        }
+      
+        & .btn-two {
+          background: transparent;
+          border: 1px solid #FFF;
+          color: #FFF;
+          font-size: 16px;
+        }
+      
+        & .btn-two:hover {
+          background: #fff;
+          color: #1A1A1A;
+          border: none;
+        }
+      
+        & .d11-content-wrap-{{ section.id }} {
+          position: absolute;
+          bottom: 105px;
+          left: 60px;
+        }
+      
+        & .hotspots-image-{{ section.id }} {
+          border-radius: {{ section.settings.image_border_radius }}px;
+          position: relative;
+          width: 100%;
+        }
+      
+        & img,
+        & .hotspots-image-{{ section.id }} picture,
+        & .hotspots-image-{{ section.id }} source {
+          width: 100%;
+          height: 100%;
+          object-fit: {{ section.settings.image_object_fit }};
+          border-radius: {{ section.settings.image_border_radius }}px;
+        }
+      
+        & .hotspot-item-{{ section.id }}::before {
+          position: absolute;
+          z-index: 0;
+          top: 0px;
+          left: 0px;
+          border-radius: 50%;
+          content: "";
+          width: 100%;
+          height: 100%;
+          animation: animation-wave {{ section.settings.animation_duration }}s ease 0s infinite normal none running;
+        }
+      
+        & .hot-spot-popover-content h4{
+          font-family: Satoshi;
+          font-weight: 500;
+          font-style: Medium;
+          font-size: 20px;
+          line-height: 100%;
+          letter-spacing: 0%;
+color: #090914;
+
+        }
+        & .hot-spot-popover-content p{
+          font-family: Satoshi;
+          font-weight: 400;
+          font-style: Regular;
+          font-size: 16px;
+          leading-trim: NONE;
+          line-height: 100%;
+          letter-spacing: 0%;
+          color: #212121;
+        }
+      
+        @media(min-width: 1024px) {
+          & .hotspots-image-{{ section.id }} {
+            aspect-ratio: {{ section.settings.image_aspect_ratio }};
+          }
+      
+          & .mbl-po-btn {
+            display: none;
+          }
+        }
+      
+        @media(max-width: 767px) {
+          & .hotspots-image-{{ section.id }} {
+            aspect-ratio: 5/6;
+          }
+      
+          & img,
+          & .hotspots-image-{{ section.id }} picture,
+          & .hotspots-image-{{ section.id }} source {
+            object-fit: {{ section.settings.image_object_fit_m }};
+          }
+      
+          & .hotspot-content {
+            padding: 15px;
+          }
+      
+          & .section-title-{{ section.id }} {
+            font-size: {{ section.settings.title_font_size_m }}px;
+            text-align: {{ section.settings.title_text_align_m }};
+            width: 343px;
+          }
+      
+          & .hotspot-item-{{ section.id }} {
+            width: {{ section.settings.hotspot_padding_m }}px;
+            height: {{ section.settings.hotspot_padding_m }}px;
+          }
+      
+          & .section-text-{{ section.id }} {
+            margin: 12px 0;
+            font-size: 14px;
+            line-height: normal;
+          }
+      
+          & .btn-wrap-{{ section.id }} {
+            display: flex;
+            width: 150px;
+            padding: 16px 20px;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+          }
+      
+          & .btn_wrapper-{{ section.id }} {
+            gap: 8px;
+          }
+      
+          & .btn-one {
+            font-size: 18px;
+          }
+      
+          & .btn-two {
+            color: #FFF;
+            font-size: 18px;
+          }
+      
+          & .d11-content-wrap-{{ section.id }} {
+            bottom: 16px;
+            left: 16px;
+          }
+      
+          & .hotspot-icon svg {
+            width: 64px;
+            height: 64px;
+          }
+      
+          & .hotspot-icon {
+            padding: 10px;
+          }
+      
+          /* & .hot-spot-popover.popover {
+            position: fixed;
+            top: 15%;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin: 27% auto 0%;
+            max-width: 90%;
+            background: #ffffff;
+            transform: translateY(100%);
+            opacity: 0;
+            z-index: 1000;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+          } */
+      
+          /* & .hot-spot-popover.popover[open] {
+            animation: slideUp 0.5s ease forwards;
+            transform: translateY(0);
+            opacity: 1;
+            max-height: 35vh;
+          } 
+          
+          & .hot-spot-popover .icon-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+          }
+          */
+      
+          & .hotspot-content.hot-spot-popover.popover div > p,
+          & .hotspot-content.hot-spot-popover.popover div > strong {
+            color: #000;
+          }
+      
+          /* & .mbl-po-btn {
+            top: -75px;
+            left: 45%;
+            background: #fff;
+            border-radius: 50%;
+            width: 0rem;
+            display: block;
+            border: none;
+            position: absolute;
+            color: #000;
+            padding: 1.5rem 1.5rem;
+          }
+      
+          & .mbl-po-btn svg {
+            fill: #fff;
+            position: absolute;
+            top: 14%;
+            right: 0;
+            left: 12%;
+          } */
+      
+          & .hotspot-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0006;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 1;
+          }
+
+      
+          & .hotspot-backdrop.active {
+            opacity: 1;
+            visibility: visible;
+          }
+      
+          & button.mbl-po-btn:active {
+            background: #fff;
+          }
+        }
+      
+        @media(max-width: 768px) {
+          & .section-text-{{ section.id }} br {
+            display: none;
+          }
+      
+          & .hotspot-icon {
+            width: 95%;
+            height: 95%;
+            padding: 0px;
+          }
+      
+          & .hotspots-image-{{ section.id }} {
+            aspect-ratio: unset;
+          }
+        }
+
+    }
+
+        
+      </style>
+
+
+
+    <div class="section-{{ section.id }}">
+        {% if section.settings.section_title != blank %}
+            <h2 class="text-center section-title text-2xl md:text-3xl font-bold mb-6">{{ section.settings.section_title }}</h2>
+        {% endif %}
+        <div class="hotspots-image-{{ section.id }}">
+            <div class="hotspot-backdrop"></div>
+            
+            {% if section.settings.hotspots_image != blank %}
+                <picture>
+                    {% if section.settings.hotspots_image_mobile != blank %}
+                        <source media="(max-width: 767px)" srcset="{{ section.settings.hotspots_image_mobile | image_url: width: 768 }}">
+                    {% endif %}
+                    <source media="all" srcset="{{ section.settings.hotspots_image | image_url: width: 1440 }}">
+                    <img src="{{ section.settings.hotspots_image | image_url: width: 1440 }}" alt="Hotspot Image">
+                </picture>
+            {% endif %}
+
+            {% for block in section.blocks %}
+            <style>
+                .hotspot-item-{{ block.id }} {
+
+                    left: {{ block.settings.position_x }}%;
+                    top: {{ block.settings.position_y }}%;
+
+                    & .hotspot-content-{{ block.id }} {
+                        top: 50%;
+                        right: 100%;
+                        border-radius: 20px;
+                        min-width: 350px;
+                        transform: translate(-20px, -20px);
+                        
+                        &::after{
+                          content: url('https://cdn.shopify.com/s/files/1/0737/9183/2341/files/Polygon_1.svg?v=1751837336');
+                          position: absolute;
+                          top: 0%;
+                          right: 0;
+                          background: #FFF;
+                          z-index: -1;
+                          width: 60px;
+                          height: 60px;
+                          transform: translate( -100%, 0);
+                        }
+                    }
+
+                    & .hotspot-content-{{ block.id }} strong {
+                        color: #000;
+                    }
+
+                    & .hotspot-content-{{ block.id }} p {
+                        color: #000;
+                        font-size: 16px;
+                    }
+
+                    @media (max-width: 767px) {
+                        left: {{ block.settings.position_x_m }}%;
+                        top: {{ block.settings.position_y_m }}%;  
+
+                        & .hotspot-content-{{ block.id }} {
+                          top: 100%;
+                          right: 50%;
+                          border-radius: 20px;
+                          transform: translate(50%, 0px);
+                        }
+
+                    }
+                }
+            </style>
+
+            <div class="hotspot-item-{{ section.id }} hotspot-item hotspot-item-{{ block.id }}" data-hotspot-id="{{ block.id }}">
+              <div class="relative">
+                <div class="hotspot-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="70" height="69" viewBox="0 0 70 69" fill="none">
+                  <g opacity="0.4">
+                  <circle cx="34.8183" cy="34.5456" r="30.6818" fill="white"/>
+                  <circle cx="34.8183" cy="34.5456" r="30.6818" fill="white" fill-opacity="0.1"/>
+                  </g>
+                  <g opacity="0.3">
+                  <circle cx="34.8182" cy="34.5453" r="34.3636" fill="white"/>
+                  <circle cx="34.8182" cy="34.5453" r="34.3636" fill="white" fill-opacity="0.1"/>
+                  </g>
+                  <circle cx="34.2045" cy="35.159" r="27.6136" fill="white"/>
+                  <circle cx="34.2045" cy="35.159" r="27.6136" fill="white"/>
+                  <g clip-path="url(#clip0_95_1252)">
+                  <path d="M33.8459 24.4724C33.8459 24.3416 33.8722 24.2161 33.9198 24.1011C33.9695 23.9812 34.0416 23.8739 34.1307 23.7848C34.3065 23.6089 34.5498 23.5 34.818 23.5C34.9495 23.5 35.0751 23.5264 35.1902 23.5741C35.1926 23.5751 35.1948 23.5763 35.1976 23.5775C35.3142 23.627 35.4187 23.698 35.5058 23.785C35.6818 23.9608 35.7906 24.2041 35.7906 24.4726C35.7906 24.4786 35.7902 24.4846 35.7894 24.4904V34.8015H46.1003C46.1061 34.8009 46.1125 34.8003 46.1183 34.8003C46.2493 34.8003 46.375 34.8267 46.49 34.8744C46.4928 34.8754 46.495 34.8766 46.4974 34.8778C46.6141 34.9274 46.7185 34.9983 46.8056 35.0854C46.9816 35.2612 47.0909 35.5045 47.0909 35.7727C47.0909 35.9034 47.0643 36.029 47.0168 36.1441C46.9672 36.2639 46.8951 36.3712 46.8056 36.4603C46.7167 36.5492 46.6099 36.6213 46.49 36.671V36.6712C46.375 36.7188 46.2493 36.7451 46.1183 36.7451C46.1125 36.7451 46.1061 36.7447 46.1003 36.7439L35.7894 36.7441V47.0551C35.7902 47.0609 35.7906 47.0671 35.7906 47.0731C35.7906 47.2041 35.7641 47.3299 35.7165 47.4448C35.7153 47.4476 35.7141 47.4498 35.7129 47.4522C35.6634 47.5688 35.5927 47.6733 35.5058 47.7604C35.3294 47.9366 35.0863 48.0455 34.818 48.0455C34.6874 48.0455 34.5618 48.0191 34.4467 47.9713C34.3269 47.9218 34.2196 47.8497 34.1305 47.7604C34.0416 47.6717 33.9695 47.5647 33.9198 47.4448C33.872 47.3299 33.8455 47.2041 33.8455 47.0731C33.8455 47.0671 33.8459 47.0609 33.8467 47.0551V36.7441H23.5358C23.53 36.7449 23.524 36.7453 23.5178 36.7453C23.3872 36.7453 23.2615 36.719 23.1465 36.6712C23.0266 36.6217 22.9193 36.5496 22.8303 36.4603C22.7414 36.3714 22.6693 36.2645 22.6195 36.1447C22.5718 36.0296 22.5454 35.904 22.5454 35.7727C22.5454 35.6419 22.5718 35.5164 22.6195 35.4014C22.6693 35.2815 22.7414 35.1743 22.8305 35.0852C23.0064 34.9092 23.2495 34.8003 23.518 34.8003C23.5242 34.8003 23.5302 34.8007 23.536 34.8015H33.8471V24.4904C33.8463 24.4844 33.8459 24.4784 33.8459 24.4724Z" fill="#090914"/>
+                  </g>
+                  <defs>
+                  <clipPath id="clip0_95_1252">
+                  <rect width="24.5455" height="24.5455" fill="white" transform="translate(22.5454 23.5)"/>
+                  </clipPath>
+                  </defs>
+                  </svg>
+                </div>
+
+                <x-popover id="popover-{{ block.id }}" class="">
+                  <div class="hotspot-content hotspot-content-{{ block.id }} hot-spot-popover popover">
+                      <button class="mbl-po-btn" part="outside-close-button" aria-label="Close">
+                      <svg width="24" height="24" viewBox="0 0 24 24">
+                          <path d="M17.658 6.343 6.344 17.657M17.658 17.657 6.344 6.343" stroke="currentColor" />
+                      </svg>
+                      </button>
+                      <div class="content-{{ block.id }} hot-spot-popover-content">
+                      <h4>{{ block.settings.title }}</h4>
+                      <p>{{ block.settings.description }}</p>
+                      </div>
+                  </div>
+                </x-popover>
+              </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+
+{% comment %} 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    console.log("DOMContentLoaded");
+      const hotspots = document.querySelectorAll(".hotspot-item");
+      const popovers = document.querySelectorAll(".hot-spot-popover");
+      const backdrop = document.querySelector(".hotspot-backdrop");
+      const closeButtons = document.querySelectorAll(".mbl-po-btn");
+  
+      // Handle hotspot click
+      hotspots.forEach((hotspot, index) => {
+        console.log("hotspot",hotspot);
+        const popover = popovers[index];
+        const icon = hotspot.querySelector(".hotspot-icon");
+  
+        hotspot.addEventListener("click", function (event) {
+          console.log("hotspot click", hotspots);
+          event.stopPropagation();
+          const isActive = hotspot.classList.contains("active");
+  
+          // Reset all hotspots and popovers
+          hotspots.forEach((item, i) => {
+            item.classList.remove("active");
+            popovers[i]?.removeAttribute("open");
+            const otherIcon = item.querySelector(".hotspot-icon");
+            if (otherIcon) otherIcon.classList.remove("active");
+          });
+  
+          // If not active, activate clicked hotspot
+          if (!isActive) {
+            hotspot.classList.add("active");
+            popover.setAttribute("open", "");
+            icon?.classList.add("active");
+            backdrop?.classList.add("active");
+            document.body.classList.add("no-scroll");
+          } else {
+            // Deactivate
+            hotspot.classList.remove("active");
+            popover.removeAttribute("open");
+            icon?.classList.remove("active");
+            backdrop?.classList.remove("active");
+            document.body.classList.remove("no-scroll");
+          }
+        });
+      });
+  
+      // Handle close button click
+      closeButtons.forEach((button) => {
+        button.addEventListener("click", function (event) {
+          event.stopPropagation();
+  
+          popovers.forEach((popover) => popover.removeAttribute("open"));
+          hotspots.forEach((hotspot) => {
+            hotspot.classList.remove("active");
+            const icon = hotspot.querySelector(".hotspot-icon");
+            icon?.classList.remove("active");
+          });
+  
+          backdrop?.classList.remove("active");
+          document.body.classList.remove("no-scroll");
+        });
+      });
+  
+      // Prevent backdrop click from closing popup
+      backdrop?.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+    });
+  </script> {% endcomment %}
+  
+</div>
+
+<script src="{{ 'shop-the-look-custom.js' | asset_url }}" defer></script>
+
+{% schema %}
+    {
+      "name": "Hotspots Banner",
+      "settings": [
+        {
+          "type": "text",
+          "id": "section_title",
+          "label": "Section Title",
+          "default": "Our Featured Products"
+        },
+        {
+            "type": "color_scheme",
+            "id": "color_scheme",
+            "label": "Color scheme",
+            "default": "scheme-1"
+        },
+        {
+          "type": "image_picker",
+          "id": "hotspots_image",
+          "label": "Hotspot Image"
+        },
+        {
+          "type": "image_picker",
+          "id": "hotspots_image_mobile",
+          "label": "Hotspot Mobile Image"
+        },
+        {
+          "type": "range",
+          "id": "padding_top",
+          "label": "Padding Top (px)",
+          "min": 0,
+          "max": 200,
+          "default": 30,
+          "step": 2
+        },
+        {
+          "type": "range",
+          "id": "padding_bottom",
+          "label": "Padding Bottom (px)",
+          "min": 0,
+          "max": 200,
+          "default": 30,
+          "step": 2
+        },
+        {
+          "type": "range",
+          "id": "margin_top",
+          "label": "Margin Top (px)",
+          "min": 0,
+          "max": 200,
+          "default": 0,
+          "step": 2
+        },
+        {
+          "type": "range",
+          "id": "margin_bottom",
+          "label": "Margin Bottom (px)",
+          "min": 0,
+          "max": 200,
+          "default": 0,
+          "step": 2
+        },
+        {
+          "type": "range",
+          "id": "image_border_radius",
+          "label": "Image Border Radius (px)",
+          "min": 0,
+          "max": 100,
+          "default": 0,
+          "step": 2
+        },
+        {
+          "type": "select",
+          "id": "image_object_fit",
+          "label": "Image Object Fit Desktop",
+          "options": [
+            { "value": "cover", "label": "Cover" },
+            { "value": "contain", "label": "Contain" },
+            { "value": "fill", "label": "Fill" }
+          ],
+          "default": "cover"
+        },
+        {
+          "type": "select",
+          "id": "image_object_fit_m",
+          "label": "Image Object Fit Mobile",
+          "options": [
+            { "value": "cover", "label": "Cover" },
+            { "value": "contain", "label": "Contain" },
+            { "value": "fill", "label": "Fill" }
+          ],
+          "default": "cover"
+        },
+        {
+          "type": "color_background",
+          "id": "hotspot_background_color",
+          "label": "Hotspot Background Color",
+          "default": "rgba(0, 0, 0, 0.25)"
+        },
+        {
+          "type": "color",
+          "id": "hotspot_text_color",
+          "label": "Hotspot Text Color",
+          "default": "#ffffff"
+        },
+        {
+          "type": "range",
+          "id": "hotspot_border_radius",
+          "label": "Hotspot Border Radius (px)",
+          "min": 0,
+          "max": 100,
+          "default": 28
+        },
+        {
+          "type": "range",
+          "id": "hotspot_padding",
+          "label": "Hotspot Width (px) Desktop",
+          "min": 0,
+          "max": 100,
+          "default": 8
+        },
+        {
+          "type": "color",
+          "id": "icon_color",
+          "label": "Icon color",
+          "default": "#254249"
+        },
+        {
+          "type": "range",
+          "id": "animation_duration",
+          "label": "Animation Duration (seconds)",
+          "min": 1,
+          "max": 10,
+          "default": 4
+        },
+        {
+          "type": "header",
+          "content": "Mobile configurations"
+        },
+        {
+          "type": "select",
+          "id": "title_text_align_m",
+          "label": "Title Text Align",
+          "options": [
+            { "value": "left", "label": "Left" },
+            { "value": "center", "label": "Center" },
+            { "value": "right", "label": "Right" }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "range",
+          "id": "hotspot_padding_m",
+          "label": "Hotspot Width (px) Mobile",
+          "min": 0,
+          "max": 50,
+          "default": 32
+        }
+      ],
+      "blocks": [
+        {
+          "type": "hotspot",
+          "name": "Hotspot",
+          "settings": [
+            {
+              "type": "text",
+              "id": "title",
+              "label": "Hotspot Title",
+              "default": "Hotspot Title"
+            },
+            {
+              "type": "textarea",
+              "id": "description",
+              "label": "Hotspot Description",
+              "default": "Hotspot description text here."
+            },
+            {
+              "type": "range",
+              "id": "position_x",
+              "label": "Position X (%)",
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "default": 50
+            },
+            {
+              "type": "range",
+              "id": "position_y",
+              "label": "Position Y (%)",
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "default": 50
+            },
+            {
+              "type": "range",
+              "id": "position_x_m",
+              "label": "Position X (%) Mobile",
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "default": 50
+            },
+            {
+              "type": "range",
+              "id": "position_y_m",
+              "label": "Position Y (%) Mobile",
+              "min": 0,
+              "max": 100,
+              "step": 1,
+              "default": 50
+            }
+          ]
+        }
+      ],
+      "presets": [
+        {
+          "name": "Hotspots Banner",
+          "category": "Hotspots"
+        }
+      ]
+    }
+    {% endschema %}
+    

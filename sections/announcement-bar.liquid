@@ -1,0 +1,83 @@
+{% for block in section.blocks %}
+  <div class="z-[37] {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+    <div
+      class="
+        bg-primary-800 py-3 text-sm font-semibold text-text-on-primary-bg
+        {% case section.settings.text_align %}
+          {% when 'left' %}text-start
+          {% when 'center' %}text-center
+          {% when 'right' %}text-end
+        {% endcase %}
+      "
+      tabindex="-1"
+    >
+      {{ block.settings.text }}
+    </div>
+  </div>
+{% endfor %}
+
+{% schema %}
+{
+  "name": "t:sections.announcement-bar.name",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "t:settings_schema.global.settings.text_alignment.label",
+      "default": "center",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.option_1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.option_2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.option_3.label"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "announcement",
+      "name": "t:sections.announcement-bar.blocks.announcement.name",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.announcement-bar.blocks.announcement.settings.text.label"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "announcement"
+      }
+    ]
+  }
+}
+{% endschema %}

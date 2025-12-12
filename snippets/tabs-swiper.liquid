@@ -1,0 +1,50 @@
+{% comment %}
+  Tabs Swiper Initialization
+  This snippet initializes Swiper for tab navigation
+{% endcomment %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tabs navigation swiper
+    const tabsSwiper = new Swiper('.tabs-navigation', {
+      slidesPerView: 'auto',
+      spaceBetween: 10,
+      freeMode: true,
+      navigation: {
+        nextEl: '.tab-nav-next',
+        prevEl: '.tab-nav-prev',
+      },
+    });
+  });
+</script>
+
+<style>
+  .tabs-navigation {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .tabs-navigation .swiper-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  .tabs-navigation .swiper-slide {
+    width: auto;
+  }
+  
+  .tab-nav-prev,
+  .tab-nav-next {
+    cursor: pointer;
+    z-index: 10;
+  }
+  
+  /* Convert existing navigation buttons to Swiper buttons */
+  .tab-nav-prev.swiper-button-disabled,
+  .tab-nav-next.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: auto;
+    pointer-events: none;
+  }
+</style>

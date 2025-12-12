@@ -1,0 +1,646 @@
+{% liquid
+  assign isSearch = is_search | default: false
+  assign isDefault = true
+  for filter in results.filters
+    if filter.type == 'price_range'
+      if filter.max_value.value or filter.min_value.value
+        assign isDefault = false
+      endif
+    else
+      if filter.active_values.size > 0
+        assign isDefault = false
+      endif
+    endif
+  endfor
+
+  assign sortBy = results.sort_by | default: false
+  assign sortByLabel = 'products.facets.sort_by_label' | t | remove: ':'
+  if sortBy == results.default_sort_by
+    assign sortBy = false
+  endif
+  if sortBy
+    assign isDefault = false
+  endif
+
+  assign priceFilter = results.filters | where: 'type', 'price_range' | first
+  assign minPrice = 0
+  assign maxPrice = priceFilter.range_max | divided_by: 100.00 | ceil
+%}
+
+{% capture filterShortcuts %}
+  {% if enable_sorting %}
+    {% assign isSelected = sortBy %}
+    <div>
+      <button
+        type="button"
+        class="button filter-btn duration-300 {% if isSelected %}button--outline-primary ps-4{%- else -%}button--outline-secondary{% endif %}  "
+        :class="
+          {
+            'button--outline-primary ps-4': getIsFilterSelected('sort_by'),
+            'button--outline-secondary': !getIsFilterSelected('sort_by')
+          }
+        "
+        @click="showFilters(false, '{{ sortByLabel }}')"
+      >
+        <span
+          class="duration-300 {% if isSelected %}me-3 w-[14px]{%- else -%}w-0 opacity-0 scale-0{% endif %}"
+          :class="
+            {
+              'me-3 w-[14px]': getIsFilterSelected('sort_by'),
+              'w-0 opacity-0 scale-0': !getIsFilterSelected('sort_by')
+            }
+          "
+        >
+          {% render 'icon-dot' %}
+        </span>
+        <span>{{ sortByLabel }}</span>
+      </button>
+    </div>
+  {% endif %}
+
+  {% if enable_filtering %}
+    {%- for filter in results.filters -%}
+      {% liquid
+        assign isSelected = false
+        if filter.type == 'price_range'
+          if filter.max_value.value or filter.min_value.value
+            assign isSelected = true
+          endif
+        else
+          if filter.active_values.size > 0
+            assign isSelected = true
+          endif
+        endif
+      %}
+      <div>
+        <button
+          type="button"
+          class="button filter-btn duration-300 {% if isSelected %}button--outline-primary ps-4{%- else -%}button--outline-secondary{% endif %}  "
+          :class="
+            {
+              'button--outline-primary ps-4': getIsFilterSelected('{{ filter.param_name }}'),
+              'button--outline-secondary': !getIsFilterSelected('{{ filter.param_name }}')
+            }
+          "
+          @click="showFilters(false, '{{ filter.label }}')"
+        >
+          <span
+            class="duration-300 {% if isSelected %}me-3 w-[14px]{%- else -%}w-0 opacity-0 scale-0{% endif %}"
+            :class="
+              {
+                'me-3 w-[14px]': getIsFilterSelected('{{ filter.param_name }}'),
+                'w-0 opacity-0 scale-0': !getIsFilterSelected('{{ filter.param_name }}')
+              }
+            "
+          >
+            {% render 'icon-dot' %}
+          </span>
+          {{ filter.label }}
+        </button>
+      </div>
+    {%- endfor -%}
+  {% endif %}
+{% endcapture %}
+
+{% capture topFilter %}
+  <nav class="overflow-x-scroll md:pb-4 pb-2 md:px-0 px-2 pt-2" aria-label="{{ 'products.facets.filter_aria_label' | t }}">
+    <div
+                class="flex w-max gap-3 transition-transform duration-300 {% if isDefault %}ltr:translate-x-[-52px] rtl:translate-x-[52px]{%- else -%}translate-x-0{% endif %}"
+      :class="
+                  {
+            'ltr:translate-x-[-52px] rtl:translate-x-[52px]': getIsDefault(),
+            'translate-x-0': !getIsDefault()
+          }
+      "
+    >
+      <button
+        type="button"
+        aria-label="{{ 'products.facets.clear_all' | t }}"
+        class="button filter-btn min-w-[44px] px-0 text-xl {% if isDefault %}button--outline-secondary opacity-0{%- else -%}button--filled-primary opacity-100{% endif %}"
+        :class="
+          {
+            'button--outline-secondary opacity-0': getIsDefault(),
+            'button--filled-primary opacity-100': !getIsDefault()
+          }
+        "
+        :tabindex="getIsDefault() ? -1 : 0"
+        @click="resetAll"
+      >
+        <span>{% render 'icon-remove' %}</span>
+      </button>
+
+      {{ filterShortcuts }}
+    </div>
+    <div x-intersect:full="isTopFilterVisible = true" x-intersect:leave="isTopFilterVisible = false" x-morph-ignore></div>
+  </nav>
+{% endcapture %}
+
+{% capture selectedSort %}
+  <template x-if="sortBy">
+    <div>
+      <button
+        type="button"
+        class="button button--outline-secondary button--size-sm me-3 shrink-0 md:me-0"
+        @click="removeFilter('sort_by')"
+      >
+        <span class="me-2">{{ 'products.facets.sort_button' | t }}:</span>
+        <span x-text="getSelectedSortOption().name"></span>
+        {% comment %} TODO: Implement ↑/↓ icons {% endcomment %}
+        <span class="ms-3 text-lg">
+          {% render 'icon-close' %}
+        </span>
+      </button>
+    </div>
+  </template>
+{% endcapture %}
+
+{% capture selectedMinPrice %}
+  <template x-if="getPriceFilter().min_value.value">
+    <div>
+      <button
+        type="button"
+        class="button button--outline-secondary button--size-sm me-3 shrink-0 md:me-0"
+        @click="removeFilter(getPriceFilter().min_value.param_name)"
+      >
+        <span class="me-2">{{ 'products.facets.filter_price.from_label' | t }}:</span>
+        <span x-text="getFormattedMinPrice()"></span>
+        <span class="ms-3 text-lg">
+          {% render 'icon-close' %}
+        </span>
+      </button>
+    </div>
+  </template>
+{% endcapture %}
+
+{% capture selectedMaxPrice %}
+  <template x-if="getPriceFilter().max_value.value">
+    <div>
+      <button
+        type="button"
+        class="button button--outline-secondary button--size-sm me-3 shrink-0 md:me-0"
+        @click="removeFilter(getPriceFilter().max_value.param_name)"
+      >
+        <span class="me-2">{{ 'products.facets.filter_price.to_label' | t }}:</span>
+        <span x-text="getFormattedMaxPrice()"></span>
+        <span class="ms-3 text-lg">
+          {% render 'icon-close' %}
+        </span>
+      </button>
+    </div>
+  </template>
+{% endcapture %}
+
+{% capture selectedAttributes %}
+  <template x-for="filter in filters">
+    <template x-for="value in filter.active_values">
+      <div>
+        <button
+          type="button"
+          class="button button--outline-secondary button--size-sm me-3 shrink-0 md:me-0"
+          @click="removeFilter(value.param_name, value.value)"
+        >
+          <span class="me-2" x-text="filter.label + ':'"></span>
+                      <span x-text="value.label"></span>
+            <span class="ms-3 text-lg">
+              {% render 'icon-close' %}
+            </span>
+        </button>
+      </div>
+    </template>
+  </template>
+{% endcapture %}
+
+{% capture selectedFilters %}
+  <div class="flex md:flex-wrap md:gap-3">
+    {{ selectedSort }}
+    {{ selectedMinPrice }}
+    {{ selectedMaxPrice }}
+    {{ selectedAttributes }}
+    <div class="bg-gradient-to-s sticky bottom-0 end-0 top-0 z-10 h-9 shrink-0 basis-20 from-bg-500 to-transparent md:hidden"></div>
+  </div>
+{% endcapture %}
+
+{% capture bottomFilterPopupContent %}
+  <div class="min-h-9"></div>
+
+  <template x-portal="document.getElementById('popup-fixed-content-portal')">
+    <div class="overflow-x-scroll overscroll-x-contain ps-3" x-show="!$store.main.isMobile || $store.popup.currentPopup === 'bottom-filters'">
+      <div class="flex items-center gap-3">
+        <button
+          type="button"
+          class="button button--filled-primary button--size-sm shrink-0"
+          @click="showFilters"
+        >
+          {{ 'products.facets.filter_button' | t }}
+          <span class="ms-3 text-lg">{% render 'icon-filter' %}</span>
+        </button>
+
+        <div id="selected-filters-mobile" class="shrink-0 grow"></div>
+
+        <template x-portal="document.getElementById($store.main.isMobile ? 'selected-filters-mobile' : 'filters-sidebar')">
+          <div class="md:px-2 md:pb-7 md:pt-2">
+            <div class="mb-5 hidden items-center justify-between md:flex">
+              <h2 class="text-text-500">{{ 'products.facets.filter_selected' | t }}</h2>
+              <button
+                x-show="!getIsDefault()"
+                class="link link--primary"
+                @click="resetAll"
+                type="button"
+              >
+                {{ 'products.facets.reset_all' | t }}
+              </button>
+            </div>
+            <template x-if="getIsDefault()">
+              <p class="pe-3 text-center md:pe-0 md:text-start">
+                {{ 'products.facets.filter_empty_text' | t }}
+              </p>
+            </template>
+            <template x-if="!getIsDefault()">
+              {{ selectedFilters }}
+            </template>
+          </div>
+        </template>
+      </div>
+    </div>
+  </template>
+{% endcapture %}
+
+{% capture bottomFilterPopup %}
+  {% render 'popup', content: bottomFilterPopupContent, id: 'bottom-filters', desktopTarget: 'bottom-filters-desktop' %}
+{% endcapture %}
+
+{% capture stickyButtons %}
+  <div class="min-h-20"></div>
+  <template x-portal="document.getElementById('popup-fixed-content-portal')">
+    <div x-transition.opacity x-show="$store.popup.currentPopup == 'filters'">
+      <div class="-top-10 end-0 start-0 h-10 bg-gradient-to-t from-bg-500 to-transparent"></div>
+      <div class="flex items-center gap-3 bg-bg-500 px-4 pb-2">
+        <button
+          type="button"
+          class="button button--outline-secondary"
+          @click="onResetButtonClick"
+        >
+          {{ 'products.facets.reset' | t }}
+        </button>
+        <button
+          type="button"
+          class="button button--filled-primary grow"
+          @click="hideFilters"
+        >
+          {{ 'products.facets.apply' | t }}
+        </button>
+      </div>
+    </div>
+  </template>
+{% endcapture %}
+
+{% capture filterHeading %}
+  <div class="sticky start-0 top-0 z-10 flex flex-col gap-3 bg-bg-500 px-3 md:pt-2">
+    <div class="relative mb-2 flex min-h-7 items-center overflow-hidden">
+      <button
+        type="button"
+        class="button button--ghost-primary icon-button icon-button--size-xs absolute bottom-0 start-0 top-0 m-auto text-xxl transition-transform duration-300 motion-reduce:transition-none"
+        aria-label="{{ 'products.facets.filters_popup.go_back' | t }}"
+        @click="isTopLevel = true; currentName = ''"
+        :tabindex="isTopLevel ? -1 : 0"
+        :class="{
+          'ltr:-translate-x-full rtl:translate-x-full': isTopLevel,
+          'translate-x-0': !isTopLevel,
+        }"
+      >
+        {% render 'icon-chevron-left' %}
+      </button>
+      <h2
+        class="text-md text-text-500 transition-transform duration-300 motion-reduce:transition-none"
+        :class="{
+          'translate-x-0': isTopLevel,
+          'ltr:translate-x-[34px] rtl:-translate-x-[34px]': !isTopLevel,
+        }"
+        x-text="isTopLevel ? '{{ 'products.facets.filters_popup.title' | t }}' : currentName"
+      >
+      </h2>
+      <button
+        type="button"
+        class="button button--outline-secondary icon-button icon-button--size-xs absolute end-0 top-0"
+        aria-label="{{ 'products.facets.filters_popup.close' | t }}"
+        @click="hideFilters"
+      >
+        {% render 'icon-close' %}
+      </button>
+    </div>
+    <hr class="divider -mx-5">
+  </div>
+{% endcapture %}
+
+{% capture filterAttributes %}
+  {%- for filter in results.filters -%}
+    <fieldset
+      class="flex-1 md:border-t md:border-bg-600 md:py-5"
+      x-data="Accordion(true, 300)"
+      x-show="$store.main.isMobile ? currentName == '{{ filter.label }}' : true"
+    >
+      <legend class="sr-only">{{ filter.label }}</legend>
+      <div
+        class="group hidden h-11 w-full cursor-pointer items-center rounded-md py-3 md:flex md:px-2"
+        x-ref="AccordionButton"
+      >
+        <h2 class="grow text-start text-text-500">
+          {{ filter.label }}
+        </h2>
+        <button
+          class="button button--outline-secondary icon-button icon-button--size-xs group-hoverable"
+          aria-label="{{ filter.label }}"
+          type="button"
+        >
+          <span style="rotate: -180deg;" x-ref="AccordionIcon">
+            {% render 'icon-chevron-down' %}
+          </span>
+        </button>
+      </div>
+      <div x-cloak x-ref="AccordionPanel" class="overflow-hidden md:px-2" :class="{
+        'transition-none': $store.main.isReducedMotion,
+        'transition': $store.main.isReducedMotion
+      }">
+        <div class="md:pb-3 md:pt-2">
+          <div
+            id="filter-{{ filter.label | downcase }}"
+            key="filter-{{ filter.label | downcase }}"
+          >
+            {%- case filter.type -%}
+            {%- when 'boolean', 'list' -%}
+              <div class="flex flex-col gap-4">
+                {%- for filter_value in filter.values -%}
+                  <label class="checkbox mb-0 h-11 w-full flex-row-reverse justify-between" for="Filter-{{ filter.param_name }}-{{ forloop.index }}">
+                    <input
+                      type="checkbox"
+                      class="checkbox__input"
+                      @change="updateFilters()"
+                      name="{{ filter_value.param_name }}"
+                      value="{{ filter_value.value }}"
+                      id="Filter-{{ filter.param_name }}-{{ forloop.index }}"
+                      :checked="getIsFilterValueSelected('{{ filter_value.param_name }}', '{{ filter_value.value }}')"
+                      aria-label="{{- filter_value.label }}"
+                    >
+                    <span class="checkbox__control" aria-hidden="true">
+                      {% render 'icon-checkmark' %}
+                    </span>
+                    <span class="checkbox__label ms-0 text-md ">{{- filter_value.label }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            {%- when 'price_range' -%}
+                {% liquid
+                  assign minPriceValue = filter.min_value.value | default: 0 | divided_by: 100.00 | floor
+                  assign maxPriceValue = filter.max_value.value | default: filter.range_max | divided_by: 100.00 | ceil
+                %}
+                {% render 'range-slider',
+                  min: minPrice,
+                  max: maxPrice,
+                  value_min: minPriceValue,
+                  value_max: maxPriceValue,
+                  min_input_name: filter.min_value.param_name,
+                  max_input_name: filter.max_value.param_name,
+                %}
+            {%- endcase -%}
+          </div>
+
+          <button
+            x-show="getIsFilterSelected('{{ filter.param_name }}')"
+            type="button"
+            class="link link--primary mt-4 hidden md:inline-block"
+            @click="resetCurrent('filter-{{ filter.label | downcase }}')"
+          >
+            {{ 'products.facets.reset' | t }}
+          </button>
+        </div>
+      </div>
+    </fieldset>
+  {%- endfor -%}
+{% endcapture %}
+
+{% capture filterSort %}
+  <fieldset
+    class="flex-1 md:border-t md:border-bg-600 md:py-5"
+    x-data="Accordion(true, 300)"
+    x-show="$store.main.isMobile ? currentName == '{{ sortByLabel }}' : true"
+  >
+    <legend class="sr-only">{{ sortByLabel }}</legend>
+    <div
+      class="group hidden h-11 w-full cursor-pointer items-center rounded-md py-3 md:flex md:px-2"
+      x-ref="AccordionButton"
+    >
+      <h2 class="grow text-start text-text-500">
+        {{ sortByLabel }}
+      </h2>
+      <button type="button" class="button button--outline-secondary icon-button icon-button--size-xs group-hoverable" aria-label="{{ sortByLabel }}">
+        <span style="rotate: -180deg;" x-ref="AccordionIcon">
+          {% render 'icon-chevron-down' %}
+        </span>
+      </button>
+    </div>
+    <div x-cloak x-ref="AccordionPanel" class="overflow-hidden md:px-2" :class="{
+      'transition-none': $store.main.isReducedMotion,
+      'transition': $store.main.isReducedMotion
+    }">
+      <div class="md:pb-3 md:pt-2">
+        <div
+          class="flex flex-col gap-4 py-3"
+          id="filter-{{ sortByLabel | downcase }}"
+        >
+          <div role="radiogroup" aria-label="{{ 'products.facets.sort_button' | t }}">
+            {% for option in results.sort_options %}
+              <div class="relative h-11 w-full">
+                <label class="radio mb-0 h-full w-full py-1" for="sort-{{ option.value }}">
+                  <input
+                    type="radio"
+                    class="radio__input"
+                    id="sort-{{ option.value }}"
+                    name="sort_by"
+                    value="{{ option.value }}"
+                    :checked="getIsFilterValueSelected('sort_by', '{{ option.value }}')"
+                    @change="updateFilters()"
+                    aria-label="{{ option.name }}"
+                  >
+                  <span class="radio__control " aria-hidden="true"></span>
+                  <span class="radio__label text-md ">{{ option.name }}</span>
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <button
+          x-show="getIsFilterSelected('sort_by')"
+          type="button"
+          class="link link--primary mt-4 hidden md:inline-block"
+          @click="resetCurrent('filter-{{ sortByLabel | downcase }}')"
+        >
+          {{ 'products.facets.reset' | t }}
+        </button>
+      </div>
+    </div>
+  </fieldset>
+{% endcapture %}
+
+{% capture filterItems %}
+  <nav class="flex flex-col gap-3 py-3" x-show="isTopLevel" aria-label="{{ 'products.facets.filter_aria_label' | t }}">
+    <button
+      type="button"
+      class="flex min-h-10 items-center justify-between py-1"
+      @click="isTopLevel = false; currentName='{{ sortByLabel }}'"
+    >
+      <span
+        class="me-4"
+        :class="
+          {
+            'hidden': !getIsFilterSelected('sort_by')
+          }
+        "
+      >
+        {% render 'icon-dot' %}
+      </span>
+      <p
+        class="grow text-start"
+        :class="
+          {
+            'text-primary-500 font-semibold': getIsFilterSelected('sort_by')
+          }
+        "
+      >
+        {{ sortByLabel }}
+      </p>
+      <p class="icon-button">
+        {% render 'icon-chevron-right' %}
+      </p>
+    </button>
+    {%- for filter in results.filters -%}
+      <button
+        type="button"
+        class="flex min-h-10 items-center justify-between py-1"
+        @click="isTopLevel = false; currentName='{{ filter.label }}'"
+      >
+        <span
+          class="me-4"
+          :class="
+            {
+              'hidden': !getIsFilterSelected('{{ filter.param_name }}')
+            }
+          "
+        >
+          {% render 'icon-dot' %}
+        </span>
+        <p
+          class="grow text-start"
+          :class="
+            {
+              'text-primary-500 font-semibold': getIsFilterSelected('{{ filter.param_name }}'),
+            }
+          "
+        >
+          {{ filter.label }}
+        </p>
+        <p class="icon-button">
+          {% render 'icon-chevron-right' %}
+        </p>
+      </button>
+    {% endfor %}
+  </nav>
+
+  <div id="filters-form-mobile"></div>
+
+  <template x-portal="document.getElementById($store.main.isMobile ? 'filters-form-mobile' : 'filters-sidebar')">
+    <form class="filter-form" id="FilterForm" x-show="$store.main.isMobile ? !isTopLevel : true">
+      <div class="md:px-2">
+        <button type="submit" class="sr-only focus-visible:not-sr-only">
+          {{ 'products.facets.apply' | t }}
+        </button>
+      </div>
+      {% if isSearch %}
+        <input type="hidden" name="q" x-model="searchQuery">
+      {% endif %}
+      {% if enable_sorting %}
+        {{ filterSort }}
+      {% endif %}
+      {% if enable_filtering %}
+        {{ filterAttributes }}
+      {% endif %}
+    </form>
+  </template>
+{% endcapture %}
+
+{%- capture filterPopupContent -%}
+  <div>
+    {{ filterHeading }}
+    <article
+      class="relative px-3 "
+      :aria-label="
+        isTopLevel
+          ? '{{ 'products.facets.filters_popup.aria_label' | t }}'
+          : '{{ 'products.facets.filters_popup.filter_aria_label' | t }} ' + currentName?.toLowerCase()
+      "
+    >
+      {{ filterItems }}
+      {{ stickyButtons }}
+    </article>
+  </div>
+{%- endcapture -%}
+
+{%- capture filterPopup -%}
+  {% render 'popup', content: filterPopupContent, id: 'filters', isFocused: true, desktopTarget: 'filters-desktop' %}
+{%- endcapture -%}
+
+<div
+  class="md:hidden"
+  x-data="Filters('{{ results.default_sort_by }}', '{{  minPrice }}', '{{ maxPrice }}', '{{ cart.currency.iso_code }}')"
+  x-init="
+    {% comment %} Set filters {% endcomment %}
+    filters = [];
+    {% for filter in results.filters %}
+      filters.push({
+        type: '{{ filter.type }}',
+        label: atob('{{ filter.label | base64_encode }}'),
+        param_name: '{{ filter.param_name }}',
+        active_values: [{% for value in filter.active_values %}
+          {
+            label: atob('{{ value.label | base64_encode }}'),
+            value: '{{ value.value }}',
+            param_name: '{{ value.param_name }}'
+          },
+        {% endfor %}],
+        min_value: {
+          value: {{ filter.min_value.value | divided_by: 100.0 | default: '' | json }},
+          param_name: '{{ filter.min_value.param_name }}',
+        },
+        max_value: {
+          value: {{ filter.max_value.value | divided_by: 100.0 | default: '' | json }},
+          param_name: '{{ filter.max_value.param_name }}',
+        },
+        values: [{% for value in filter.values %}
+          {
+            label: atob('{{ value.label | base64_encode }}'),
+            value: '{{ value.value }}',
+            param_name: '{{ value.param_name }}'
+          },
+        {% endfor %}],
+      });
+    {% endfor %}
+
+    {% comment %} Set sortOptions {% endcomment %}
+    sortOptions = [];
+    {% for option in results.sort_options %}
+      sortOptions.push({
+        value: '{{ option.value }}',
+        name: atob('{{ option.name | base64_encode }}')
+      });
+    {% endfor %}
+
+    {% comment %} Set sortBy {% endcomment %}
+    setSortBy('{{ results.sort_by }}');
+  "
+>
+  {{ topFilter }}
+  {{ bottomFilterPopup }}
+  {{ filterPopup }}
+  <div id="filters-desktop"></div>
+  <div id="bottom-filters-desktop"></div>
+</div>

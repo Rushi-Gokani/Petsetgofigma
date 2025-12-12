@@ -1,0 +1,190 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+  assign slides_count = section.settings.blog.articles_count
+  if section.settings.post_limit < slides_count
+    assign slides_count = section.settings.post_limit
+  endif
+%}
+{%- capture slides_amount_in_view -%}
+  {% render '_slider-amount-in-view',
+    xs: 2.2,
+    sm: 2.5,
+    md: 3,
+    lg: 4,
+    xl: 5,
+    xxl: 5,
+    is_stretch_full_width: section.settings.stretch_full_width,
+    slides_count: slides_count
+  %}
+{%- endcapture -%}
+
+{%- capture slides -%}
+  {%- if section.settings.blog != blank and section.settings.blog.articles_count > 0 -%}
+    {%- for article in section.settings.blog.articles limit: section.settings.post_limit -%}
+      {%- capture slideContent -%}
+        {%- render 'article-card',
+          article: article,
+          media_height: section.settings.image_height,
+          media_aspect_ratio: article.image.aspect_ratio,
+          show_image: section.settings.show_image,
+          show_date: section.settings.show_date,
+          truncate_title: true,
+          class: "h-full pt-2"
+        -%}
+      {%- endcapture -%}
+
+      {%- render 'slider-slide', content: slideContent -%}
+    {%- endfor -%}
+  {% else %}
+    {%- for i in (1..section.settings.post_limit)  -%}
+      {%- capture slideContent -%}
+        {%- render 'article-card',
+          media_height: section.settings.image_height,
+          media_aspect_ratio: article.image.aspect_ratio,
+          show_image: section.settings.show_image,
+          show_date: section.settings.show_date,
+          truncate_title: true,
+          class: "h-full",
+          show_excerpt: true,
+          index: i
+        -%}
+      {%- endcapture -%}
+
+      {%- render 'slider-slide', content: slideContent -%}
+    {%- endfor -%}
+  {% endif %}
+{%- endcapture -%}
+{%- assign title = section.settings.heading | escape -%}
+
+<div
+  class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+  style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px"
+>
+  {%- render 'slider',
+    slides: slides,
+    gap: 16,
+    slides_amount_in_view: slides_amount_in_view,
+    title: title,
+    is_full_page: true
+  -%}
+
+  {% if section.settings.show_view_all and section.settings.post_limit < section.settings.blog.articles_count %}
+    <div class="mt-5 text-center">
+      <a
+        {%- render '_link-attributes', link: section.settings.blog.url -%}
+        class="button button--filled-primary"
+      >
+        {{ 'sections.featured_collection.view_all' | t }}
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.featured-blog.name",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Blog posts",
+      "label": "t:sections.featured-blog.settings.heading.label"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "t:sections.featured-blog.settings.blog.label"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.featured-blog.settings.post_limit.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_image.label",
+      "info": "t:sections.featured-blog.settings.show_image.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_view_all.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "stretch_full_width",
+      "default": false,
+      "label": "t:settings_schema.global.settings.stretch_full_width.label",
+      "info": "t:settings_schema.global.settings.stretch_full_width.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured-blog.presets.name",
+      "settings": {
+        "blog": "News"
+      }
+    }
+  ]
+}
+{% endschema %}

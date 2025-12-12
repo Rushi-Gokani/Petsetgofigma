@@ -1,0 +1,647 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1763105100a013aa04": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_3d17aaa_XhM77i": {
+          "type": "ai_gen_block_3d17aaa",
+          "settings": {
+            "video_url": "https://cdn.shopify.com/videos/c/o/v/56a2ff1962774d76bb4aaae941110f7d.mov",
+            "autoplay": true,
+            "loop": true,
+            "muted": true,
+            "desktop_height": 80,
+            "mobile_height": 75,
+            "content_alignment_vertical": "center",
+            "content_alignment_horizontal": "center",
+            "text_alignment": "center",
+            "content_max_width": 800,
+            "show_overlay": true,
+            "overlay_color": "#000000",
+            "overlay_opacity": 0.2,
+            "heading": "",
+            "heading_color": "#ffffff",
+            "heading_size": 56,
+            "heading_spacing": 20,
+            "subheading": "Discover our amazing collection",
+            "subheading_color": "#ffffff",
+            "subheading_size": 20,
+            "subheading_spacing": 30,
+            "button_text": "Shop now",
+            "button_link": "",
+            "button_background_color": "#f68e02",
+            "button_text_color": "#ffffff",
+            "button_hover_background_color": "#363030",
+            "button_hover_text_color": "#ffffff",
+            "button_border_color": "#f68e02",
+            "button_hover_border_color": "#363030",
+            "button_border_width": 0,
+            "button_font_size": 16,
+            "button_padding_vertical": 15,
+            "button_padding_horizontal": 40,
+            "button_border_radius": 4,
+            "show_controls": true,
+            "control_button_background": "#ffffff",
+            "control_button_icon_color": "#000000",
+            "control_button_opacity": 0.8
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_3d17aaa_XhM77i"
+      ],
+      "settings": {}
+    },
+    "17613035610c130ffa": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "image_banner": {
+      "type": "image-banner",
+      "blocks": {
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop All Products",
+            "button_link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "button"
+      ],
+      "disabled": true,
+      "settings": {
+        "image": "shopify://shop_images/SWEATER.png",
+        "mobile_image": "shopify://shop_images/SWEATER.png",
+        "image_overlay_opacity": 20,
+        "image_height": "large",
+        "desktop_content_position": "bottom-center",
+        "mobile_content_alignment": "center",
+        "custom_color_scheme": true,
+        "color_scheme": ""
+      }
+    },
+    "collection_list_GXnwRU": {
+      "type": "collection-list",
+      "blocks": {
+        "featured_collection_HhHYzV": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "clothing"
+          }
+        },
+        "featured_collection_3VrNf8": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "bedding"
+          }
+        },
+        "featured_collection_AXmQjj": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "kurtas"
+          }
+        },
+        "featured_collection_UVahaV": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "toys"
+          }
+        },
+        "featured_collection_GK6MyT": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "dog-beds"
+          }
+        }
+      },
+      "block_order": [
+        "featured_collection_HhHYzV",
+        "featured_collection_3VrNf8",
+        "featured_collection_AXmQjj",
+        "featured_collection_UVahaV",
+        "featured_collection_GK6MyT"
+      ],
+      "name": "t:sections.collection-list.presets.name",
+      "settings": {
+        "title": "Collections",
+        "stretch_full_width": false,
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "slideshow_FMQLLj": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_UjrPTD": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/2_c5c77948-c540-47aa-829c-5daf4d8a8997.png",
+            "image_overlay_opacity": 0,
+            "heading": "Dog Beds",
+            "heading_size": "medium",
+            "subheading": "Best Beds for your paw friends",
+            "button_label": "Shop Now",
+            "link": "shopify://collections/dog-beds",
+            "box_align": "middle-right",
+            "show_text_box": true,
+            "text_alignment": "center"
+          }
+        },
+        "slide_KXMYk7": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/Copy_of_website_banners_1.png",
+            "image_overlay_opacity": 0,
+            "heading": "Winter Wear",
+            "heading_size": "medium",
+            "subheading": "Sweaters to keep your pets warm",
+            "button_label": "Shop Now",
+            "link": "shopify://collections/sweaters",
+            "box_align": "middle-center",
+            "show_text_box": true,
+            "text_alignment": "center"
+          }
+        }
+      },
+      "block_order": [
+        "slide_UjrPTD",
+        "slide_KXMYk7"
+      ],
+      "name": "t:sections.slideshow.presets.name",
+      "settings": {
+        "slide_height": "medium",
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "accessibility_info": "Slideshow about our brand",
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 0,
+        "padding_bottom": 44
+      }
+    },
+    "1762942714f96e998b": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_56a2b97_VHUDKA": {
+          "type": "ai_gen_block_56a2b97",
+          "settings": {
+            "quote_text": "Everything your pet needs, all in one wag-worthy place.",
+            "author_name": "",
+            "show_icon": true,
+            "quote_font": "caveat_n4",
+            "font_size": 36,
+            "line_height": 1.4,
+            "author_font": "figtree_n4",
+            "author_font_size": 18,
+            "background_color": "#ffffff",
+            "text_color": "#f68e02",
+            "author_color": "#666666",
+            "icon_color": "#f68e02",
+            "cursor_color": "#f68e02",
+            "typing_speed": 50,
+            "start_delay": 500,
+            "text_alignment": "center",
+            "max_width": 750,
+            "min_height": 250,
+            "icon_size": 50,
+            "padding_top": 0,
+            "padding_bottom": 0,
+            "padding_horizontal": 20
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_56a2b97_VHUDKA"
+      ],
+      "settings": {}
+    },
+    "1761289749a0c54212": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_16aef5f_cVmUiK": {
+          "type": "ai_gen_block_16aef5f",
+          "settings": {
+            "heading": "Featured Collections.",
+            "subheading": "Discover our curated product selections",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "subheading_size": 16,
+            "collection_1": "pet-bandanas",
+            "tab_label_1": "",
+            "collection_2": "best-sellers",
+            "tab_label_2": "",
+            "collection_3": "bedding",
+            "tab_label_3": "",
+            "collection_4": "sale",
+            "tab_label_4": "",
+            "collection_5": "dog-beds",
+            "tab_label_5": "",
+            "collection_6": "clothing",
+            "tab_label_6": "",
+            "collection_7": "",
+            "tab_label_7": "",
+            "collection_8": "",
+            "tab_label_8": "",
+            "products_limit": 12,
+            "products_per_row_desktop": 4,
+            "products_per_row_tablet": 3,
+            "product_gap": 20,
+            "image_aspect_ratio": 100,
+            "tabs_alignment": "center",
+            "tab_font_size": 16,
+            "tab_border_radius": 8,
+            "tab_background": "#ffffff",
+            "tab_text_color": "#363030",
+            "tab_border_color": "#c4c6bf",
+            "tab_hover_background": "#f5f8f6",
+            "tab_hover_text_color": "#363030",
+            "tab_hover_border_color": "#f68e02",
+            "tab_active_background": "#f68e02",
+            "tab_active_text_color": "#ffffff",
+            "tab_active_border_color": "#f68e02",
+            "card_border_radius": 12,
+            "card_background": "#ffffff",
+            "product_title_size": 16,
+            "product_title_color": "#363030",
+            "product_price_size": 18,
+            "product_price_color": "#f68e02",
+            "arrow_background": "#f5f8f6",
+            "arrow_color": "#363030",
+            "arrow_hover_background": "#f68e02",
+            "arrow_hover_color": "#ffffff",
+            "background_color": "#f5f8f6",
+            "heading_color": "#363030",
+            "subheading_color": "#363030",
+            "container_width": 1200,
+            "section_padding_top": 60,
+            "section_padding_bottom": 60
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_16aef5f_cVmUiK"
+      ],
+      "settings": {}
+    },
+    "1761292373cd4c424c": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_0d6ad8a_j8HAU3": {
+          "type": "ai_gen_block_0d6ad8a",
+          "name": "Video Reel carousel",
+          "settings": {
+            "title": "Watch Our Stories",
+            "subtitle": "Swipe to explore",
+            "title_size": 32,
+            "subtitle_size": 16,
+            "title_color": "#000000",
+            "subtitle_color": "#666666",
+            "section_padding": 40,
+            "background_color": "#ffffff",
+            "card_width": 300,
+            "card_width_mobile": 280,
+            "card_gap": 20,
+            "aspect_ratio_width": 9,
+            "aspect_ratio_height": 16,
+            "card_background": "#ffffff",
+            "card_text_color": "#000000",
+            "card_border_radius": 12,
+            "enable_loop": true,
+            "enable_mute": true,
+            "play_button_color": "#ffffff",
+            "play_button_icon_color": "#000000",
+            "progress_bar_color": "#f68e02",
+            "product_tag_background": "#f5f5f5",
+            "product_tag_text_color": "#000000",
+            "show_navigation": true,
+            "show_dots": true,
+            "nav_button_color": "#ffffff",
+            "nav_button_icon_color": "#000000",
+            "dot_color": "#000000",
+            "video_1_type": "shopify",
+            "video_1_file": "https://cdn.shopify.com/videos/c/o/v/d1c0092c6a3743f0a971e3e43e9a7fa4.mp4",
+            "video_1_url": "",
+            "video_1_title": "Video Title",
+            "video_1_description": "Add a description for your video",
+            "video_1_product": "2-in-1-melamine-dog-bowl-abstract",
+            "video_2_type": "shopify",
+            "video_2_file": "https://cdn.shopify.com/videos/c/o/v/aa71859ea8974bdbaf52a1a4fcd7df34.mp4",
+            "video_2_url": "",
+            "video_2_title": "Video Title",
+            "video_2_description": "Add a description for your video",
+            "video_2_product": "",
+            "video_3_type": "shopify",
+            "video_3_file": "https://cdn.shopify.com/videos/c/o/v/76b0eccb6296489e9b38690ed67fa1c6.mp4",
+            "video_3_url": "",
+            "video_3_title": "Video Title",
+            "video_3_description": "Add a description for your video",
+            "video_3_product": "",
+            "video_4_type": "shopify",
+            "video_4_file": "https://cdn.shopify.com/videos/c/o/v/3466dac5444f49668ecbab90e469d9d6.mp4",
+            "video_4_url": "",
+            "video_4_title": "",
+            "video_4_description": "",
+            "video_4_product": "",
+            "video_5_type": "shopify",
+            "video_5_file": "https://cdn.shopify.com/videos/c/o/v/33b676d392df466b99c63a4cdbfba198.mp4",
+            "video_5_url": "",
+            "video_5_title": "",
+            "video_5_description": "",
+            "video_5_product": "",
+            "video_6_type": "none",
+            "video_6_file": "",
+            "video_6_url": "",
+            "video_6_title": "",
+            "video_6_description": "",
+            "video_6_product": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_0d6ad8a_j8HAU3"
+      ],
+      "settings": {}
+    },
+    "1761302991e3b53dd6": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_7104926_mxUELA": {
+          "type": "ai_gen_block_7104926",
+          "settings": {
+            "card_1_image": "shopify://shop_images/1_1_97592355-0845-4708-93cd-863a811bdfa2.png",
+            "card_1_title": "Featured Collection",
+            "card_1_subtitle": "Explore our latest arrivals",
+            "card_1_link": "",
+            "card_2_image": "shopify://shop_images/0ceab554e1f00a62c4ca920275fedd160ef8ee27.png",
+            "card_2_title": "Special Offers",
+            "card_2_subtitle": "Save up to 50% off",
+            "card_2_link": "",
+            "gap": 20,
+            "padding_top": 40,
+            "padding_bottom": 40,
+            "padding_horizontal": 20,
+            "border_radius": 12,
+            "aspect_ratio": 1.2,
+            "content_padding": 32,
+            "title_size": 28,
+            "subtitle_size": 16,
+            "text_color": "#ffffff",
+            "overlay_opacity": 0.5
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_7104926_mxUELA"
+      ],
+      "settings": {}
+    },
+    "featured_collection_434Acz": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Clearance",
+        "collection": "sale",
+        "products_to_show": 15,
+        "show_view_all": true,
+        "stretch_full_width": false,
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "image_with_text_1": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Our Mission"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We at Pet Set Go want to create a world where best quality Pet Products are within reach of all Pet Parents<br/><br/></p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop all",
+            "button_link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/5_ba1a6ebb-83d7-4d08-aaed-744d54caa262.png",
+        "layout": "image_first",
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "1762250003e4eb14c4": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_4b385cf_7pWYWt": {
+          "type": "ai_gen_block_4b385cf",
+          "name": "Testimonial New",
+          "settings": {
+            "heading": "What Our Customers Say",
+            "subheading": "Real reviews from real pet parents",
+            "heading_alignment": "center",
+            "heading_size": 36,
+            "subheading_size": 16,
+            "testimonial_count": 3,
+            "testimonial_text_1": "This product has been amazing for my pet! Highly recommend to all pet parents out there.",
+            "rating_1": 5,
+            "customer_name_1": "Sarah Johnson",
+            "customer_role_1": "Verified Buyer",
+            "customer_image_1": "shopify://shop_images/Generated_Image_October_27_2025_-_5_25PM.png",
+            "media_type_1": "image",
+            "testimonial_image_1": "shopify://shop_images/1_f8e1a157-43c6-45c8-b831-f3942a76ff3d.png",
+            "product_1": "pack-of-2-dog-sweaters-shivery-copy",
+            "testimonial_text_2": "Excellent quality and my furry friend absolutely loves it. Will definitely order again!",
+            "rating_2": 5,
+            "customer_name_2": "Michael Chen",
+            "customer_role_2": "Verified Buyer",
+            "customer_image_2": "shopify://shop_images/smile-emoji-icon-in-orange-color.png",
+            "media_type_2": "image",
+            "testimonial_image_2": "shopify://shop_images/4_3f78e1ed-3d1a-46b1-b12b-46396f55ff4c.png",
+            "product_2": "3d-bone-push-dog-toy",
+            "testimonial_text_3": "Fast shipping and great customer service. My dog is happier than ever!",
+            "rating_3": 5,
+            "customer_name_3": "Emily Rodriguez",
+            "customer_role_3": "Verified Buyer",
+            "customer_image_3": "shopify://shop_images/ChatGPT_Image_Oct_7_2025_05_10_44_PM-Photoroom.png",
+            "media_type_3": "image",
+            "testimonial_image_3": "shopify://shop_images/8_caffa1b5-a872-4f34-aaaa-8dab3844be84.png",
+            "product_3": "dog-jackets",
+            "testimonial_text_4": "",
+            "rating_4": 5,
+            "customer_name_4": "",
+            "customer_role_4": "",
+            "media_type_4": "none",
+            "product_4": "",
+            "testimonial_text_5": "",
+            "rating_5": 5,
+            "customer_name_5": "",
+            "customer_role_5": "",
+            "media_type_5": "none",
+            "product_5": "",
+            "testimonial_text_6": "",
+            "rating_6": 5,
+            "customer_name_6": "",
+            "customer_role_6": "",
+            "media_type_6": "none",
+            "product_6": "",
+            "slides_per_view": 3,
+            "slides_per_view_tablet": 2,
+            "card_gap": 20,
+            "autoplay": true,
+            "autoplay_delay": 5,
+            "card_background": "#ffffff",
+            "card_padding": 30,
+            "card_border_radius": 12,
+            "card_border_width": 1,
+            "card_border_color": "#e5e5e5",
+            "card_shadow_horizontal": 0,
+            "card_shadow_vertical": 4,
+            "card_shadow_blur": 12,
+            "card_shadow_opacity": 0.1,
+            "star_size": 20,
+            "star_color": "#f68e02",
+            "star_empty_color": "#e0e0e0",
+            "text_size": 16,
+            "text_color": "#363030",
+            "name_size": 16,
+            "name_color": "#363030",
+            "role_size": 14,
+            "role_color": "#757575",
+            "avatar_size": 60,
+            "avatar_placeholder_bg": "#f5f5f5",
+            "avatar_placeholder_color": "#bdbdbd",
+            "product_label_color": "#757575",
+            "product_title_color": "#363030",
+            "divider_color": "#e5e5e5",
+            "media_border_radius": 8,
+            "nav_button_bg": "#f68e02",
+            "nav_button_hover_bg": "#d67a02",
+            "nav_button_color": "#ffffff",
+            "dot_color": "#e0e0e0",
+            "dot_active_color": "#f68e02",
+            "background_color": "#f5f8f6",
+            "heading_color": "#363030",
+            "subheading_color": "#757575",
+            "container_width": 1200,
+            "section_padding_top": 60,
+            "section_padding_bottom": 60
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_4b385cf_7pWYWt"
+      ],
+      "settings": {}
+    },
+    "17606932316adb44ef": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_eeafc13_xKwjmk": {
+          "type": "ai_gen_block_eeafc13",
+          "name": "Blog posts main",
+          "settings": {
+            "blog": "news",
+            "posts_to_show": 3,
+            "heading": "Latest from our blog",
+            "subtitle": "Discover insights, tips, and stories from our team",
+            "show_date": false,
+            "show_author": false,
+            "show_excerpt": false,
+            "read_more_text": "Read more",
+            "show_view_all": true,
+            "view_all_text": "View all posts",
+            "container_width": 1200,
+            "columns_desktop": 3,
+            "columns_tablet": 2,
+            "grid_gap": 32,
+            "section_padding_top": 80,
+            "section_padding_bottom": 80,
+            "mobile_card_width": 85,
+            "mobile_carousel_gap": 16,
+            "mobile_carousel_spacing": 16,
+            "show_carousel_navigation": true,
+            "image_aspect_ratio": 65,
+            "card_padding": 24,
+            "card_border_radius": 12,
+            "card_shadow": "0 4px 12px rgba(0, 0, 0, 0.1)",
+            "background_color": "#ffffff",
+            "heading_color": "#000000",
+            "subtitle_color": "#666666",
+            "card_background": "#ffffff",
+            "card_title_color": "#000000",
+            "card_excerpt_color": "#666666",
+            "meta_color": "#999999",
+            "link_color": "#f68e02",
+            "carousel_button_background": "#f68e02",
+            "carousel_button_color": "#ffffff",
+            "carousel_dot_color": "#f68e02",
+            "heading_size": 40,
+            "subtitle_size": 16,
+            "card_title_size": 20,
+            "card_excerpt_size": 14,
+            "button_background": "#f68e02",
+            "button_hover_background": "#d67a02",
+            "button_text_color": "#ffffff",
+            "button_border_radius": 8
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_eeafc13_xKwjmk"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "1763105100a013aa04",
+    "17613035610c130ffa",
+    "image_banner",
+    "collection_list_GXnwRU",
+    "slideshow_FMQLLj",
+    "1762942714f96e998b",
+    "1761289749a0c54212",
+    "1761292373cd4c424c",
+    "1761302991e3b53dd6",
+    "featured_collection_434Acz",
+    "1762250003e4eb14c4",
+    "image_with_text_1",
+    "17606932316adb44ef"
+  ]
+}

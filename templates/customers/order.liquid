@@ -1,0 +1,25 @@
+<div class="h-full bg-secondary-500 pt-[72px] md:pt-[89px]">
+  <div class="content-wrapper mx-auto px-5">
+    <a
+      x-element-transition-trigger
+      href="{{ routes.account_url }}"
+      class="relative my-8 block text-lg font-semibold text-text-500 md:hover:text-primary-600"
+    >
+      <span
+        class="absolute top-1 inline-block w-7 -translate-x-full animate-slideIconIn motion-reduce:translate-x-0 motion-reduce:animate-none"
+      >
+        {% render 'icon-arrow-back' %}
+      </span>
+      <h1
+        class="inline-block animate-slideTitleIn motion-reduce:translate-x-[--translate-width] motion-reduce:animate-none"
+        style="--translate-width: 30px;"
+      >
+        {{ 'customer.order.title' | t: name: order.name }}
+      </h1>
+    </a>
+
+    <div class="grid-cols-addressForms gap-8 md:grid">
+      {% render 'order-items', order: order %}
+    </div>
+  </div>
+</div>

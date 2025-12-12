@@ -1,0 +1,158 @@
+<div
+  class="section {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% endif %}"
+  style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; background: {{ section.settings.background }};"
+>
+  <div class="carousel-wrapper relative">
+    <div class="swiper" id="carousel-{{ section.id }}">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            {% if block.settings.image != blank %}
+              <img src="{{ block.settings.image | img_url: 'master' }}" alt="{{ block.settings.alt | escape }}" class="w-full h-auto object-cover rounded" />
+            {% else %}
+              <div class="w-full h-48 bg-gray-200 flex items-center justify-center rounded">No image</div>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% if section.settings.show_arrows %}
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
+      {% endif %}
+      {% if section.settings.show_dots %}
+        <div class="swiper-pagination"></div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var swiper = new Swiper('#carousel-{{ section.id }}', {
+      slidesPerView: {{ section.settings.desktop_slides_per_view }},
+      spaceBetween: 16,
+      navigation: {
+        nextEl: {{ section.settings.show_arrows | json }} ? '#carousel-{{ section.id }} .swiper-button-next' : null,
+        prevEl: {{ section.settings.show_arrows | json }} ? '#carousel-{{ section.id }} .swiper-button-prev' : null,
+      },
+      pagination: {
+        el: {{ section.settings.show_dots | json }} ? '#carousel-{{ section.id }} .swiper-pagination' : null,
+        clickable: true,
+      },
+      breakpoints: {
+        0: {
+          slidesPerView: {{ section.settings.mobile_slides_per_view }},
+        },
+        768: {
+          slidesPerView: {{ section.settings.desktop_slides_per_view }},
+        }
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Carousel Slides",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "desktop_slides_per_view",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "label": "Slides per screen (desktop)",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "mobile_slides_per_view",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Slides per screen (mobile)",
+      "default": 1
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "Show arrows",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "Show dots",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "label": "Use custom color scheme",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "background-1"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 32
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background color",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Slide image"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "Alt text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carousel Slides",
+      "blocks": [
+        { "type": "slide" },
+        { "type": "slide" },
+        { "type": "slide" }
+      ]
+    }
+  ]
+}
+{% endschema %}

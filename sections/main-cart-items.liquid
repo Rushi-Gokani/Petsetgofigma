@@ -1,0 +1,30 @@
+<div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div class="md:content-wrapper mt-[72px] md:mx-auto md:pb-10 max-md:h-[calc(100vh-106px)] max-md:overflow-y-scroll">
+    {% render 'cart', is_cart_page: true %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main-cart-items.name",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

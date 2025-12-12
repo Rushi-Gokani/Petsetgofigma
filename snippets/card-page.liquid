@@ -1,0 +1,27 @@
+{% liquid
+  assign nthPageLarge = nth_page_large | default: 0
+  assign isLargeMod = index | plus: 1 | modulo: nthPageLarge
+  assign isLarge = false
+  if nthPageLarge > 0 and isLargeMod == 0
+    assign isLarge = true
+  endif
+%}
+
+<div
+  key="page-{{ page.id }}"
+  {% if isLarge %}
+    class="col-span-2"
+  {% endif %}
+>
+  <a x-element-transition-trigger href="{{ page.url }}" class="relative flex min-w-0 rounded-md">
+    <div class="h-0 w-0" style="padding-bottom: calc(100% * 1 / var(--product-aspect-ratio) + 81px)"></div>
+    <article class="absolute left-0 top-0 z-10 h-full w-full flex-col items-stretch justify-start text-start">
+      <div class="flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-md bg-secondary-100 p-4">
+        <h3 class="text-center text-md">
+          {{ page.title | escape }}
+        </h3>
+        <p class="text-md text-text-500">{{ 'templates.search.page' | t | downcase }}</p>
+      </div>
+    </article>
+  </a>
+</div>

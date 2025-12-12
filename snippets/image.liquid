@@ -1,0 +1,62 @@
+{% comment %}
+  Renders an image
+
+  Accepts:
+    id: string,
+    src: string,
+    srcset: string,
+    alt: string,
+    height: string | number,
+    width: string | number,
+    img_class: string,
+    container_class: string,
+    sizes: string,
+    loading: string,
+    style: string,
+    index?: number,
+    is_png: boolean,
+    is_mix: boolean
+{% endcomment %}
+{% liquid
+  assign img_class = 'faded-img opacity-0 transition-opacity duration-300 ' | append: img_class
+
+  # For product collections only show instant first 4 images on desktop & first 2 on mobile.
+  if request.page_type == 'collection' or request.page_type == 'search'
+    if request.page_type == 'collection' and section.index == 1
+      assign img_class = img_class | append: ' no-fade'
+    endif
+
+    if index and index < 4
+      assign img_class = img_class | append: ' no-fade'
+    endif
+
+    # PDP has `no-fade` class passed for first 2 images in `product-details`
+  elsif request.page_type != 'product'
+    # Otherwise, only show instant first 2 sections images
+    if section.index <= 2
+      assign img_class = img_class | append: ' no-fade'
+    endif
+  endif
+
+  if is_mix
+    assign img_class = img_class | append: ' mix-blend-darken'
+  endif
+%}
+
+<div class="{% unless is_png %}bg-[--fade-in-bg]{% endunless %} {{ container_class }}">
+  {{
+    src
+    | image_url: width: null
+    | image_tag:
+      id: id,
+      srcset: srcset,
+      alt: alt,
+      height: height,
+      width: width,
+      class: img_class,
+      sizes: sizes,
+      loading: loading,
+      style: style,
+      onload: "this.classList.remove('opacity-0');"
+  }}
+</div>

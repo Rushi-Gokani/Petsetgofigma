@@ -1,0 +1,327 @@
+{%- if title != 'megamenu' -%}
+  <div
+    class="menu__level"
+    :class="
+      {
+        'menu__level--current': history[history.length - 1] === '{{ id }}',
+        'menu__level--visible': history.includes('{{ id }}'),
+        'menu__level--same-depth': {{ level | default: 1 }} <= delayedLevel
+      }
+    "
+    :inert="!history.includes('{{ id }}')"
+    data-menu-level="{{ id }}"
+  >
+    <div class="menu__header">
+      <div class="menu__header-container p-2">
+        {%- if id == 'all' -%}
+          <template x-if="!$store.main.isMobile">
+            <button
+              @click="$store.resizable.hideAll();"
+              type="button"
+              class="button icon-button icon-button--size-lg h-auto w-auto gap-3 px-2 py-3 text-primary-500 hover:bg-bg-600"
+              aria-label="{{ 'sections.header.close_menu' | t }}"
+              aria-controls="menu-desktop"
+              :aria-expanded="$store.resizable.isVisible('menu-desktop')"
+              :class="{'hidden': !$store.resizable.isVisible('menu-desktop')}"
+            >
+              <div class="contents">
+                {% render 'icon-close' %}
+              </div>
+              <span class="text-md font-semibold">{{ 'accessibility.close' | t }}</span>
+            </button>
+          </template>
+        {% endif %}
+        <button
+          @click="history.pop()"
+          type="button"
+          aria-label="{{ 'sections.header.menu_go_back' | t }}"
+          class="menu__back-button py-3 motion-reduce:max-md:animate-none"
+          :class="
+            {
+              'menu__back-button--visible max-md:animate-slideIconIn motion-reduce:translate-x-0': history.length !== 1,
+              'max-md:animate-slideIconOut motion-reduce:-translate-x-full': history.length == 1
+            }
+          "
+          :tabindex="history.length === 1 ? -1 : 0"
+          :aria-hidden="history.length === 1"
+        >
+          {% render 'icon-chevron-left' %}
+        </button>
+        <h2
+          class="menu__heading py-3 motion-reduce:max-md:animate-none"
+          style="--translate-width: 52px;"
+          :class="
+            {
+              'menu__heading--root': '{{ id }}' === 'all',
+              'max-md:animate-slideTitleIn motion-reduce:translate-x-[--translate-width]': history.length !== 1,
+              'max-md:animate-slideTitleOut motion-reduce:translate-x-0': history.length == 1
+            }
+          "
+          x-show="$store.main.isMobile || '{{ id }}' !== 'all'"
+        >
+          {{ title }}
+        </h2>
+        <div id="menu-actions-{{ id }}" class="md:mt-[6px] md:flex-none md:flex-row"></div>
+      </div>
+      <hr class="divider -mx-5  md:hidden">
+    </div>
+    {% assign menu_hover_border_classes = 'md:group-hover:border-b-1 md:group-hover:border-current' %}
+    {% assign menu_without_hover_border = 'shop-by-goal,shop-by-style' | split: ',' %}
+    {% assign current_level_id = id | downcase %}
+    {% if menu_without_hover_border contains current_level_id %}
+      {% assign menu_hover_border_classes = '' %}
+    {% endif %}
+    <ul role="list" class="menu__links">
+      {%- for link in links -%}
+        <li>
+          {% if link.links != blank %}
+            <button
+              type="button"
+              {% if forloop.first %}
+                x-a11y-trap-target.initial="$store.resizable.isVisible('menu-desktop') && !$store.main.isMobile && history.length > 0 && history[history.length - 1] === '{{ id }}'"
+              {% endif %}
+              class="menu__link group"
+              @click="setHistory([...'{{ path }}'.split(','), '{{ link.handle }}'])"
+              :class="{ 'menu__link--active': history.includes('{{ link.handle }}') }"
+              role="button"
+              :aria-expanded="history.includes('{{ link.handle }}')"
+            >
+              <span class="link max-w-full truncate border-transparent transition-colors {{ menu_hover_border_classes }} md:group-hover:text-primary-600">
+                {{ link.title | escape }}
+              </span>
+              <span class="text-xl transition-[color,transform] md:group-hover:text-primary-600 ltr:md:group-hover:-translate-x-3 rtl:md:group-hover:translate-x-3">
+                {% render 'icon-chevron-right' %}
+              </span>
+            </button>
+            <template x-portal="document.getElementById('menu-sections')">
+              {% assign nextPath = path | append: ',' | append: link.handle %}
+              {% assign nextLevel = level | default: 1 | plus: 1 %}
+              {% render 'menu-items',
+                id: link.handle,
+                url: link.url,
+                title: link.title,
+                links: linklists[link.handle].links,
+                path: nextPath,
+                level: nextLevel
+              %}
+            </template>
+          {% else %}
+            <a
+              {% if forloop.first %}
+                x-a11y-trap-target.initial="$store.resizable.isVisible('menu-desktop') && !$store.main.isMobile && history.length > 0 && history[history.length - 1] === '{{ id }}'"
+              {% endif %}
+              href="{{ link.url }}"
+              class="focus-visible:focus-ring group flex min-h-11 items-center justify-between py-1"
+              :class="{ 'text-primary-500 font-semibold': history.includes('{{ link.handle }}') }"
+              role="link"
+              {% if link.current %}
+                aria-current="page"
+              {% endif %}
+              {% case link.type %}
+                {% when 'product_link' %}
+                  x-element-transition-trigger:product.animate="
+                    {
+                      'variantImg': '{{ link.object.selected_or_first_available_variant.image | image_url }}',
+                      'productImg': '{{ link.object.featured_image | image_url }}',
+                      'title': '{{ link.object.title | escape }}',
+                    }
+                  "
+                {% when 'collection_link' %}
+                  x-element-transition-trigger:category.animate="
+                    {
+                      'title': `{{ link.object.title | escape }}`,
+                      {% if link.object.image %}
+                      'img': '{{ link.object.image | image_url }}',
+                      {% endif %}
+                      'description': `{{ link.object.description | escape }}`
+                    }
+                  "
+                {% else %}
+                  x-element-transition-trigger
+              {% endcase %}
+            >
+              {% if level > 1 and link.type == 'collection_link' %}
+                {% assign collection_number = forloop.index %}
+
+                <div class="flex items-center gap-3 w-full">
+                  <div class="flex-shrink-0 w-12 h-12 rounded-md overflow-hidden bg-bg-600">
+                    {% if collection_number == 1 and link.object.metafields.custom._featured_collection_1_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_1_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 2 and link.object.metafields.custom._featured_collection_2_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_2_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 3 and link.object.metafields.custom._featured_collection_3_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_3_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 4 and link.object.metafields.custom._featured_collection_4_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_4_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 5 and link.object.metafields.custom._featured_collection_5_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_5_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 6 and link.object.metafields.custom._featured_collection_6_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_6_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 7 and link.object.metafields.custom._featured_collection_7_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_7_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 8 and link.object.metafields.custom._featured_collection_8_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_8_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 9 and link.object.metafields.custom._featured_collection_9_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_9_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif collection_number == 10 and link.object.metafields.custom._featured_collection_10_image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.metafields.custom._featured_collection_10_image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% elsif link.object.image %}
+                      {% render 'image',
+                        img_class: 'w-full h-full object-cover',
+                        src: link.object.image,
+                        loading: 'lazy',
+                        alt: link.title | escape
+                      %}
+                    {% else %}
+                      <div class="w-full h-full flex items-center justify-center text-text-400 text-xs font-semibold">
+                        {{ link.title | truncate: 1, "" }}
+                      </div>
+                    {% endif %}
+                  </div>
+                  <div class="flex-1 min-w-0">
+                    <span class="link block max-w-full truncate border-transparent transition-colors {{ menu_hover_border_classes }} md:group-hover:text-primary-600">
+                      {{ link.title | escape }}
+                    </span>
+                    {% if collection_number == 1 and link.object.metafields.custom.featured_collection_1_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_1_text }}</span>
+                    {% elsif collection_number == 2 and link.object.metafields.custom.featured_collection_2_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_2_text }}</span>
+                    {% elsif collection_number == 3 and link.object.metafields.custom.featured_collection_3_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_3_text }}</span>
+                    {% elsif collection_number == 4 and link.object.metafields.custom.featured_collection_4_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_4_text }}</span>
+                    {% elsif collection_number == 5 and link.object.metafields.custom.featured_collection_5_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_5_text }}</span>
+                    {% elsif collection_number == 6 and link.object.metafields.custom.featured_collection_6_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_6_text }}</span>
+                    {% elsif collection_number == 7 and link.object.metafields.custom.featured_collection_7_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_7_text }}</span>
+                    {% elsif collection_number == 8 and link.object.metafields.custom.featured_collection_8_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_8_text }}</span>
+                    {% elsif collection_number == 9 and link.object.metafields.custom.featured_collection_9_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_9_text }}</span>
+                    {% elsif collection_number == 10 and link.object.metafields.custom.featured_collection_10_text %}
+                      <span class="text-xs text-text-400 block truncate">{{ link.object.metafields.custom.featured_collection_10_text }}</span>
+                    {% endif %}
+                  </div>
+                </div>
+              {% else %}
+                <span class="link max-w-full truncate border-transparent transition-colors {{ menu_hover_border_classes }} md:group-hover:text-primary-600">
+                  {{ link.title | escape }}
+                </span>
+              {% endif %}
+            </a>
+          {% endif %}
+        </li>
+      {%- endfor -%}
+    </ul>
+    <div class="h-20 md:hidden"></div>
+    {%- if shop.customer_accounts_enabled -%}
+      {% if url != blank %}
+        <template x-portal="$store.main.isMobile ? document.getElementById('popup-fixed-content-portal') : document.getElementById('menu-actions-{{ id }}')">
+          <div
+            class="bg-bg-500 px-4 pb-2 transition-colors duration-200 md:bg-transparent md:hover:text-primary-600"
+            x-show="$store.main.isMobile ? $store.popup.currentPopup == 'menu' && history[history.length - 1] === '{{ id }}' && !getIsSearchActive() : history.includes('{{ id }}')"
+            role="link"
+          >
+            {% capture desktopButton %}
+              {% comment %} should not double quote because of x-html {% endcomment %}
+              <span class="link link--ghost">
+                {{ 'sections.featured_blog.view_all' | t }}
+              </span>
+              <span class="ps-2">
+                {% render 'icon-menu-view-all' %}
+              </span>
+            {% endcapture %}
+            {% assign downcase_title = title | downcase %}
+            <a
+              x-element-transition-trigger
+              :class="$store.main.isMobile ? 'button button--filled-primary w-full': 'flex items-center'"
+              href="{{ url }}"
+              x-a11y-trap-target.end="$store.popup.currentPopup === 'menu' && history.length !== 1 && history[history.length - 1] === '{{ id }}'"
+              x-html="
+                $store.main.isMobile
+                ? '{{ 'sections.header.view_all' | t: title: downcase_title }}'
+                : `{{ desktopButton | escape }}`
+              "
+            >
+            </a>
+          </div>
+        </template>
+      {% endif %}
+      {% unless level %}
+        <div class="md:mt-[88px]"></div>
+        <template x-portal="$store.main.isMobile ? document.getElementById('popup-fixed-content-portal') : document.getElementById('menu-desktop-fixed')">
+          <div
+            class="w-full bg-bg-500 px-4 pb-2 md:w-[--menu-width] md:rounded-md md:pb-4"
+            :inert="$store.main.isMobile ? $store.popup.currentPopup !== 'menu' : !$store.resizable.isVisible('menu-desktop')"
+            x-show="!$store.main.isMobile || ($store.popup.currentPopup == 'menu' && history[history.length - 1] === '{{ id }}' && !getIsSearchActive())"
+          >
+            <a
+              x-element-transition-trigger
+              href="{{ routes.account_url }}"
+              class="button button--filled-primary w-full"
+              x-a11y-trap-target.end="$store.popup.currentPopup === 'menu' && history.length === 1"
+            >
+              {% if customer %}
+                {{ 'customer.my_account' | t }}
+              {% else %}
+                {{ 'customer.login_sign_up' | t }}
+              {% endif %}
+            </a>
+          </div>
+        </template>
+      {% endunless %}
+    {%- endif -%}
+  </div>
+{%- endif -%}

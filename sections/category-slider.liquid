@@ -1,0 +1,562 @@
+{{ 'swiper-bundle.min.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'swiper-bundle.min.js' | asset_url }}" defer="defer"></script>
+
+<div class="category-slider-section color-{{ section.settings.color_scheme }} gradient" id="{{section.id}}">
+  <div class="container mx-auto px-4">
+    {% if section.settings.title != blank %}
+      <h2 class="text-center section-title text-2xl md:text-3xl font-bold mb-6" style="opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);"></h2>
+    {% endif %}
+
+    <div class="swiper category-swiper category-swiper--{{ section.id }}" style="overflow: visible;">
+      <div class="swiper-wrapper">
+        {% for block in section.blocks %}
+          <div class="swiper-slide" {{ block.shopify_attributes }}>
+            <div class="category-card relative">
+              {% if block.settings.image != blank %}
+                <div class="category-image-container z-0">
+                  {% render 'image'
+                    , src: block.settings.image
+                    , alt: block.settings.title
+                    , img_class: 'category-image w-full h-full rounded-lg object-contain'
+                    , container_class: 'overflow-hidden rounded-lg bg-white'
+                  %}
+                </div>
+              {% else %}
+                <div class="category-image-placeholder bg-gray-200 rounded-lg aspect-square flex items-center justify-center">
+                  {{ 'image' | placeholder_svg_tag: 'w-16 h-16 text-gray-400' }}
+                </div>
+              {% endif %}
+
+              <div class="category-content text-center absolute z-1 left-0 right-0">
+                {% if block.settings.title != blank %}
+                  <h3 class="font-bold category-card-title">{{ block.settings.title }}</h3>
+                {% endif %}
+
+                {% if block.settings.text != blank %}
+                  <p class="text-sm text-gray-600 mt-1 card-text">{{ block.settings.text }}</p>
+                {% endif %}
+              </div>
+
+              {% if block.settings.link != blank %}
+                <a
+                  href="{{ block.settings.link }}"
+                  class="absolute inset-0 z-10"
+                  aria-label="{{ block.settings.title }}"></a>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <div class="swiper-bottom flex items-center justify-between relative gap-3" style="opacity: 0; transform: translateY(20px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);">
+        {% if section.settings.pagination_type == 'bullets' %}
+          <div class="swiper-pagination swiper-pagination-bullet category-swiper-pagination-bullet"></div>
+        {% elsif section.settings.pagination_type == 'progress' %}
+          <div class="swiper-pagination swiper-pagination-progressbar category-swiper-pagination-progressbar flex-auto flex-shrink-1 flex-grow-1"></div>
+        {% endif %}
+        {% if section.settings.show_arrows %}
+          <div class="swiper-buttons swiper-category-buttons relative flex items-center gap-2">
+            <button class="swiper-button-prev category-swiper-button-prev button button--outline-primary icon-button icon-button--size-sm"></button>
+            <button class="swiper-button-next category-swiper-button-next button button--outline-primary icon-button icon-button--size-sm"></button>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #{{section.id}}
+{
+  --heading-color: {{ section.settings.color_scheme.settings.text }};
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-background-500, {{ section.settings.color_scheme.settings.background }});
+
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+
+  & .swiper-bottom {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  & .swiper-pagination-progressbar.category-swiper-pagination-progressbar {
+    position: relative !important;
+    flex: 1 1 auto !important;
+  }
+  & .swiper-category-buttons > button {
+    position: relative !important;
+    top: unset !important;
+    left: unset !important;
+    right: unset !important;
+    bottom: unset !important;
+    transform: unset !important;
+    background: white !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 12px !important;
+    width: 44px !important;
+    height: 44px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+    transition: all 0.2s ease !important;
+  }
+
+  & .swiper-category-buttons > button:hover {
+    background: #f9fafb !important;
+    border-color: #d1d5db !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
+  }
+
+  & .swiper-category-buttons > button:active {
+    transform: translateY(0) !important;
+  }
+
+  & .category-card {
+    position: relative;
+    padding: 10px;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    background: var(--color-background-500, {{ section.settings.color_scheme.settings.background }});
+    will-change: transform;
+  }
+  & .category-image-container {
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+   & .category-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  & .category-card:hover .category-image-container {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  & .category-swiper-button-prev,
+  & .category-swiper-button-next {
+    color: #222222;
+    background: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #222222 !important;
+    margin-top: 0 !important;
+  }
+
+   & .category-swiper-button-prev:after,
+   & .category-swiper-button-next:after {
+    font-size: 14px;
+    color: #222222;
+  }
+
+   & .category-swiper-button-prev:hover,
+   & .category-swiper-button-next:hover {
+    background: #222222 !important;
+    color: #fff !important;
+  }
+
+   & .category-swiper-button-prev:hover:after,
+   & .category-swiper-button-next:hover:after {
+    color: #fff !important;
+  }
+
+  & .category-swiper-pagination {
+    position: relative;
+    margin-top: 0;
+  }
+
+  & .category-content {
+    bottom: 20px;
+  }
+
+  & .swiper-pagination-progressbar {
+    background: rgba(0, 0, 0, 0.08);
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  & .swiper-pagination-progressbar .swiper-pagination-progressbar-fill {
+    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  }
+
+  & h3.category-card-title {
+    font-family: Satoshi;
+    font-weight: 900;
+    font-size: 30px;
+    line-height: 120%;
+    letter-spacing: normal;
+    color: #FFFFFF;
+
+  }
+  @media screen and (max-width: 768px) {
+    & h3.category-card-title {
+      font-size: 24px;
+    }
+    & .category-swiper .swiper-slide.swiper-slide-active {
+      transform: scale(1.08);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    & .category-swiper .swiper-slide {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    & .category-swiper {
+      padding-block: 1rem;
+    }
+
+    /* Mobile-optimized navigation */
+    & .swiper-bottom {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    & .swiper-category-buttons > button {
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 10px !important;
+    }
+
+    & .swiper-pagination-progressbar {
+      height: 5px;
+      border-radius: 2.5px;
+    }
+
+    & .swiper-category-buttons {
+      gap: 0.5rem;
+    }
+
+    /* Mobile bullet pagination styling */
+    & .swiper-pagination-bullet {
+      width: 8px !important;
+      height: 8px !important;
+      background: rgba(0, 0, 0, 0.2) !important;
+      opacity: 1 !important;
+      margin: 0 4px !important;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      border-radius: 50% !important;
+    }
+
+    & .swiper-pagination-bullet-active {
+      background: #3b82f6 !important;
+      transform: scale(1.3) !important;
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.6) !important;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+  }
+
+}
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Add entrance animation for the title
+    const sectionTitle = document.querySelector('#{{section.id}} .section-title');
+    if (sectionTitle) {
+      setTimeout(() => {
+        sectionTitle.style.opacity = '1';
+        sectionTitle.style.transform = 'translateY(0)';
+      }, 200);
+    }
+
+    // Add entrance animation for the entire swiper
+    const swiperContainer = document.querySelector('.category-swiper--{{ section.id }}');
+    if (swiperContainer) {
+      swiperContainer.style.opacity = '0';
+      swiperContainer.style.transform = 'translateY(30px)';
+
+      setTimeout(() => {
+        swiperContainer.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
+        swiperContainer.style.opacity = '1';
+        swiperContainer.style.transform = 'translateY(0)';
+      }, 300);
+    }
+
+    const categorySwiper = new Swiper('.category-swiper--{{ section.id }}', {
+      slidesPerView: {{ section.settings.mobile_slides_per_view }},
+      spaceBetween: 5,
+      initialSlide: 0,
+      centeredSlides: true,
+      centeredSlidesBounds: true,
+      loop: {{ section.settings.enable_loop | json }},
+      speed: 600, // Smoother slide transition speed
+      easing: 'cubic-bezier(0.16, 1, 0.3, 1)', // Smooth easing function
+
+      // Enhanced touch and mouse interactions
+      touchRatio: 0.8,
+      touchAngle: 45,
+      grabCursor: true,
+      simulateTouch: true,
+
+      // Smooth autoplay if enabled
+      autoplay: false, // We'll handle this manually for smoother control
+
+      {% if section.settings.show_arrows %}
+      navigation: {
+        nextEl: '.category-swiper-button-next',
+        prevEl: '.category-swiper-button-prev',
+      },
+      {% endif %}
+
+      {% if section.settings.pagination_type != 'none' %}
+      pagination: {
+        {% if section.settings.pagination_type == 'bullets' %}
+          el: '.swiper-pagination-bullet',
+          clickable: true,
+          dynamicBullets: true,
+        {% elsif section.settings.pagination_type == 'progress' %}
+          el: '.category-swiper-pagination-progressbar',
+        type: 'progressbar',
+        {% endif %}
+      },
+      {% endif %}
+
+      // Enhanced slide effects
+      effect: 'slide',
+      fadeEffect: {
+        crossFade: true
+      },
+
+      // Improved responsive breakpoints with smoother transitions
+      breakpoints: {
+        640: {
+          slidesPerView: {{ section.settings.tablet_slides_per_view }},
+          spaceBetween: 8,
+          centeredSlides: false,
+          centeredSlidesBounds: false,
+        },
+        768: {
+          slidesPerView: {{ section.settings.tablet_slides_per_view }},
+          spaceBetween: 12,
+          centeredSlides: false,
+          centeredSlidesBounds: false,
+        },
+        1024: {
+          slidesPerView: {{ section.settings.desktop_slides_per_view }},
+          spaceBetween: 16,
+          centeredSlides: false,
+          centeredSlidesBounds: false
+        }
+      },
+
+      // Enhanced event handlers for smoother interactions
+      on: {
+        slideChange: function() {
+          // Add subtle animation to active slide
+          const activeSlide = this.slides[this.activeIndex];
+          if (activeSlide) {
+            activeSlide.style.transform = 'scale(1.02)';
+            setTimeout(() => {
+              activeSlide.style.transform = '';
+            }, 300);
+          }
+        },
+        slideChangeTransitionStart: function() {
+          // Smooth opacity transition for slides
+          this.slides.forEach(slide => {
+            slide.style.transition = 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+          });
+        }
+      }
+    });
+
+    // Animate navigation controls
+    const swiperBottom = document.querySelector('.category-swiper--{{ section.id }}').parentElement.querySelector('.swiper-bottom');
+    if (swiperBottom) {
+      setTimeout(() => {
+        swiperBottom.style.opacity = '1';
+        swiperBottom.style.transform = 'translateY(0)';
+      }, 600);
+    }
+
+    // Add smooth hover effects for navigation buttons
+    const prevBtn = document.querySelector('.category-swiper-button-prev');
+    const nextBtn = document.querySelector('.category-swiper-button-next');
+
+    if (prevBtn) {
+      prevBtn.addEventListener('mouseenter', () => {
+        prevBtn.style.transform = 'translateX(-2px) scale(1.05)';
+        prevBtn.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+      });
+      prevBtn.addEventListener('mouseleave', () => {
+        prevBtn.style.transform = '';
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('mouseenter', () => {
+        nextBtn.style.transform = 'translateX(2px) scale(1.05)';
+        nextBtn.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+      });
+      nextBtn.addEventListener('mouseleave', () => {
+        nextBtn.style.transform = '';
+      });
+    }
+  });
+</script>
+
+{% schema %}
+  {
+    "name": "Category Slider",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Shop by Category"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_loop",
+        "label": "Enable loop",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "mobile_slides_per_view",
+        "min": 1,
+        "max": 2,
+        "step": 0.1,
+        "label": "Slides per view (mobile)",
+        "default": 1.2
+      },
+      {
+        "type": "range",
+        "id": "tablet_slides_per_view",
+        "min": 2,
+        "max": 4,
+        "step": 0.1,
+        "label": "Slides per view (tablet)",
+        "default": 2.2
+      }, {
+        "type": "range",
+        "id": "desktop_slides_per_view",
+        "min": 3,
+        "max": 6,
+        "step": 1,
+        "label": "Slides per view (desktop)",
+        "default": 4
+      }, {
+        "type": "checkbox",
+        "id": "show_arrows",
+        "label": "Show navigation arrows",
+        "default": true
+      }, {
+        "type": "select",
+        "id": "pagination_type",
+        "label": "Pagination type",
+        "options": [
+          {
+            "value": "none",
+            "label": "None"
+          }, {
+            "value": "bullets",
+            "label": "Dots"
+          }, {
+            "value": "progress",
+            "label": "Progress bar"
+          }
+        ],
+        "default": "none"
+      }, {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "default": "scheme-1"
+      }, {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Padding top",
+        "default": 36
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Padding bottom",
+        "default": 36
+      }
+    ],
+    "blocks": [
+      {
+        "type": "category",
+        "name": "Category",
+        "limit": 8,
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+          }, {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Category Title"
+          }, {
+            "type": "text",
+            "id": "text",
+            "label": "Text",
+            "default": "Category description"
+          }, {
+            "type": "url",
+            "id": "link",
+            "label": "Link"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Category Slider",
+        "blocks": [
+          {
+            "type": "category",
+            "settings": {
+              "title": "Clothing"
+            }
+          }, {
+            "type": "category",
+            "settings": {
+              "title": "Bedding"
+            }
+          }, {
+            "type": "category",
+            "settings": {
+              "title": "Accessories"
+            }
+          }, {
+            "type": "category",
+            "settings": {
+              "title": "Bowls"
+            }
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

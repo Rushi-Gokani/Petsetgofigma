@@ -1,0 +1,48 @@
+{% comment %}
+  Card Badge
+  ----------------------
+  Displays either out of stock badge or discount badge on product card.
+
+  Accepts:
+  product: {Product} - Product object
+  class: string - Additional classes to be added to the badge container
+{% endcomment %}
+
+{% if is_alpine_template %}
+  <template x-if="product.available">
+    {% render '_discount-badge',
+      class: class,
+      product: product.selected_or_first_available_variant,
+      is_alpine_template: is_alpine_template
+    %}
+  </template>
+  <template x-if="!product.available">
+    <div
+      class="card-product__badge-container z-10 rounded-[40px] px-3 text-sm text-white {{ class }}"
+      style="background-color: #6b7280; color: white;"
+      x-element-transition-skip='{"transformOrigin": "left bottom"}'
+    >
+      <span class="font-semibold">
+        {{ 'products.product.sold_out' | t }}
+      </span>
+    </div>
+  </template>
+{% else %}
+  {% if product.available %}
+    {% render '_discount-badge',
+      is_alpine_template: is_alpine_template,
+      class: class,
+      product: product.selected_or_first_available_variant
+    %}
+  {% else %}
+    <div
+      class="card-product__badge-container z-10 rounded-[40px] px-3 text-sm text-white {{ class }}"
+      style="background-color: #6b7280; color: white;"
+      x-element-transition-skip='{"transformOrigin": "left bottom"}'
+    >
+      <span class="font-semibold">
+        {{ 'products.product.sold_out' | t }}
+      </span>
+    </div>
+  {% endif %}
+{% endif %}

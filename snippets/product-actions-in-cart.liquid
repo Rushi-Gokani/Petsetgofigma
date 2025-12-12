@@ -1,0 +1,48 @@
+{% comment %}
+  Renders a product action button
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - is_popup: {Boolean} Whether the button is in popup
+  - is_small: {Boolean} Whether the button is small
+{% endcomment %}
+
+{% liquid
+  if product.selected_or_first_available_variant
+    assign variant_qty = cart | item_count_for_variant: product.selected_or_first_available_variant.id | default: 0
+    if variant_qty > 0
+      assign is_variant_in_cart = true
+    else
+      assign is_variant_in_cart = false
+    endif
+  else
+    assign variant_qty = 0
+    assign is_variant_in_cart = false
+  endif
+
+  assign variant_count = product.variants | size
+  assign is_popup = is_popup | default: false
+  assign is_small = is_small | default: false
+  assign show_select_another_option = false
+%}
+
+{% if show_select_another_option %}
+  <button
+    {% if is_variant_in_cart == false or is_popup or variant_count == 1 %}
+      style="display: none"
+    {% endif %}
+    x-show="isVariantAvailable && ({{ variant_count }} > 1) && isVariantInCart && !{{ is_popup }}"
+    class="animate-on-transition button button--filled-primary w-full {% if is_small %} button--size-sm {% endif %} md:hidden"
+    @click.prevent="showProductActions()"
+    type="button"
+  >
+    <span>
+      {{ 'products.product.select_another_option' | t }}
+    </span>
+    <span
+      class="button__icon button__icon--right {% if is_small %} text-lg {% endif %}"
+    >
+      {% render 'icon-shopping-bag' %}
+    </span>
+  </button>
+{% endif %}

@@ -1,0 +1,107 @@
+<div class="md:[&:not(.transition-preview_&)]:mt-[89px]"></div>
+
+<div class="max-md:hidden [.transition-preview_&]:hidden">
+  {% render 'breadcrumbs', is_alpine_template: true %}
+</div>
+
+<div
+  class="md:content-wrapper relative z-30 mx-auto flex w-full flex-col justify-center gap-4 md:grid md:grid-cols-[1fr_250px] md:items-start md:gap-8 lg:grid-cols-[1fr_330px] xl:grid-cols-[1fr_400px] xl:gap-16"
+  x-data="
+    {
+      mobileImg: $store['transition'].pageData?.productImg || $store['transition'].pageData?.variantImg,
+      desktopImg: $store['transition'].pageData?.variantImg || $store['transition'].pageData?.productImg
+    }
+  "
+>
+  <div class="product-details flex flex-col gap-4 md:sticky md:top-[--scroll-top] md:order-1 md:gap-8 md:pb-7">
+    <div class="relative md:hidden">
+      <div
+        class="relative flex aspect-product min-h-0 bg-[--fade-in-bg]"
+        style="margin-top: {{ settings.mobile_featured_image_margin_top }}px;"
+      >
+        <div
+          x-element-transition-dest="img"
+          class="relative w-full"
+          {% if settings.fit_products_media == 'contain' %}
+            :class="
+              {
+                'p-[4%]': !!mobileImg
+              }
+            "
+          {% endif %}
+        >
+          <img
+            :src="mobileImg"
+            x-show="!!mobileImg"
+            class="
+              absolute inset-0 m-auto object-center
+              {% if settings.fit_products_media == 'contain' %}object-contain rounded-[5%] md:rounded-[3%] max-h-full w-auto{% else %}object-cover size-full{% endif %}
+              {% if settings.card_gray_background %}mix-blend-darken{% endif %}
+            "
+            {% if settings.fit_products_media == 'contain' %}
+              :class="
+                {
+                  'max-w-[calc(100%-8%)]': !!mobileImg
+                }
+              "
+            {% endif %}
+            width="100%"
+            height="100%"
+          >
+          <div class="contents" x-show="!mobileImg">
+            {% render '_product-missing-image' %}
+          </div>
+        </div>
+      </div>
+      {% render '_discount-badge', is_alpine_template: true, class: settings.badge_position %}
+    </div>
+
+    <div
+      class="flex flex-col gap-4 px-4 md:gap-1 md:px-0"
+    >
+      <div class="flex justify-between leading-tight md:flex-col md:gap-7">
+        <div class="flex w-full flex-col gap-2">
+          <h1
+            x-html="$store['transition'].pageData?.title"
+            class="heading text-md text-text-500 md:text-4xl max-md:truncate"
+          ></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="flex w-full flex-col flex-wrap gap-4 md:grid md:grid-cols-[repeat(auto-fit,1fr)] md:gap-5 md:pb-7 lg:grid-cols-[repeat(auto-fit,minmax(300px,1fr))] max-md:hidden"
+  >
+    <div
+      class="flex aspect-product w-full flex-shrink-0 items-center justify-center bg-[--fade-in-bg] md:rounded-2xl"
+      {% if settings.fit_products_media == 'contain' %}
+        :class="
+          {
+            'p-[4%]': !!desktopImg
+          }
+        "
+      {% endif %}
+    >
+      <img
+        x-show="!!desktopImg"
+        :src="desktopImg"
+        class="{% if settings.fit_products_media == 'contain' %}object-contain max-h-full w-auto{% else %}object-cover h-full w-full{% endif %} rounded-2xl object-center {% if settings.card_gray_background %}mix-blend-darken{% endif %}"
+        width="100%"
+        height="100%"
+      >
+      <div class="w-full overflow-hidden md:rounded-2xl" x-show="!desktopImg">
+        {% render '_product-missing-image' %}
+      </div>
+    </div>
+    <template x-if="$store['transition'].pageData?.mediaCount >= 3">
+      <div class="contents">
+        <div></div>
+        <div></div>
+      </div>
+    </template>
+    <template x-if="$store['transition'].pageData?.mediaCount === 2">
+      <div></div>
+    </template>
+  </div>
+</div>

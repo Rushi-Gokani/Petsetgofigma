@@ -1,0 +1,197 @@
+{% liquid
+  # Aspect ratio 16 / 9 + extra black space = 1.816
+  assign adjustable_heights = 'h-[calc(640px/1.816)] md:h-[calc(768px/1.816)] lg:h-[calc(1024px/1.816)] xl:h-[calc(1280px/1.816)] 2xl:h-[calc(1536px/1.816)]'
+%}
+
+{% capture thumbnail %}
+  {%- if section.settings.cover_image != blank -%}
+    {% liquid
+      assign class = '{{ adjustable_heights }} w-full h-full object-cover'
+      assign container_class = 'h-full w-full'
+      if section.settings.full_width
+        assign sizes = '100vw'
+      else
+        assign class = class | append: ' rounded-xl'
+        assign container_class = container_class | append: ' rounded-xl'
+        assign sizes = '(min-width: 750px) calc(100vw - 10rem), 100vw'
+      endif
+    %}
+
+    {%- assign alt = 'sections.video.load_video' | t: description: section.settings.description -%}
+    {%
+      render 'image',
+      src: section.settings.cover_image,
+      alt: alt,
+      loading: 'lazy',
+      width: section.settings.cover_image.width,
+      height: section.settings.cover_image.height,
+      sizes: sizes,
+      img_class: class,
+      container_class: container_class
+    %}
+  {%- else -%}
+    {{ 'collection-2' | placeholder_svg_tag: 'placeholder-svg placeholder' }}
+  {%- endif -%}
+
+  <div class="absolute top-0 flex h-full w-full items-center justify-center bg-gradient-to-b from-[#00000000] to-[#00000040]">
+    <div class="text-center text-secondary-500">
+      <div class="flex flex-col-reverse">
+        <h1 class="heading mb-8 text-4xl text-primary-500">{{ section.settings.title }}</h1>
+        <h2 class="mb-3 text-lg font-semibold">{{ section.settings.subtitle }}</h2>
+      </div>
+      <span class="inline-block rounded-sm border border-current p-4">
+        {%- render 'icon-play' -%}
+      </span>
+    </div>
+  </div>
+{% endcapture %}
+
+<div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    class="{% unless section.settings.full_width %}content-wrapper m-auto{% endunless %}"
+    style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+  >
+    <noscript>
+      <a
+        href="{{ section.settings.video_url }}"
+        class="relative"
+      >
+        {{ thumbnail }}
+      </a>
+    </noscript>
+
+    <div
+      class="relative {{ adjustable_heights }}"
+      x-data="{ loaded: false }"
+    >
+      <button
+        type="button"
+        @click="loaded = true"
+        class="h-full w-full"
+        :class="{ 'hidden': loaded }"
+      >
+        {{ thumbnail }}
+      </button>
+
+      <template x-if="loaded">
+        {%- liquid
+          assign loop = ''
+          if section.settings.enable_video_looping
+            assign loop = '&loop=1'
+          endif
+        -%}
+        {%- if section.settings.video_url.type == 'youtube' -%}
+          <iframe
+            src="https://www.youtube.com/embed/{{ section.settings.video_url.id }}?enablejsapi=1&autoplay=1{{ loop }}"
+            class="js-youtube h-full w-full"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            title="{{ section.settings.description | escape }}"
+          ></iframe>
+        {%- else -%}
+          <iframe
+            src="https://player.vimeo.com/video/{{ section.settings.video_url.id }}?autoplay=1{{ loop }}"
+            class="js-vimeo h-full w-full"
+            allow="autoplay; encrypted-media"
+            allowfullscreen
+            title="{{ section.settings.description | escape }}"
+          ></iframe>
+        {%- endif -%}
+      </template>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.video.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "default": "Title",
+      "label": "t:sections.video.settings.title.label"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "default": "Subtitle",
+      "label": "t:sections.video.settings.subtitle.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "t:sections.video.settings.cover_image.label"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "accept": ["youtube", "vimeo"],
+      "default": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc",
+      "label": "t:sections.video.settings.video_url.label",
+      "placeholder": "t:sections.video.settings.video_url.placeholder",
+      "info": "t:sections.video.settings.video_url.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.video.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_video_looping",
+      "label": "t:sections.video.settings.enable_video_looping.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.video.presets.name"
+    }
+  ]
+}
+{% endschema %}

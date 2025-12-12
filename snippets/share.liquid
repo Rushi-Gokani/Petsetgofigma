@@ -1,0 +1,107 @@
+{% comment %}
+  Accepts:
+  id: String
+  title: String
+  url: String
+{% endcomment %}
+
+{%- assign desktop_id = id | append: '-desktop' -%}
+
+<div
+  x-data="
+    {
+      isVisible: false,
+      keyDown: null,
+      showPopup: () => {},
+      hidePopup: () => {},
+      copied: false
+    }
+  "
+  x-init="
+    const container = document.getElementById('{{ desktop_id }}');
+    const btn = document.getElementById('{{ id }}-btn');
+
+    hidePopup = () => {
+      isVisible = false;
+      document.removeEventListener('click', keyDown)
+    }
+
+    keyDown = (e) => {
+      if (!container.contains(e.target) && !btn.contains(e.target)) {
+        hidePopup();
+      }
+    };
+
+    showPopup = () => {
+        copied = false;
+        if ($store.main.isMobile) {
+          $store.popup.showPopup('{{ id }}', true)
+        } else {
+          isVisible = true;
+          $nextTick(() => {
+            document.addEventListener('click', keyDown);
+          })
+        }
+    }
+  "
+>
+  <button
+    id="{{ id }}-btn"
+    class="button button--ghost-primary animate-on-transition w-full  "
+    @click.prevent="showPopup()"
+    type="button"
+  >
+    {{ title }}
+  </button>
+  <div
+    id="{{ desktop_id }}"
+    class="absolute end-0 z-20 mt-3 w-[400px] max-w-full rounded-md border bg-bg-500 p-5 shadow-sm  max-md:hidden"
+    :class="{'md:hidden': !isVisible}"
+    x-a11y-trap="isVisible"
+    x-cloak
+  ></div>
+
+  {%- capture share_content -%}
+    <div class="flex flex-col gap-4 max-md:mb-3">
+      <div class="flex items-center justify-between px-2 md:hidden">
+        <span class="mb-2 block md:mb-3 max-md:font-semibold">{{ 'general.share.title' | t }}</span>
+
+        <button class="border-text-text-500 rounded-sm border p-3 md:hidden" @click.prevent="$store.popup.hidePopup('{{ id }}')" type="button">
+          {% render 'icon-close' %}
+        </button>
+      </div>
+
+      <div class="flex gap-2">
+        <label for="url_{{ id }}" class="sr-only tracking-widest">{{- 'general.share.share_url' | t -}}</label>
+        <input
+          type="text"
+          class="input__field input__field--outline h-auto bg-bg-500 px-5 py-2.5"
+          id="url_{{ id }}"
+          value="{{ url }}"
+          placeholder="{{ 'general.share.share_url' | t }}"
+          onclick="this.select();"
+          readonly
+        >
+        <button class="hidden rounded-md border p-4" type="button">
+          {% render 'icon-clipboard' %}
+        </button>
+      </div>
+
+      <div class="flex gap-3">
+        <button
+          type="button"
+          class="button button--outline button--outline-primary max-md:hidden"
+          @click.prevent="hidePopup()"
+        >
+          {{ 'general.share.close' | t }}
+        </button>
+
+        <button @click.prevent="navigator.clipboard.writeText('{{ url }}'); copied = true;" class="button button--filled button--filled-primary flex-1" type="button">
+          <span x-text="copied ? '{{ 'general.share.success_message' | t }}' : '{{ 'general.share.copy_to_clipboard' | t }}'"></span>
+        </button>
+      </div>
+    </div>
+  {%- endcapture -%}
+
+  {% render 'popup', content: share_content, id: id, isFocused: true, desktopTarget: desktop_id %}
+</div>

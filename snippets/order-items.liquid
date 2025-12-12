@@ -1,0 +1,114 @@
+<div class="w-full">
+  {% comment %} Orders  {% endcomment %}
+  {%- for line_item in order.line_items -%}
+    <div
+      key="{{ line_item.id }}"
+      x-element-transition-area="o-{{ line_item.id }}"
+      class="contrast-border mb-5 rounded-md bg-bg-500 p-5 max-md:px-3 print:rounded-none print:border-b"
+    >
+      <a
+        x-element-transition-trigger:product.animate="
+          {
+            'variantImg': '{{ line_item.image | image_url }}',
+            'title': '{{ line_item.title | escape }}'
+          }
+        "
+        href="{{ line_item.url }}"
+      >
+        <div class="flex min-w-0 flex-col items-stretch justify-center gap-5">
+          <div class="w-full">
+            <h2 class="text-md font-semibold">
+              <span>{{ line_item.title }}</span>
+            </h2>
+            {%- unless line_item.product.has_only_default_variant -%}
+              {% for option in line_item.options_with_values %}
+                <p class="text-md ">{{ option.name }}: {{ option.value }}</p>
+              {% endfor %}
+              {% if line_item.selling_plan_allocation %}
+                <p class="mt-3 text-md ">
+                  {{ line_item.selling_plan_allocation.selling_plan.name }}
+                </p>
+              {% endif %}
+            {% endunless %}
+          </div>
+          <div class="flex flex-wrap items-center justify-between">
+            <div class="flex items-center gap-3" @click.prevent.stop>
+              {{- 'sections.cart.quantity' | t -}}
+              : {{ line_item.quantity }}
+            </div>
+            <div class="flex flex-col items-center text-md">
+              {% if line_item.line_level_discount_allocations.size > 0 %}
+                <span class="text-red-700">{{ line_item.final_price | money_without_trailing_zeros }}</span>
+                <s>{{ line_item.original_price | money_without_trailing_zeros }}</s>
+              {% else %}
+                <span>{{ line_item.final_price | money_without_trailing_zeros }}</span>
+              {% endif %}
+              <div class="text-md  {% if line_item.unit_price_measurement == nil %}hidden{% endif %}">
+                <span class="sr-only">{{ 'products.product.price.unit_price' | t }}</span>
+                <span>
+                  <span>{{- line_item.unit_price | money_without_trailing_zeros -}}</span>
+                  <span aria-hidden="true">/</span>
+                  <span class="sr-only">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+                  <span>
+                    {%- if line_item.unit_price_measurement.reference_value != 1 -%}
+                      {{- line_item.unit_price_measurement.reference_value -}}
+                    {%- endif -%}
+                    {{ line_item.unit_price_measurement.reference_unit }}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </a>
+    </div>
+  {%- endfor -%}
+
+  <div class="contrast-border mb-5 rounded-md bg-bg-500 p-5 max-md:mb-3 max-md:px-3 max-md:pt-0">
+    <div class="mb-3 flex justify-between text-text-500 max-md:pt-5">
+      <span>{{ 'customer.order.subtotal' | t }}</span>
+      <span>{{ order.line_items_subtotal_price | money_without_trailing_zeros }}</span>
+    </div>
+
+    {%- if order.cart_level_discount_applications != blank -%}
+      {%- for discount_application in order.cart_level_discount_applications -%}
+        <div class="mb-3 flex justify-between ">
+          <span>{{ 'customer.order.discount' | t }}</span>
+          <span>{{- discount_application.title -}}</span>
+        </div>
+        <div class="mb-3 flex justify-between ">
+          <span>-{{ discount_application.total_allocated_amount | money_without_trailing_zeros }}</span>
+          <span>{{- discount_application.title -}}</span>
+        </div>
+      {%- endfor -%}
+    {% endif %}
+
+    {%- for shipping_method in order.shipping_methods -%}
+      <div class="mb-3 flex justify-between ">
+        <span>{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</span>
+        <span>{{ shipping_method.price | money_without_trailing_zeros }}</span>
+      </div>
+    {%- endfor -%}
+
+    {%- for tax_line in order.tax_lines -%}
+      <div class="mb-3 flex justify-between ">
+        <span>
+          {{- 'customer.order.tax' | t }} ({{ tax_line.title }}
+          {{ tax_line.rate | times: 100 }}%)
+        </span>
+        <span>{{ tax_line.price | money_without_trailing_zeros }}</span>
+      </div>
+    {%- endfor -%}
+
+    <div class="mt-2 flex justify-between border-t pt-4 font-semibold  text-text-500 max-md:mt-5">
+      <span>{{ 'customer.order.total' | t }}</span>
+      <span>{{ order.total_price | money_without_trailing_zeros }}</span>
+    </div>
+  </div>
+
+  <div class="mb-4 w-full px-2 text-center print:hidden">
+    <button onclick="window.print();" class="button button--filled button--filled-primary max-md:w-full" type="button">
+      {{ 'customer.order.print' | t }}
+    </button>
+  </div>
+</div>

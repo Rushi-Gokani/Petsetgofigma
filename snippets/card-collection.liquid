@@ -1,0 +1,85 @@
+{% comment %}
+  Renders a collection card
+  ? Collection card should recieve updates based on the design
+
+  Accepts:
+  - card_collection: {Object} Collection Liquid object
+  - lazy_load: {Boolean} Should image load lazy. (optional)
+  - class: {String} Custom class. (optional)
+  - index: {Number} current loop cycle
+
+  Usage:
+  {% render 'card-collection',
+    card_collection: collection,
+    lazy_load: true,
+    class: 'my-class-name'
+  %}
+{% endcomment %}
+
+{%- if card_collection and card_collection != empty -%}
+  {% liquid
+    assign imageLoad = 'lazy'
+
+    if lazy_load == false
+      assign imageLoad = 'eager'
+    endif
+  %}
+
+  <div
+    key="{{ card_collection.id }}"
+    class="{{ class }}"
+  >
+    <a
+      {%- render '_link-attributes', is_collection: true, collection: card_collection -%}
+      class="contrast-border card-hover group relative flex min-w-0 rounded-md"
+    >
+      <article
+        class="z-10 flex h-full w-full flex-col items-stretch justify-start text-start"
+      >
+        <div class="overflow-hidden rounded-md bg-secondary-100">
+          {% if card_collection.featured_image %}
+            {% liquid
+              assign alt = card_collection.featured_image.alt | default: 'sections.collection_template.title' | t | append: ': ' | append: card_collection.title | escape
+
+              assign class = 'aspect-square h-full w-full object-cover object-center'
+              if settings.card_gray_background
+                assign class = class | append: ' mix-blend-darken'
+              endif
+            %}
+            {% render 'image',
+              src: card_collection.featured_image,
+              alt: alt,
+              img_class: class,
+              container_class: 'transition-transform md:group-hover:scale-105',
+              loading: imageLoad,
+              index: index
+            %}
+          {% else %}
+            {% render '_collection-missing-image' %}
+          {% endif %}
+        </div>
+        <div class="relative mt-4 flex flex-col gap-1">
+          <h2 class="mx-auto w-[calc(100%-40px)] truncate text-center text-md contrast-more:pb-3">
+            {{ card_collection.title }}
+          </h2>
+        </div>
+      </article>
+    </a>
+  </div>
+{%- else -%}
+  <article
+    class="card-hover group z-10 flex h-full w-full flex-col items-stretch justify-start text-start"
+  >
+    <div class="contrast-border z-10 overflow-hidden rounded-md bg-secondary-400">
+      {%- assign placeholder_image_index = index | modulo: 6 | plus: 1 -%}
+      {{
+        'collection-'
+        | append: placeholder_image_index
+        | placeholder_svg_tag: 'w-full h-full md:group-hover:scale-105 transition-transform aspect-square'
+      }}
+    </div>
+    <div class="relative mt-4 flex flex-col gap-1">
+      <h2 class="mx-auto truncate text-center text-md contrast-more:pb-3">{{ 'onboarding.collection_title' | t }}</h2>
+    </div>
+  </article>
+{%- endif -%}

@@ -1,0 +1,444 @@
+{% doc %}
+  @prompt
+    a nice quote with a typing effect and option to select font its a visual effect on the site which we can add like a note or quote so make it with best practices and animation of writing effect on scroll 
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-typing-quote-{{ ai_gen_id }} {
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_horizontal }}px {{ block.settings.padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: {{ block.settings.min_height }}px;
+  }
+
+  .ai-typing-quote__container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.max_width }}px;
+    width: 100%;
+    text-align: {{ block.settings.text_alignment }};
+  }
+
+  .ai-typing-quote__icon-{{ ai_gen_id }} {
+    display: inline-block;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .ai-typing-quote__icon-{{ ai_gen_id }}.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .ai-typing-quote__icon-{{ ai_gen_id }} svg {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    fill: {{ block.settings.icon_color }};
+  }
+
+  .ai-typing-quote__text-{{ ai_gen_id }} {
+    font-family: {{ block.settings.quote_font.family }}, {{ block.settings.quote_font.fallback_families }};
+    font-weight: {{ block.settings.quote_font.weight }};
+    font-size: {{ block.settings.font_size }}px;
+    line-height: {{ block.settings.line_height }};
+    color: {{ block.settings.text_color }};
+    margin: 0 0 24px;
+    min-height: 1.2em;
+  }
+
+  .ai-typing-quote__cursor-{{ ai_gen_id }} {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background-color: {{ block.settings.cursor_color }};
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    opacity: 0;
+  }
+
+  .ai-typing-quote__cursor-{{ ai_gen_id }}.blinking {
+    animation: ai-typing-quote-blink-{{ ai_gen_id }} 0.8s infinite;
+  }
+
+  @keyframes ai-typing-quote-blink-{{ ai_gen_id }} {
+    0%, 49% {
+      opacity: 1;
+    }
+    50%, 100% {
+      opacity: 0;
+    }
+  }
+
+  .ai-typing-quote__author-{{ ai_gen_id }} {
+    font-family: {{ block.settings.author_font.family }}, {{ block.settings.author_font.fallback_families }};
+    font-weight: {{ block.settings.author_font.weight }};
+    font-size: {{ block.settings.author_font_size }}px;
+    color: {{ block.settings.author_color }};
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .ai-typing-quote__author-{{ ai_gen_id }}.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-typing-quote-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top | times: 0.6 }}px {{ block.settings.padding_horizontal | times: 0.7 }}px {{ block.settings.padding_bottom | times: 0.6 }}px;
+      min-height: {{ block.settings.min_height | times: 0.7 }}px;
+    }
+
+    .ai-typing-quote__text-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size | times: 0.7 }}px;
+    }
+
+    .ai-typing-quote__icon-{{ ai_gen_id }} svg {
+      width: {{ block.settings.icon_size | times: 0.7 }}px;
+      height: {{ block.settings.icon_size | times: 0.7 }}px;
+    }
+
+    .ai-typing-quote__author-{{ ai_gen_id }} {
+      font-size: {{ block.settings.author_font_size | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<typing-quote-{{ ai_gen_id }}
+  class="ai-typing-quote-{{ ai_gen_id }}"
+  data-typing-speed="{{ block.settings.typing_speed }}"
+  data-start-delay="{{ block.settings.start_delay }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-typing-quote__container-{{ ai_gen_id }}">
+    {% if block.settings.show_icon %}
+      <div class="ai-typing-quote__icon-{{ ai_gen_id }}">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/>
+        </svg>
+      </div>
+    {% endif %}
+
+    <blockquote class="ai-typing-quote__text-{{ ai_gen_id }}" data-full-text="{{ block.settings.quote_text | escape }}">
+      <span class="ai-typing-quote__cursor-{{ ai_gen_id }}"></span>
+    </blockquote>
+
+    {% if block.settings.author_name != blank %}
+      <cite class="ai-typing-quote__author-{{ ai_gen_id }}">
+        {{ block.settings.author_name }}
+      </cite>
+    {% endif %}
+  </div>
+</typing-quote-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class TypingQuote{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.typingSpeed = parseInt(this.dataset.typingSpeed) || 50;
+        this.startDelay = parseInt(this.dataset.startDelay) || 500;
+        this.hasAnimated = false;
+        this.observer = null;
+      }
+
+      connectedCallback() {
+        this.quoteElement = this.querySelector('.ai-typing-quote__text-{{ ai_gen_id }}');
+        this.cursorElement = this.querySelector('.ai-typing-quote__cursor-{{ ai_gen_id }}');
+        this.authorElement = this.querySelector('.ai-typing-quote__author-{{ ai_gen_id }}');
+        this.iconElement = this.querySelector('.ai-typing-quote__icon-{{ ai_gen_id }}');
+        this.fullText = this.quoteElement.dataset.fullText || '';
+        
+        this.setupIntersectionObserver();
+      }
+
+      setupIntersectionObserver() {
+        const options = {
+          root: null,
+          rootMargin: '0px',
+          threshold: 0.3
+        };
+
+        this.observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && !this.hasAnimated) {
+              this.hasAnimated = true;
+              this.startTypingAnimation();
+            }
+          });
+        }, options);
+
+        this.observer.observe(this);
+      }
+
+      startTypingAnimation() {
+        if (this.iconElement) {
+          this.iconElement.classList.add('visible');
+        }
+
+        setTimeout(() => {
+          this.typeText();
+        }, this.startDelay);
+      }
+
+      typeText() {
+        let index = 0;
+        this.cursorElement.style.opacity = '1';
+
+        const typeInterval = setInterval(() => {
+          if (index < this.fullText.length) {
+            const currentText = this.fullText.substring(0, index + 1);
+            this.quoteElement.innerHTML = currentText + '<span class="ai-typing-quote__cursor-{{ ai_gen_id }}"></span>';
+            this.cursorElement = this.querySelector('.ai-typing-quote__cursor-{{ ai_gen_id }}');
+            this.cursorElement.style.opacity = '1';
+            index++;
+          } else {
+            clearInterval(typeInterval);
+            this.cursorElement.classList.add('blinking');
+            
+            if (this.authorElement) {
+              setTimeout(() => {
+                this.authorElement.classList.add('visible');
+              }, 300);
+            }
+          }
+        }, this.typingSpeed);
+      }
+
+      disconnectedCallback() {
+        if (this.observer) {
+          this.observer.disconnect();
+        }
+      }
+    }
+
+    customElements.define('typing-quote-{{ ai_gen_id }}', TypingQuote{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Typing quote",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "textarea",
+      "id": "quote_text",
+      "label": "Quote text",
+      "default": "The only way to do great work is to love what you do."
+    },
+    {
+      "type": "text",
+      "id": "author_name",
+      "label": "Author name",
+      "default": "Steve Jobs"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_icon",
+      "label": "Show quote icon",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "font_picker",
+      "id": "quote_font",
+      "label": "Quote font",
+      "default": "poppins_n6"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 20,
+      "max": 80,
+      "step": 2,
+      "unit": "px",
+      "label": "Quote font size",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.4
+    },
+    {
+      "type": "font_picker",
+      "id": "author_font",
+      "label": "Author font",
+      "default": "avenir_next_n4"
+    },
+    {
+      "type": "range",
+      "id": "author_font_size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Author font size",
+      "default": 18
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f5f8f6"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Quote text",
+      "default": "#363030"
+    },
+    {
+      "type": "color",
+      "id": "author_color",
+      "label": "Author text",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Icon",
+      "default": "#f68e02"
+    },
+    {
+      "type": "color",
+      "id": "cursor_color",
+      "label": "Cursor",
+      "default": "#f68e02"
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "typing_speed",
+      "min": 20,
+      "max": 150,
+      "step": 10,
+      "unit": "ms",
+      "label": "Typing speed",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "start_delay",
+      "min": 0,
+      "max": 2000,
+      "step": 100,
+      "unit": "ms",
+      "label": "Start delay",
+      "default": 500
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Maximum width",
+      "default": 800
+    },
+    {
+      "type": "range",
+      "id": "min_height",
+      "min": 200,
+      "max": 600,
+      "step": 50,
+      "unit": "px",
+      "label": "Minimum height",
+      "default": 400
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 30,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 50
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 150,
+      "step": 10,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "Typing quote"
+    }
+  ]
+}
+{% endschema %}

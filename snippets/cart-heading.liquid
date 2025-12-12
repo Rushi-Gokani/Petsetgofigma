@@ -1,0 +1,29 @@
+{% comment %}
+  - is_cart_page: {Boolean} - If the cart is being rendered on the cart page
+{% endcomment %}
+
+<div class="flex items-center justify-between bg-bg-500 md:h-[--initial-height] md:min-h-14 md:rounded-md max-md:pb-4 {% if is_cart_page %}md:gap-4 md:flex-row-reverse md:justify-end{% else %}md:px-6 sticky top-0 z-10{% endif %}">
+  <h1 class="flex items-center text-lg text-text-500 {% unless is_cart_page %}md:text-md{% endunless %}">
+    {%- unless is_cart_page -%}
+      <span class="button__icon me-4 text-[1.5rem] max-md:hidden">
+        {%- render 'icon-cart-empty' -%}
+      </span>
+    {%- endunless -%}
+    {{ 'sections.cart.title' | t }}
+  </h1>
+  <template x-if="!isCartEmpty">
+    <div
+      class="delay-800 me-1 flex justify-center align-middle transition-all duration-300"
+      :class="{'opacity-0': isCartEmpty}"
+    >
+      <a
+        href="{{ routes.cart_url }}"
+        x-element-transition-trigger
+        class="link link--ghost {% if is_cart_page %} hidden {% endif %}"
+      >
+        {{ 'sections.cart.totals.view_cart' | t }}
+        <span x-text="`(${$store.main.totalCartQty})`" class="me-1"></span>
+      </a>
+    </div>
+  </template>
+</div>

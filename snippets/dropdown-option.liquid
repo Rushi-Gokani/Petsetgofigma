@@ -1,0 +1,29 @@
+{% comment %}
+  Renders a dropdown option
+
+  Accepts:
+    isActive: boolean,
+    value: string,
+    label: string,
+    on_click: string {optional},
+    url: string {optional}
+{% endcomment %}
+
+<li>
+  <a
+    tabindex="0"
+    data-value="{{ value }}"
+    class="flex cursor-pointer justify-between p-3 text-text-500 {% if isActive == true %}bg-bg-600 text-primary-600 md:cursor-not-allowed{%else%}md:hover:text-primary-600{% endif %} gap-x-6 text-nowrap rounded-xs"
+    {% if url %}
+      href="{{ url }}"
+    {% endif %}
+    {% if on_click %}
+      @click.prevent="{{ on_click }}"
+    {% endif %}
+    {% if isActive == true %}
+      aria-current="true"
+    {% endif %}
+  >
+    {{ label }}
+  </a>
+</li>

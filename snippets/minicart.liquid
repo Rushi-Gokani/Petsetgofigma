@@ -1,0 +1,11 @@
+{%- capture cartContent -%}
+    {% render 'cart' %}
+{%- endcapture -%}
+
+{% render 'popup',
+  content: cartContent,
+  id: 'cart',
+  isFocused: true,
+  isFullScreen: true,
+  desktopTarget: 'cart-desktop'
+%}

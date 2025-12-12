@@ -1,0 +1,184 @@
+{% comment %}
+  - is_cart_page: {Boolean} - If the cart is being rendered on the cart page
+{% endcomment %}
+
+{% capture quantityControls %}
+<button
+  type="button"
+  class="button button--outline-secondary icon-button icon-button--size-sm bg-bg-500"
+  :aria-label="item.quantity < 2 ? `{{ 'sections.cart.remove_from_cart' | t }}` : `{{ 'sections.cart.qty_decrease' | t }}`"
+  @click.prevent.stop="$store.cart.decreaseQty(item.key);"
+  @transitionend.stop
+  :aria-busy="$store.cart.isLoading"
+>
+  <span
+    :class="{ 'hidden': item.quantity > 1 }"
+    x-show="item.quantity < 2"
+  >
+    {% render 'icon-remove' %}
+  </span>
+  <span :class="{ 'hidden': item.quantity < 2 }" x-show="item.quantity > 1">
+    {% render 'icon-minus' %}
+  </span>
+</button>
+<label :for="'quantity_' + item.key" class="sr-only tracking-widest">
+  {{- 'sections.cart.quantity' | t -}}
+</label>
+<input
+  type="number"
+  name="quantity"
+  class="input__field h-9 min-w-14 basis-14 text-center"
+  min="0"
+  :id="'quantity_' + item.key"
+  x-model="item.quantity"
+  @click.prevent.stop=""
+  @change="$store.cart.setQty($event.target.value, item.key)"
+  aria-label="{{ 'sections.cart.quantity' | t }}"
+  :aria-busy="$store.cart.isLoading"
+>
+<button
+  type="button"
+  class="button button--outline-secondary icon-button icon-button--size-sm bg-bg-500"
+  aria-label="{{ 'sections.cart.qty_increase' | t }}"
+  @click.prevent.stop="$store.cart.increaseQty(item.key)"
+  :aria-busy="$store.cart.isLoading"
+>
+  {% render 'icon-plus' %}
+</button>
+{% endcapture %}
+
+<div class="flex flex-col gap-5 {% if is_cart_page %}flex-1 md:pr-5{% else %}md:overflow-auto md:max-h-[calc(100dvh-225px)] md:px-4{% endif %}">
+  <div class="flex flex-col gap-5 md:gap-5 md:pb-3 {% if is_cart_page %}md:grid md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4{% else %}md:pt-4 md:pb-10{% endif %}">
+    <template x-for="item in cartItems" :key="item.key">
+      <div
+        :key="item.key"
+        class="card-hover group max-h-80 {% if is_cart_page %}md:max-h-none{% endif %} transition-all duration-300"
+        :class="
+          {
+            'opacity-0 -mt-5 max-h-0 overflow-hidden': item.isDeleted,
+            'max-h-80': !item.isDeleted,
+            'md:animate-[pop_300ms_1000ms_ease-in-out_forwards] animate-[pop_300ms_400ms_ease-in-out_forwards]': Date.now() < item.focusedUntil
+          }
+        "
+      >
+        <a
+          x-element-transition-trigger:product.animate="
+            {
+              'variantImg': item.image,
+              'title': item.product_title,
+              'mediaCount': 3
+            }
+          "
+          :href="item.url"
+          class="relative grid grid-cols-[94px_1fr] content-center gap-5 rounded-md {% if is_cart_page %}md:flex md:flex-col md:h-full{% endif %}"
+        >
+          <div class="overflow-hidden rounded-md">
+            <div class="relative overflow-hidden rounded-xs bg-[--fade-in-bg]" style="transform: translateZ(0)">
+              <template x-if="item.image">
+                <div class="bg-[--fade-in-bg] transition-transform md:group-hover:scale-105">
+                  <img
+                    :src="item.image"
+                    class="aspect-product h-full w-full object-cover object-center {% if settings.card_gray_background %}mix-blend-darken{% endif %}"
+                    loading="lazy"
+                    width=""
+                    height=""
+                  >
+                </div>
+              </template>
+              <template x-if="!item.image && item.gift_card">
+                {% render '_product-missing-image', type: 'cart', is_gift: true %}
+              </template>
+              <template x-if="!item.image && !item.gift_card">
+                {% render '_product-missing-image', type: 'cart' %}
+              </template>
+
+              <template x-if="{{ is_cart_page | default: false }} && !$store.main.isMobile">
+                <div class="absolute bottom-5 left-1/2 hidden max-w-min -translate-x-1/2 items-center gap-3 {% if is_cart_page %}md:flex{% endif %}">
+                  {{ quantityControls }}
+                </div>
+              </template>
+            </div>
+          </div>
+          <div class="flex min-w-0 flex-col items-stretch justify-center gap-5 {% if is_cart_page %}md:gap-0 md:flex-1 md:justify-normal{% endif %}">
+            <div class="w-full">
+              <h2 class="text-md text-text-500">
+                <span x-text="item.product_title"></span>
+              </h2>
+              <template x-if="!item.product_has_only_default_variant">
+                <template x-for="(option, o) in item.options_with_values" :key="o">
+                  <p
+                    class="text-[14px]"
+                    x-text="`${option.name}: ${option.value}`"
+                  ></p>
+                </template>
+              </template>
+              {% comment %} Gift card recipient email {% endcomment %}
+              <template x-if="item.properties['Recipient email']">
+                <p
+                  class="text-md"
+                  x-text="`{{ 'recipient.form.email_label' | t }}: ${item.properties['Recipient email']}`"
+                ></p>
+              </template>
+              {% comment %} End Gift card recipient email {% endcomment %}
+              <template x-if="item.selling_plan_allocation">
+                <p
+                  class="mt-2 text-md"
+                  x-text="item.selling_plan_allocation.selling_plan.name"
+                ></p>
+              </template>
+
+              <template x-if="item.line_level_discount_allocations.length">
+                <template
+                  x-for="discount in item.line_level_discount_allocations"
+                  :key="discount.discount_application.key"
+                >
+                  <p class="mt-2 flex items-center gap-2 text-md">
+                    {%- render 'icon-discount' -%}
+                    <span x-text="discount.discount_application.title"></span>
+                  </p>
+                </template>
+              </template>
+            </div>
+            <div class="flex flex-wrap items-center justify-between {% if is_cart_page %}md:h-full md:items-end{% endif %}">
+              <div class="flex max-w-min items-center gap-3 {% if is_cart_page %}md:hidden{% endif %}">
+                {{ quantityControls }}
+              </div>
+              <div class="flex {% if is_cart_page %}w-full mt-3 flex-wrap{% endif %} items-center justify-between">
+                <div class="flex flex-col items-center justify-between text-md {% if is_cart_page %}md:items-start{% endif %}">
+                  <template x-if="item.line_level_discount_allocations.length">
+                    <div class="contents">
+                      <span
+                        class="text-red-700"
+                        x-text="$store.main.getPrice(item.final_price)"
+                      ></span>
+                      <s x-text="$store.main.getPrice(item.original_price)"></s>
+                    </div>
+                  </template>
+                  <template x-if="!item.line_level_discount_allocations.length">
+                    <span class="text-primary-500" x-text="$store.main.getPrice(item.final_price)"></span>
+                  </template>
+                  <template x-if="item.unit_price">
+                    <div class="text-md ">
+                      <span class="sr-only">{{ 'products.product.price.unit_price' | t }}</span>
+                      <span>
+                        <span x-text="$store.main.getPrice(item.unit_price)"></span>
+                        <span aria-hidden="true">/</span>
+                        <span class="sr-only">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+                        <span>
+                          <template x-if="item.unit_price_measurement.reference_value !== 1">
+                            <span x-text="item.unit_price_measurement.reference_value"></span>
+                          </template>
+                          <span x-text="item.unit_price_measurement.reference_unit"></span>
+                        </span>
+                      </span>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
+    </template>
+  </div>
+</div>

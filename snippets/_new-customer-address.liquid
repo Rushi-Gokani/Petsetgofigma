@@ -1,0 +1,172 @@
+<div class="flex items-center justify-between max-md:px-2 max-md:pt-2">
+  <span class="mb-2 block md:mb-3 md:px-5 md:text-text-500 max-md:font-semibold">
+    {{ 'customer.addresses.add_new' | t }}
+  </span>
+
+  <button
+    class="border-text-text-500 rounded-sm border p-3 md:hidden"
+    @click="$store.popup.hidePopup('add-new-address')"
+    type="button"
+  >
+    {% render 'icon-close' %}
+  </button>
+</div>
+{% form 'customer_address', customer.new_address %}
+  <div class="md:contrast-border rounded-md bg-bg-500 px-2 pb-3 pt-5  md:px-5 md:py-5 ">
+    <div class="mb-3 flex flex-col gap-3 md:flex-row">
+      <label for="first_name" class="sr-only tracking-widest">{{ 'customer.addresses.first_name' | t }}</label>
+      <input
+        type="text"
+        name="address[first_name]"
+        placeholder="{{ 'customer.addresses.first_name' | t }}"
+        value="{{ form.first_name }}"
+        autocapitalize="words"
+        required
+        id="first_name"
+        class="input__field input__field--outline h-auto px-5 py-4"
+        autofocus
+      >
+
+      <label for="last_name" class="sr-only tracking-widest">{{ 'customer.addresses.last_name' | t }}</label>
+      <input
+        type="text"
+        name="address[last_name]"
+        placeholder="{{ 'customer.addresses.last_name' | t }}"
+        value="{{ form.last_name }}"
+        id="last_name"
+        required
+        autocapitalize="words"
+        class="input__field input__field--outline h-auto px-5 py-4"
+      >
+    </div>
+
+    <label for="company" class="sr-only tracking-widest">{{ 'customer.addresses.company' | t }}</label>
+    <input
+      type="text"
+      name="address[company]"
+      placeholder="{{ 'customer.addresses.company' | t }}"
+      value="{{ form.company }}"
+      id="company"
+      autocapitalize="words"
+      class="input__field input__field--outline mb-3 h-auto bg-bg-500 px-5 py-4"
+    >
+
+    <label for="address1" class="sr-only tracking-widest">{{ 'customer.addresses.address1' | t }}</label>
+    <input
+      type="text"
+      name="address[address1]"
+      placeholder="{{ 'customer.addresses.address1' | t }}"
+      value="{{ form.address1 }}"
+      id="address1"
+      required
+      autocapitalize="words"
+      class="input__field input__field--outline mb-3 h-auto bg-bg-500 px-5 py-4"
+    >
+
+    <label for="address2" class="sr-only tracking-widest">{{ 'customer.addresses.address2' | t }}</label>
+    <input
+      type="text"
+      name="address[address2]"
+      placeholder="{{ 'customer.addresses.address2' | t }}"
+      value="{{ form.address2 }}"
+      id="address2"
+      autocapitalize="words"
+      class="input__field input__field--outline mb-3 h-auto bg-bg-500 px-5 py-4"
+    >
+
+    <div class="mb-3 flex flex-col gap-3 md:flex-row">
+      <label for="city" class="sr-only tracking-widest">{{ 'customer.addresses.city' | t }}</label>
+      <input
+        type="text"
+        name="address[city]"
+        placeholder="{{ 'customer.addresses.city' | t }}"
+        value="{{ form.city }}"
+        id="city"
+        required
+        autocapitalize="words"
+        class="input__field input__field--outline h-auto px-5 py-4"
+      >
+
+      <label for="country" class="sr-only tracking-widest">{{ 'customer.addresses.country' | t }}</label>
+      <select
+        x-ref="address_country"
+        @change="updateCountry($event)"
+        name="address[country]"
+        placeholder="{{ 'customer.addresses.country' | t }}"
+        value="{{ form.country }}"
+        id="country"
+        required
+        class="input__field input__field--outline h-auto px-5 py-4"
+      >
+        {{ country_option_tags }}
+      </select>
+    </div>
+
+    <label for="province" class="sr-only tracking-widest">{{ 'customer.addresses.province' | t }}</label>
+    <select
+      x-show="province?.length"
+      name="address[province]"
+      placeholder="{{ 'customer.addresses.province' | t }}"
+      value="{{ form.province }}"
+      id="province"
+      autocapitalize="words"
+      class="input__field input__field--outline mb-3 h-auto bg-bg-500 px-5 py-4"
+    >
+      <template x-for="item in province">
+        <option :value="item[0]" x-text="item[0]"></option>
+      </template>
+    </select>
+
+    <label for="zip" class="sr-only tracking-widest">{{ 'customer.addresses.zip' | t }}</label>
+    <input
+      type="text"
+      name="address[zip]"
+      placeholder="{{ 'customer.addresses.zip' | t }}"
+      value="{{ form.zip }}"
+      id="zip"
+      required
+      autocapitalize="words"
+      class="input__field input__field--outline mb-3 h-auto bg-bg-500 px-5 py-4"
+    >
+
+    <label for="phone" class="sr-only tracking-widest">{{ 'customer.addresses.phone' | t }}</label>
+    <input
+      type="tel"
+      name="address[phone]"
+      placeholder="{{ 'customer.addresses.phone' | t }}"
+      value="{{ form.phone }}"
+      id="phone"
+      autocapitalize="words"
+      class="input__field input__field--outline mb-3 h-auto bg-bg-500 px-5 py-4"
+    >
+
+    <label class="mb-7 mt-5 flex items-center gap-3 px-4" for="address_default_address_new">
+      <input
+        type="checkbox"
+        id="address_default_address_new"
+        name="address[default]"
+        class="checkbox__input"
+      >
+      <span class="checkbox__control" aria-hidden="true">
+        {% render 'icon-checkmark' %}
+      </span>
+      <span class="checkbox__label ml-0 ">
+        {{- 'customer.addresses.set_default' | t -}}
+      </span>
+    </label>
+
+    <div class="flex gap-4">
+      <button
+        type="button"
+        @click="hideForm()"
+        class="button button--outline button--outline-primary max-md:hidden"
+      >
+        {{ 'customer.addresses.cancel' | t }}
+      </button>
+
+      <button type="submit" class="button button--filled button--filled-primary flex-1">
+        {{ 'customer.addresses.add' | t }}
+      </button>
+    </div>
+  </div>
+{% endform %}

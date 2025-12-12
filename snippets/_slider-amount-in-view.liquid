@@ -1,0 +1,39 @@
+{% comment %}
+  Renders slider amount in view conditionally
+
+  Accepts:
+  - xs: {number} amounts to render in xs screens
+  - sm: {number} amounts to render in sm screens
+  - md: {number} amounts to render in md screens
+  - lg: {number} amounts to render in lg screens
+  - xl: {number} amounts to render in xl screens
+  - xxl: {number} amounts to render in xxl screens
+  - is_stretch_full_width: {Boolean} should rendered items take full width of slider
+  - slides_count: {number} number of slides count to be stretched to
+{% endcomment %}
+
+{% liquid
+  if is_stretch_full_width
+    if slides_count < 2
+      assign xs = slides_count
+      assign sm = slides_count
+      assign md = slides_count
+      assign lg = slides_count
+      assign xl = slides_count
+      assign xxl = slides_count
+    elsif slides_count < 3
+      assign md = slides_count
+      assign lg = slides_count
+      assign xl = slides_count
+      assign xxl = slides_count
+    elsif slides_count < 4
+      assign lg = slides_count
+      assign xl = slides_count
+      assign xxl = slides_count
+    elsif slides_count < 5
+      assign xl = slides_count
+      assign xxl = slides_count
+    endif
+  endif
+%}
+{xs: {{ xs }}, sm: {{ sm }}, md: {{ md }}, lg: {{ lg }}, xl: {{ xl }}, xxl: {{ xxl }}}

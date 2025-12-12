@@ -1,0 +1,239 @@
+/* Improved mobile product page layout */
+
+@media screen and (max-width: 767px) {
+  /* Product title improvements */
+  .product-details h1.heading.product-title {
+    font-size: 1.5rem !important; /* Larger font size */
+    line-height: 1.2 !important;
+    margin-bottom: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    position: relative !important;
+    right: auto !important;
+    display: block !important;
+    text-align: left !important;
+    font-weight: 600 !important;
+  }
+
+  /* Price improvements */
+  .product-details .product-price {
+    position: relative !important;
+    right: auto !important;
+    margin-top: 0.25rem !important;
+    margin-bottom: 1rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: 100% !important;
+    display: block !important;
+    text-align: left !important;
+  }
+
+  /* Price element improvements */
+  .product-details .product-price-element {
+    font-size: 1.25rem !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+  }
+
+  /* Sale price and compare price spacing */
+  .product-details .product-price-element span.text-primary-600 {
+    margin-right: 0.5rem !important;
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Add spacing before product actions */
+  .product-details .product-actions {
+    margin-top: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Improve variant selectors */
+  .product-details .product-actions .variant-selector {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Improve buy buttons */
+  .product-details .product-actions .product-form__buttons {
+    margin-top: 0.5rem !important;
+  }
+
+  /* Ensure proper spacing between elements */
+  .product-details > div > form > div {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Fix for any absolute positioning that might interfere */
+  .product-details [class*="max-md:absolute"] {
+    position: relative !important;
+    right: auto !important;
+    left: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+  }
+
+  /* Force the layout to be stacked on mobile */
+  .product-details > div > form {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  /* Ensure title comes first */
+  .product-details > div > form > h1.product-title {
+    order: 1 !important;
+  }
+
+  /* Price comes second */
+  .product-details > div > form > div.product-price {
+    order: 2 !important;
+  }
+
+  /* Product actions come third */
+  .product-details > div > form > div.product-actions {
+    order: 3 !important;
+  }
+
+  /* Description and other elements come after */
+  .product-details > div > form > div[x-data="Accordion"] {
+    order: 4 !important;
+  }
+
+  /* Ensure proper spacing between sections */
+  .product-details > div > form > div.product-price + div.product-actions {
+    margin-top: 0.5rem !important;
+  }
+
+  /* Add more space before description */
+  .product-details > div > form > div.product-actions + div {
+    margin-top: 1.5rem !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    padding-top: 1.5rem !important;
+  }
+
+  /* Improve description section */
+  .product-details [x-data="Accordion"] button {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .product-details [x-data="Accordion"] .rte {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  /* Fix for any padding/margin issues */
+  .product-details [class*="max-md:pe-"] {
+    padding-right: 1rem !important;
+  }
+
+  /* Collection page pricing improvements */
+  .product_card_prices .price__element span.text-primary-600 {
+    font-weight: 900 !important;
+    font-size: 1.25rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Make product card pricing more prominent */
+  .product_card_prices {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Price improvements for all instances - Override Tailwind classes */
+  .price__element span.text-primary-600,
+  .price__element .text-primary-600 {
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+    /* Override Tailwind text-md, md:text-lg classes */
+  }
+
+  /* Also target any price span with primary color */
+  .price__element span[class*="text-primary-"] {
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Compare price styling (strikethrough) */
+  .price__element s {
+    font-weight: 400 !important;
+    font-size: 1rem !important;
+    opacity: 0.7 !important;
+  }
+}
+
+/* Enhanced Pricing Styles - Override Tailwind with custom class */
+.product-price-enhanced {
+  font-weight: 900 !important;
+  font-size: 1.5rem !important;
+  line-height: 1.2 !important;
+  /* This will override Tailwind utility classes */
+}
+
+/* Enhanced Pricing Styles for Desktop */
+@media screen and (min-width: 768px) {
+  /* Even bigger on desktop for product pages */
+  .product-details .product-price-enhanced {
+    font-size: 1.75rem !important;
+  }
+  /* Product page pricing - desktop */
+  .product-details .price__element span.text-primary-600 {
+    font-weight: 900 !important;
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Collection page pricing - desktop */
+  .product_card_prices .price__element span.text-primary-600 {
+    font-weight: 900 !important;
+    font-size: 1.35rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* All price elements on desktop - Override Tailwind classes */
+  .price__element span.text-primary-600,
+  .price__element .text-primary-600 {
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+    /* Override Tailwind text-md, md:text-lg classes */
+  }
+
+  /* Also target any price span with primary color on desktop */
+  .price__element span[class*="text-primary-"] {
+    font-weight: 900 !important;
+    font-size: 1.5rem !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Compare price on desktop */
+  .price__element s {
+    font-weight: 400 !important;
+    font-size: 1.1rem !important;
+    opacity: 0.7 !important;
+  }
+
+  /* Add more emphasis to product page pricing */
+  .product-details [x-ref="ProductPrice"] {
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Collection card pricing spacing */
+  .product_card_prices {
+    margin-top: 0.75rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  /* Make pricing stand out more on desktop */
+  .price__element {
+    letter-spacing: 0.02em !important;
+  }
+}

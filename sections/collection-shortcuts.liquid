@@ -1,0 +1,86 @@
+<section id="collection-shortcuts" class="collection-shortcuts-section py-2">
+  {% if section.blocks.size > 0 %}
+    <!-- Mobile: scrollable shortcuts -->
+    <div class="overflow-x-scroll pb-2 pt-1 md:hidden" style="-webkit-overflow-scrolling: touch; scroll-behavior: smooth;">
+      <div class="flex gap-3 px-4">
+        {% for block in section.blocks %}
+          {% assign coll = collections[block.settings.collection] %}
+          {% if coll %}
+            {% assign img = block.settings.icon | default: coll.image %}
+            <a href="{{ coll.url }}" class="flex flex-col items-center shrink-0 min-w-0">
+              <div class="w-12 h-12 rounded-full overflow-hidden bg-secondary-100 shadow-md">
+                <img src="{{ img | image_url: width: 200, height: 200, crop: 'center' }}" alt="{{ coll.title }}" class="w-full h-full object-cover">
+              </div>
+              <span class="mt-1 text-[4px] text-center truncate text-text-500 max-w-16">{{ coll.title }}</span>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    <!-- Desktop: scrollable shortcuts -->
+    <div class="hidden md:block">
+      <div class="overflow-x-auto pb-2 pt-1" style="scroll-behavior: smooth;">
+        <div class="flex gap-4 px-4">
+          {% for block in section.blocks %}
+            {% assign coll = collections[block.settings.collection] %}
+            {% if coll %}
+              {% assign img = block.settings.icon | default: coll.image %}
+              <a href="{{ coll.url }}" class="flex flex-col items-center shrink-0 min-w-0">
+                <div class="w-16 h-16 rounded-full overflow-hidden bg-secondary-100 shadow-md">
+                  <img src="{{ img | image_url: width: 200, height: 200, crop: 'center' }}" alt="{{ coll.title }}" class="w-full h-full object-cover">
+                </div>
+                <span class="mt-1 text-xs text-center truncate text-text-500 max-w-20">{{ coll.title }}</span>
+              </a>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+{% schema %}
+{
+  "name": "Collection Shortcuts",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "shortcut",
+      "name": "Shortcut",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Custom Image (optional)",
+          "info": "Use custom image or defaults to collection image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Shortcuts",
+      "category": "Collection",
+      "blocks": [
+        {
+          "type": "shortcut",
+          "settings": {
+            "collection": "all"
+          }
+        },
+        {
+          "type": "shortcut",
+          "settings": {
+            "collection": "all"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

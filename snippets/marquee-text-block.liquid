@@ -1,0 +1,127 @@
+{% comment %}
+  Marquee Text Block for Product Information Section
+{% endcomment %}
+
+<div class="marquee-block" style="margin-top: {{ block.settings.margin_top }}px; margin-bottom: {{ block.settings.margin_bottom }}px;">
+  <div class="marquee-container" style="background-color: rgb(255 122 0 / 0.1);{% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %} padding: {{ block.settings.padding_vertical }}px 0; {% if block.settings.border_top %}border-top: 1px solid {{ block.settings.border_color }};{% endif %}{% if block.settings.border_bottom %}border-bottom: 1px solid {{ block.settings.border_color }};{% endif %}">
+    <div class="marquee-content" style="animation-duration: {{ block.settings.animation_speed }}s;">
+      {% liquid
+        assign repetitions = 10
+        assign icon_style = 'width: ' | append: block.settings.icon_size | append: 'px; height: ' | append: block.settings.icon_size | append: 'px; display: inline-block; vertical-align: middle;'
+          if block.settings.text_color != blank
+            assign icon_style = icon_style | append: ' color: ' | append: block.settings.text_color | append: ';'
+          endif
+
+        assign processed_text = block.settings.marquee_text
+      %}
+
+      {% comment %} Build SVGs {% endcomment %}
+      {% capture svg_star %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg></span>{% endcapture %}
+      {% capture svg_heart %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg></span>{% endcapture %}
+      {% capture svg_gift %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg></span>{% endcapture %}
+      {% capture svg_tag %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></span>{% endcapture %}
+      {% capture svg_lightning %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd"/></svg></span>{% endcapture %}
+      {% capture svg_fire %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clip-rule="evenodd"/></svg></span>{% endcapture %}
+      {% capture svg_diamond %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg></span>{% endcapture %}
+      {% capture svg_trophy %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M6.5 18a2.5 2.5 0 01-5 0V8.5a2.5 2.5 0 015 0V18zM22.5 18a2.5 2.5 0 01-5 0V8.5a2.5 2.5 0 015 0V18zM12 15V5m0 0l3 3m-3-3l-3 3"/></svg></span>{% endcapture %}
+      {% capture svg_truck %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 104 0m6 0a2 2 0 104 0m-4 0a2 2 0 104 0"/></svg></span>{% endcapture %}
+      {% capture svg_check %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg></span>{% endcapture %}
+      {% capture svg_bell %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></span>{% endcapture %}
+
+      {% capture svg_smile %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M8 15c1.333 1 2.667 1.5 4 1.5s2.667-.5 4-1.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="10" r="1.25" fill="currentColor"/><circle cx="15" cy="10" r="1.25" fill="currentColor"/></svg></span>{% endcapture %}
+      {% capture svg_users %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M16 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/><path d="M22 21v-2a4 4 0 00-3-3.87" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16 3.13a4 4 0 010 7.75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>{% endcapture %}
+      {% capture svg_bowtie %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 8l7 4-7 4V8zm18 0l-7 4 7 4V8z" stroke-width="2" stroke-linejoin="round"/><rect x="10" y="9" width="4" height="6" rx="1" fill="currentColor"/></svg></span>{% endcapture %}
+      {% capture svg_flag %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 4v16" stroke-width="2" stroke-linecap="round"/><path d="M5 5h10l1 3h4v7h-9l-1-3H5V5z" stroke-width="2" stroke-linejoin="round"/></svg></span>{% endcapture %}
+      {% capture svg_lion %}<span style="{{ icon_style }}; margin: 0 {{ block.settings.icon_spacing }}px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 15c2-1 3-3 4-5 1.5-3 4-4 7-4 3 0 5 2 7 3-1 2-2 3-4 3h-2l-1 2 1 2h-3l-2 3H7l1-3-2-1H3z" stroke-width="1.8" stroke-linejoin="round"/></svg></span>{% endcapture %}
+
+      {% if block.settings.enable_icon %}
+        {% liquid
+          assign processed_text = processed_text | replace: '[star]', svg_star | replace: '[Star]', svg_star | replace: '[STAR]', svg_star
+          assign processed_text = processed_text | replace: '[heart]', svg_heart | replace: '[Heart]', svg_heart | replace: '[HEART]', svg_heart
+          assign processed_text = processed_text | replace: '[gift]', svg_gift | replace: '[Gift]', svg_gift | replace: '[GIFT]', svg_gift
+          assign processed_text = processed_text | replace: '[tag]', svg_tag | replace: '[Tag]', svg_tag | replace: '[TAG]', svg_tag
+          assign processed_text = processed_text | replace: '[lightning]', svg_lightning | replace: '[Lightning]', svg_lightning | replace: '[LIGHTNING]', svg_lightning
+          assign processed_text = processed_text | replace: '[fire]', svg_fire | replace: '[Fire]', svg_fire | replace: '[FIRE]', svg_fire
+          assign processed_text = processed_text | replace: '[diamond]', svg_diamond | replace: '[Diamond]', svg_diamond | replace: '[DIAMOND]', svg_diamond
+          assign processed_text = processed_text | replace: '[trophy]', svg_trophy | replace: '[Trophy]', svg_trophy | replace: '[TROPHY]', svg_trophy
+          assign processed_text = processed_text | replace: '[truck]', svg_truck | replace: '[Truck]', svg_truck | replace: '[TRUCK]', svg_truck
+          assign processed_text = processed_text | replace: '[check]', svg_check | replace: '[Check]', svg_check | replace: '[CHECK]', svg_check
+          assign processed_text = processed_text | replace: '[bell]', svg_bell | replace: '[Bell]', svg_bell | replace: '[BELL]', svg_bell
+          assign processed_text = processed_text | replace: '[smile]', svg_smile | replace: '[Smile]', svg_smile | replace: '[SMILE]', svg_smile
+          assign processed_text = processed_text | replace: '[users]', svg_users | replace: '[Users]', svg_users | replace: '[USERS]', svg_users
+          assign processed_text = processed_text | replace: '[bowtie]', svg_bowtie | replace: '[Bowtie]', svg_bowtie | replace: '[BOWTIE]', svg_bowtie
+          assign processed_text = processed_text | replace: '[flag]', svg_flag | replace: '[Flag]', svg_flag | replace: '[FLAG]', svg_flag
+          assign processed_text = processed_text | replace: '[lion]', svg_lion | replace: '[Lion]', svg_lion | replace: '[LION]', svg_lion
+        %}
+      {% endif %}
+
+      {% for i in (1..repetitions) %}
+        <div class="marquee-item" style="padding-right: {{ block.settings.text_spacing }}px; font-size: {{ block.settings.font_size }}px; font-weight: {{ block.settings.font_weight }}; text-transform: {{ block.settings.text_transform }}; letter-spacing: {{ block.settings.letter_spacing }}px;">
+          {% if block.settings.enable_links and block.settings.link_url != blank %}
+            <a href="{{ block.settings.link_url }}" class="marquee-link" style="{% if block.settings.text_color != blank %}color: {{ block.settings.text_color }};{% endif %} text-decoration: none;">
+              {{ processed_text }}
+            </a>
+          {% else %}
+            <span>{{ processed_text }}</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<style>
+  .marquee-block {
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .marquee-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    border-radius: 40px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .marquee-content {
+    display: flex;
+    animation: marquee linear infinite;
+    white-space: nowrap;
+  }
+
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    line-height: 1.2;
+  }
+
+  .marquee-link {
+    transition: opacity 0.3s ease;
+  }
+
+  .marquee-link:hover {
+    opacity: 0.8;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (max-width: 749px) {
+    .marquee-item {
+      font-size: {{ block.settings.mobile_font_size }}px !important;
+    }
+  }
+
+  /* Pause animation on hover */
+  .marquee-container:hover .marquee-content {
+    animation-play-state: paused;
+  }
+}</style>

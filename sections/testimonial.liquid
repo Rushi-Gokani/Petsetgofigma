@@ -1,0 +1,343 @@
+{% stylesheet %}
+  .review-summary {
+    text-align: center;
+    padding: 60px 20px;
+  }
+  .review-summary h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .avg-rating {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  .star-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 14px;
+    margin: 2px 0;
+  }
+  .bar-line {
+    height: 6px;
+    width: 100px;
+    background: #ccc;
+    border-radius: 4px;
+    position: relative;
+  }
+  .bar-line span {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 6px;
+    border-radius: 4px;
+    background: #000;
+  }
+.testimonial-slider-container {
+    padding: 60px 20px;
+  }
+
+  .testimonial-card-wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 20px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .testimonial-background-box {
+    background: #ffe1bd;
+    border-radius: 20px;
+    display: flex;
+    padding: 40px 24px;
+    max-width: 960px;
+    width: 100%;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .testimonial-text-box {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    max-width: 460px;
+    margin-left: 60px;
+    margin-right: 0;
+  }
+
+  .testimonial-text-box p {
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .testimonial-stars {
+    color: #ffc400;
+    font-size: 18px;
+    margin-top: 10px;
+  }
+
+  /* Replace broken inner star characters with pseudo content */
+  .testimonial-stars { font-size: 0; position: relative; }
+  .testimonial-stars::before { content: '★★★★★'; font-size: 18px; color: #ffc400; }
+
+  .testimonial-name {
+    font-weight: 600;
+    margin-top: 5px;
+  }
+
+  .testimonial-image {
+    flex-shrink: 0;
+    margin-right: 40px;
+    align-self: center;
+  }
+
+  .testimonial-image img {
+    width: 200px;
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+  }
+
+
+  .see-all-button {
+    display: block;
+    margin: 30px auto 0;
+    padding: 10px 20px;
+    background: orange;
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    text-align: center;
+    width: fit-content;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .review-summary { padding: 40px 16px; }
+    .review-summary h2 { font-size: 2rem; }
+    .avg-rating { font-size: 2.25rem; }
+    .testimonial-background-box { padding: 28px 20px; }
+  }
+
+  @media (max-width: 768px) {
+    .review-summary > .flex { flex-direction: column; gap: 16px; }
+    .ratings-bars { width: 100%; }
+    .bar-line { width: 60%; }
+
+    .testimonial-slider-container { padding: 32px 16px; }
+    .testimonial-background-box { flex-direction: column-reverse; padding: 20px; }
+    .testimonial-text-box { margin: 0; max-width: 100%; width: 100%; }
+    .testimonial-image { margin: 0 0 16px 0; }
+    .testimonial-image img { width: 100%; max-width: 280px; }
+  }
+  /* Ensure reliable star characters regardless of file encoding */
+  .testimonial-stars::before { content: "\2605\2605\2605\2605\2605"; }
+  {% endstylesheet %}
+
+<div class="review-summary">
+  <h2 class="width: 100%;">{{ section.settings.heading }}</h2>
+  <div class="flex items-center gap-10 justify-center">
+    <div class="reviews-stats-main">
+      <div class="avg-rating">{{ section.settings.average_rating }}</div>
+      <div>{{ section.settings.review_count }} Reviews</div>
+      <button style="margin: 10px 0; padding: 10px 20px; background: orange; color: white; border: none; border-radius: 6px;">
+        {{ section.settings.button_label }}
+      </button>
+    </div>
+    <div class="ratings-bars flex-50 grow-0">
+      {% for i in (1..5) reversed %}
+        {% assign rating_key = 'star_' | append: i %}
+        {% assign rating_percent = section.settings[rating_key] %}
+        <div class="star-bar">
+          {{ i }} Star ({{ rating_percent }}%)
+          <div class="bar-line"><span style="width: {{ rating_percent }}%; background: #ffb000;"></span></div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{%- capture testimonialSlides -%}
+  {% for block in section.blocks %}
+    {%- capture slideContent -%}
+      <div class="testimonial-card-wrapper">
+        <div class="testimonial-background-box">
+          <div class="testimonial-text-box">
+            <p>{{ block.settings.testimonial }}</p>
+            <div class="testimonial-stars">★★★★★</div>
+            <div class="testimonial-name">{{ block.settings.name }}</div>
+          </div>
+          <div class="testimonial-image">
+            {% if block.settings.image %}
+              <img src="{{ block.settings.image | img_url: 'medium' }}" alt="Testimonial Image">
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {%- endcapture -%}
+    {%- render 'slider-slide', content: slideContent -%}
+  {% endfor %}
+{%- endcapture -%}
+
+{%- capture slides_amount_in_view -%}
+  {% render '_slider-amount-in-view',
+    xs: 1,
+    sm: 1,
+    md: 1,
+    lg: 1,
+    xl: 1,
+    xxl: 1,
+    slides_count: section.blocks.size
+  %}
+{%- endcapture -%}
+
+<div class="testimonial-slider-container">
+  {%- render 'slider',
+    slides: testimonialSlides,
+    gap: 20,
+    slides_amount_in_view: slides_amount_in_view,
+    is_header_disabled: true,
+    class: 'testimonial-slider-wrapper'
+  -%}
+</div>
+
+<a href="{{ section.settings.see_all_link }}" class="see-all-button">
+  {{ section.settings.see_all_text }}
+</a>
+
+{% schema %}
+{
+  "name": "Testimonial",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "See why people love our products"
+    },
+    {
+      "type": "text",
+      "id": "average_rating",
+      "label": "Average Rating",
+      "default": "4.8"
+    },
+    {
+      "type": "text",
+      "id": "review_count",
+      "label": "Total Reviews",
+      "default": "22,549"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Write a Review"
+    },
+    {
+      "type": "range",
+      "id": "star_5",
+      "label": "5 Star %",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "star_4",
+      "label": "4 Star %",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 13
+    },
+    {
+      "type": "range",
+      "id": "star_3",
+      "label": "3 Star %",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "star_2",
+      "label": "2 Star %",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "star_1",
+      "label": "1 Star %",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "default": 0
+    },
+    {
+      "type": "text",
+      "id": "see_all_text",
+      "label": "See All Reviews Button Label",
+      "default": "See All Reviews"
+    },
+    {
+      "type": "url",
+      "id": "see_all_link",
+      "label": "See All Reviews Link"
+    }
+
+  ],
+   "blocks": [
+    {
+      "type": "testimonial",
+      "name": "Testimonial",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "testimonial",
+          "label": "Testimonial Text",
+          "default": "This mattress keeps my spine aligned and provides solid support."
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Customer Name",
+          "default": "Meenakshi Yadav"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 6,
+  "presets": [
+    {
+      "name": "Testimonial",
+      "category": "Testimonials",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

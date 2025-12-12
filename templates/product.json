@@ -1,0 +1,267 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "wrapper": "div.product-page[x-data='ProductPage()']",
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "vendor": {
+          "type": "text",
+          "disabled": true,
+          "settings": {
+            "text": "{{ product.vendor }}"
+          }
+        },
+        "judge_me_reviews_preview_badge_6wNbzT": {
+          "type": "shopify://apps/judge-me-reviews/blocks/preview_badge/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "product_marquee_tzLX3U": {
+          "type": "product_marquee",
+          "settings": {
+            "icon_1": "shopify://shop_images/smile-emoji-icon-in-orange-color.png",
+            "text_1": "50k+ Happy Customers",
+            "icon_2": "shopify://shop_images/bow-icon-in-orange-color.png",
+            "text_2": "Free Bowtie",
+            "icon_3": "shopify://shop_images/ChatGPT_Image_Oct_7_2025_05_10_44_PM-Photoroom.png",
+            "text_3": "Made In India",
+            "text_4": "",
+            "text_5": "",
+            "text_6": "",
+            "background_color": "#ff7a001a",
+            "text_color": "#f68e02",
+            "border_radius": 24,
+            "padding_vertical": 8,
+            "padding_horizontal": 12,
+            "icon_size": 18,
+            "icon_text_gap": 8,
+            "item_gap": 48,
+            "font_size": 18,
+            "mobile_font_size": 14,
+            "font_weight": "600",
+            "text_transform": "capitalize",
+            "letter_spacing": 0,
+            "animation_speed": 20,
+            "border_top": false,
+            "border_right": false,
+            "border_bottom": false,
+            "border_left": false,
+            "border_color": "#000000"
+          }
+        },
+        "product_actions": {
+          "type": "product_actions",
+          "settings": {
+            "show_dynamic_checkout": false,
+            "show_gift_card_recipient": false
+          }
+        },
+        "coupon_display_nUQbkq": {
+          "type": "coupon_display",
+          "settings": {
+            "coupon_code_1": "Welcome99",
+            "coupon_text_1": "flat 99 off on orders above 1299*",
+            "coupon_code_2": "GET520",
+            "coupon_text_2": "20% off on orders above 2499*",
+            "coupon_code_3": "Get25",
+            "coupon_text_3": "25% off on order above 39999*",
+            "coupon_code_4": "",
+            "coupon_text_4": "",
+            "coupon_code_5": "",
+            "coupon_text_5": ""
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "details_care_WHLBKW": {
+          "type": "details_care",
+          "settings": {}
+        },
+        "c_edd_estimated_delivery_date_delivery_coder_theme_VgmweY": {
+          "type": "shopify://apps/c-edd-estimated-delivery-date/blocks/delivery_coder_theme/4a0685bc-c234-45b2-8382-5ad6a8e3e3fd",
+          "settings": {}
+        },
+        "pickup_availability": {
+          "type": "pickup_availability",
+          "settings": {}
+        },
+        "share": {
+          "type": "share",
+          "settings": {
+            "share_label": "Share"
+          }
+        },
+        "complementary_Y9w47U": {
+          "type": "complementary",
+          "disabled": true,
+          "settings": {
+            "block_heading": "Pairs well with",
+            "product_list_limit": 10
+          }
+        },
+        "suitable_for_BRkVNY": {
+          "type": "suitable_for",
+          "disabled": true,
+          "settings": {
+            "suitable_for_content": "{{ product.metafields.custom.suitable_for.value }}"
+          }
+        },
+        "suitable_for_breeds_dynamic": {
+          "type": "suitable_for_breeds",
+          "settings": {
+            "metafield_namespace": "scraft",
+            "metafield_key": "breed_info",
+            "label_text": "Suitable for breeds"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "vendor",
+        "judge_me_reviews_preview_badge_6wNbzT",
+        "price",
+        "product_marquee_tzLX3U",
+        "product_actions",
+        "coupon_display_nUQbkq",
+        "description",
+        "details_care_WHLBKW",
+        "c_edd_estimated_delivery_date_delivery_coder_theme_VgmweY",
+        "pickup_availability",
+        "share",
+        "complementary_Y9w47U",
+        "suitable_for_BRkVNY",
+        "suitable_for_breeds_dynamic"
+      ],
+      "settings": {
+        "display_gallery_images": "all_variants",
+        "gallery_layout": "carousel",
+        "carousel_icons": "large_arrows",
+        "carousel_pagination": "counter",
+        "carousel_mobile_pagination": "dots",
+        "carousel_aspect_ratio": "adapt",
+        "carousel_object_fit": "cover",
+        "primary_option_type": "button",
+        "secondary_option_type": "button",
+        "primary_option": "",
+        "color_swatch_map": "Rose Gold:#b76e79",
+        "enable_sticky_info": true,
+        "enable_video_looping": false,
+        "enable_video_autoplay": false,
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 12
+      }
+    },
+    "175983369206e198f9": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_snippet_widget_D6bbf3": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_snippet_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        },
+        "judge_me_reviews_featured_carousel_4px4gc": {
+          "type": "shopify://apps/judge-me-reviews/blocks/featured_carousel/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "disabled": true,
+          "settings": {
+            "maxwidth": 1080
+          }
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_snippet_widget_D6bbf3",
+        "judge_me_reviews_featured_carousel_4px4gc"
+      ],
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "image-with-text": {
+      "type": "image-with-text",
+      "blocks": {
+        "image-with-text-0": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image with text"
+          }
+        },
+        "image-with-text-1": {
+          "type": "text",
+          "settings": {
+            "text": "<p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "image-with-text-0",
+        "image-with-text-1"
+      ],
+      "disabled": true,
+      "settings": {
+        "layout": "text_first",
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
+    "1759580998f21f2302": {
+      "type": "apps",
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "176138903260436ab0": {
+      "type": "apps",
+      "blocks": {
+        "judge_me_reviews_review_snippet_widget_XmX4F3": {
+          "type": "shopify://apps/judge-me-reviews/blocks/review_snippet_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "judge_me_reviews_review_snippet_widget_XmX4F3"
+      ],
+      "disabled": true,
+      "settings": {
+        "include_margins": true
+      }
+    },
+    "product-recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "heading": "You may also like",
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 28
+      }
+    }
+  },
+  "order": [
+    "main",
+    "175983369206e198f9",
+    "image-with-text",
+    "1759580998f21f2302",
+    "176138903260436ab0",
+    "product-recommendations"
+  ]
+}

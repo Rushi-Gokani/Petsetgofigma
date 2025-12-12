@@ -1,0 +1,56 @@
+{%- capture searchContent -%}
+  {% render 'search-input' %}
+{%- endcapture -%}
+
+{%- capture accountContent -%}
+  {% render 'account-popup' %}
+{%- endcapture -%}
+
+{%- capture menuContent -%}
+<nav
+  class="flex h-full flex-col"
+  aria-label="{{ 'sections.header.aria_label' | t }}"
+  x-data="Search"
+  :inert="$store.main.isMobile ? $store.popup.currentPopup !== 'menu' : !$store.resizable.isVisible('menu-desktop')"
+>
+  <template x-portal="document.getElementById($store.main.isMobile ? 'search-mobile' : 'search-desktop')">
+    {{ searchContent }}
+  </template>
+  <template x-portal="document.getElementById('account-desktop')">
+    {{ accountContent }}
+  </template>
+  <div class="contents md:hidden" id="search-mobile"></div>
+  <div
+    id="menu-sections"
+    class="menu__wrapper"
+    x-data="{
+      history: ['all'],
+      delayedLevel: 1,
+      setHistory(history) {
+        this.history = history;
+
+        setTimeout(() => {
+          this.delayedLevel = history.length;
+
+          if (history.length) {
+            const level = history[history.length - 1]
+            document.querySelector(`[data-menu-level='${level}'] a`)?.focus();
+          }
+        }, 300);
+      }
+    }"
+    x-show="!$store.main.isMobile || !getIsSearchActive()"
+  >
+    {%- assign title = 'sections.header.all_categories' | t -%}
+    {% render 'menu-items', id: 'all', links: section.settings.menu.links, title: title, path: 'all' %}
+  </div>
+</nav>
+{%- endcapture -%}
+
+{% render 'popup',
+  content: menuContent,
+  id: 'menu',
+  isFocused: true,
+  isFullScreen: true,
+  desktopTarget: 'menu-desktop'
+%}

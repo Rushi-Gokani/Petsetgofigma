@@ -1,0 +1,1173 @@
+{% doc %}
+  @prompt
+    generate me a modern section for blog posts with all latest design and best practices with some animation , the card on mobile should be a carousel and more options should be there and it should be responsive and have some space on mobil rest all is perfect 
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-blog-posts-{{ ai_gen_id }} {
+    padding: {{ block.settings.section_padding_top }}px 20px {{ block.settings.section_padding_bottom }}px;
+    background-color: {{ block.settings.background_color }};
+  }
+
+  .ai-blog-posts-container-{{ ai_gen_id }} {
+    max-width: {{ block.settings.container_width }}px;
+    margin: 0 auto;
+  }
+
+  .ai-blog-posts-header-{{ ai_gen_id }} {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .ai-blog-posts-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.heading_size }}px;
+    color: {{ block.settings.heading_color }};
+    margin: 0 0 16px;
+    font-weight: 700;
+  }
+
+  .ai-blog-posts-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ai-blog-posts-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat({{ block.settings.columns_desktop }}, 1fr);
+    gap: {{ block.settings.grid_gap }}px;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .ai-blog-posts-grid-{{ ai_gen_id }}.ai-blog-posts-visible-{{ ai_gen_id }} {
+    animation: ai-blog-posts-fade-in-up-{{ ai_gen_id }} 0.8s ease forwards;
+  }
+
+  @keyframes ai-blog-posts-fade-in-up-{{ ai_gen_id }} {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .ai-blog-post-card-{{ ai_gen_id }} {
+    background-color: {{ block.settings.card_background }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: {{ block.settings.card_shadow }};
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .ai-blog-post-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .ai-blog-post-image-wrapper-{{ ai_gen_id }} {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ block.settings.image_aspect_ratio }}%;
+    overflow: hidden;
+    background-color: #f4f4f4;
+  }
+
+  .ai-blog-post-image-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+
+  .ai-blog-post-card-{{ ai_gen_id }}:hover .ai-blog-post-image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-blog-post-image-placeholder-{{ ai_gen_id }} {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+  }
+
+  .ai-blog-post-image-placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-blog-post-content-{{ ai_gen_id }} {
+    padding: {{ block.settings.card_padding }}px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .ai-blog-post-meta-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+    color: {{ block.settings.meta_color }};
+    flex-wrap: wrap;
+  }
+
+  .ai-blog-post-date-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ai-blog-post-author-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .ai-blog-post-meta-icon-{{ ai_gen_id }} {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .ai-blog-post-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_title_size }}px;
+    color: {{ block.settings.card_title_color }};
+    margin: 0 0 12px;
+    font-weight: 600;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .ai-blog-post-excerpt-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_excerpt_size }}px;
+    color: {{ block.settings.card_excerpt_color }};
+    line-height: 1.6;
+    margin: 0 0 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex-grow: 1;
+  }
+
+  .ai-blog-post-link-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: {{ block.settings.link_color }};
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: gap 0.3s ease;
+    margin-top: auto;
+  }
+
+  .ai-blog-post-link-{{ ai_gen_id }}:hover {
+    gap: 12px;
+  }
+
+  .ai-blog-post-link-arrow-{{ ai_gen_id }} {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-blog-post-link-{{ ai_gen_id }}:hover .ai-blog-post-link-arrow-{{ ai_gen_id }} {
+    transform: translateX(4px);
+  }
+
+  .ai-blog-posts-cta-{{ ai_gen_id }} {
+    text-align: center;
+    margin-top: 48px;
+  }
+
+  .ai-blog-posts-button-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 16px 32px;
+    background-color: {{ block.settings.button_background }};
+    color: {{ block.settings.button_text_color }};
+    text-decoration: none;
+    border-radius: {{ block.settings.button_border_radius }}px;
+    font-weight: 600;
+    font-size: 16px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+
+  .ai-blog-posts-button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_background }};
+    transform: translateY(-2px);
+  }
+
+  .ai-blog-posts-carousel-wrapper-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-blog-posts-carousel-container-{{ ai_gen_id }} {
+    position: relative;
+    padding: 0 {{ block.settings.mobile_carousel_spacing }}px;
+  }
+
+  .ai-blog-posts-carousel-{{ ai_gen_id }} {
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    display: flex;
+    gap: {{ block.settings.mobile_carousel_gap }}px;
+    padding-bottom: 20px;
+  }
+
+  .ai-blog-posts-carousel-{{ ai_gen_id }}::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ai-blog-posts-carousel-item-{{ ai_gen_id }} {
+    flex: 0 0 {{ block.settings.mobile_card_width }}%;
+    scroll-snap-align: start;
+  }
+
+  .ai-blog-posts-carousel-nav-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .ai-blog-posts-carousel-button-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: {{ block.settings.carousel_button_background }};
+    color: {{ block.settings.carousel_button_color }};
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .ai-blog-posts-carousel-button-{{ ai_gen_id }}:active {
+    transform: scale(0.95);
+  }
+
+  .ai-blog-posts-carousel-button-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .ai-blog-posts-carousel-dots-{{ ai_gen_id }} {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .ai-blog-posts-carousel-dot-{{ ai_gen_id }} {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: {{ block.settings.carousel_dot_color }};
+    opacity: 0.3;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+  }
+
+  .ai-blog-posts-carousel-dot-{{ ai_gen_id }}.active {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  @media screen and (max-width: 989px) {
+    .ai-blog-posts-grid-{{ ai_gen_id }} {
+      grid-template-columns: repeat({{ block.settings.columns_tablet }}, 1fr);
+    }
+
+    .ai-blog-posts-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.8);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-blog-posts-{{ ai_gen_id }} {
+      padding: {{ block.settings.section_padding_top | times: 0.6 }}px 0 {{ block.settings.section_padding_bottom | times: 0.6 }}px;
+    }
+
+    .ai-blog-posts-header-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.mobile_carousel_spacing }}px;
+      margin-bottom: 32px;
+    }
+
+    .ai-blog-posts-title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.heading_size }}px * 0.65);
+    }
+
+    .ai-blog-posts-subtitle-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.subtitle_size }}px * 0.9);
+    }
+
+    .ai-blog-post-content-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.75 }}px;
+    }
+
+    .ai-blog-posts-grid-{{ ai_gen_id }} {
+      display: none;
+    }
+
+    .ai-blog-posts-carousel-wrapper-{{ ai_gen_id }} {
+      display: block;
+    }
+
+    .ai-blog-posts-cta-{{ ai_gen_id }} {
+      padding: 0 {{ block.settings.mobile_carousel_spacing }}px;
+      margin-top: 32px;
+    }
+  }
+{% endstyle %}
+
+<blog-posts-{{ ai_gen_id }} class="ai-blog-posts-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-blog-posts-container-{{ ai_gen_id }}">
+    {% if block.settings.heading != blank or block.settings.subtitle != blank %}
+      <div class="ai-blog-posts-header-{{ ai_gen_id }}">
+        {% if block.settings.heading != blank %}
+          <h2 class="ai-blog-posts-title-{{ ai_gen_id }}">{{ block.settings.heading }}</h2>
+        {% endif %}
+        {% if block.settings.subtitle != blank %}
+          <p class="ai-blog-posts-subtitle-{{ ai_gen_id }}">{{ block.settings.subtitle }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    {% if block.settings.blog != blank %}
+      <div class="ai-blog-posts-grid-{{ ai_gen_id }}">
+        {% for article in block.settings.blog.articles limit: block.settings.posts_to_show %}
+          <article class="ai-blog-post-card-{{ ai_gen_id }}">
+            <a href="{{ article.url }}" class="ai-blog-post-image-wrapper-{{ ai_gen_id }}">
+              {% if article.image %}
+                <img
+                  src="{{ article.image | image_url: width: 800 }}"
+                  alt="{{ article.image.alt | escape }}"
+                  class="ai-blog-post-image-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="800"
+                  height="{{ 800 | divided_by: article.image.aspect_ratio | round }}"
+                >
+              {% else %}
+                <div class="ai-blog-post-image-placeholder-{{ ai_gen_id }}">
+                  {{ 'image' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </a>
+
+            <div class="ai-blog-post-content-{{ ai_gen_id }}">
+              {% if block.settings.show_date or block.settings.show_author %}
+                <div class="ai-blog-post-meta-{{ ai_gen_id }}">
+                  {% if block.settings.show_date %}
+                    <div class="ai-blog-post-date-{{ ai_gen_id }}">
+                      <svg class="ai-blog-post-meta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                      <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                        {{ article.published_at | date: '%B %d, %Y' }}
+                      </time>
+                    </div>
+                  {% endif %}
+
+                  {% if block.settings.show_author and article.author != blank %}
+                    <div class="ai-blog-post-author-{{ ai_gen_id }}">
+                      <svg class="ai-blog-post-meta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      <span>{{ article.author }}</span>
+                    </div>
+                  {% endif %}
+                </div>
+              {% endif %}
+
+              <h3 class="ai-blog-post-title-{{ ai_gen_id }}">
+                <a href="{{ article.url }}" style="color: inherit; text-decoration: none;">
+                  {{ article.title }}
+                </a>
+              </h3>
+
+              {% if block.settings.show_excerpt and article.excerpt != blank %}
+                <div class="ai-blog-post-excerpt-{{ ai_gen_id }}">
+                  {{ article.excerpt | strip_html | truncate: 120 }}
+                </div>
+              {% endif %}
+
+              <a href="{{ article.url }}" class="ai-blog-post-link-{{ ai_gen_id }}">
+                {{ block.settings.read_more_text }}
+                <svg class="ai-blog-post-link-arrow-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </a>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="ai-blog-posts-carousel-wrapper-{{ ai_gen_id }}">
+        <div class="ai-blog-posts-carousel-container-{{ ai_gen_id }}">
+          <div class="ai-blog-posts-carousel-{{ ai_gen_id }}">
+            {% for article in block.settings.blog.articles limit: block.settings.posts_to_show %}
+              <div class="ai-blog-posts-carousel-item-{{ ai_gen_id }}">
+                <article class="ai-blog-post-card-{{ ai_gen_id }}">
+                  <a href="{{ article.url }}" class="ai-blog-post-image-wrapper-{{ ai_gen_id }}">
+                    {% if article.image %}
+                      <img
+                        src="{{ article.image | image_url: width: 600 }}"
+                        alt="{{ article.image.alt | escape }}"
+                        class="ai-blog-post-image-{{ ai_gen_id }}"
+                        loading="lazy"
+                        width="600"
+                        height="{{ 600 | divided_by: article.image.aspect_ratio | round }}"
+                      >
+                    {% else %}
+                      <div class="ai-blog-post-image-placeholder-{{ ai_gen_id }}">
+                        {{ 'image' | placeholder_svg_tag }}
+                      </div>
+                    {% endif %}
+                  </a>
+
+                  <div class="ai-blog-post-content-{{ ai_gen_id }}">
+                    {% if block.settings.show_date or block.settings.show_author %}
+                      <div class="ai-blog-post-meta-{{ ai_gen_id }}">
+                        {% if block.settings.show_date %}
+                          <div class="ai-blog-post-date-{{ ai_gen_id }}">
+                            <svg class="ai-blog-post-meta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                              <line x1="16" y1="2" x2="16" y2="6"></line>
+                              <line x1="8" y1="2" x2="8" y2="6"></line>
+                              <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                              {{ article.published_at | date: '%B %d, %Y' }}
+                            </time>
+                          </div>
+                        {% endif %}
+
+                        {% if block.settings.show_author and article.author != blank %}
+                          <div class="ai-blog-post-author-{{ ai_gen_id }}">
+                            <svg class="ai-blog-post-meta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <span>{{ article.author }}</span>
+                          </div>
+                        {% endif %}
+                      </div>
+                    {% endif %}
+
+                    <h3 class="ai-blog-post-title-{{ ai_gen_id }}">
+                      <a href="{{ article.url }}" style="color: inherit; text-decoration: none;">
+                        {{ article.title }}
+                      </a>
+                    </h3>
+
+                    {% if block.settings.show_excerpt and article.excerpt != blank %}
+                      <div class="ai-blog-post-excerpt-{{ ai_gen_id }}">
+                        {{ article.excerpt | strip_html | truncate: 120 }}
+                      </div>
+                    {% endif %}
+
+                    <a href="{{ article.url }}" class="ai-blog-post-link-{{ ai_gen_id }}">
+                      {{ block.settings.read_more_text }}
+                      <svg class="ai-blog-post-link-arrow-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </a>
+                  </div>
+                </article>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if block.settings.show_carousel_navigation %}
+            <div class="ai-blog-posts-carousel-nav-{{ ai_gen_id }}">
+              <button class="ai-blog-posts-carousel-button-{{ ai_gen_id }} ai-blog-posts-carousel-prev-{{ ai_gen_id }}" aria-label="Previous">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <div class="ai-blog-posts-carousel-dots-{{ ai_gen_id }}"></div>
+              <button class="ai-blog-posts-carousel-button-{{ ai_gen_id }} ai-blog-posts-carousel-next-{{ ai_gen_id }}" aria-label="Next">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if block.settings.show_view_all and block.settings.blog != blank %}
+        <div class="ai-blog-posts-cta-{{ ai_gen_id }}">
+          <a href="{{ block.settings.blog.url }}" class="ai-blog-posts-button-{{ ai_gen_id }}">
+            {{ block.settings.view_all_text }}
+          </a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="ai-blog-posts-grid-{{ ai_gen_id }}">
+        {% for i in (1..block.settings.posts_to_show) %}
+          <article class="ai-blog-post-card-{{ ai_gen_id }}">
+            <div class="ai-blog-post-image-wrapper-{{ ai_gen_id }}">
+              <div class="ai-blog-post-image-placeholder-{{ ai_gen_id }}">
+                {{ 'image' | placeholder_svg_tag }}
+              </div>
+            </div>
+            <div class="ai-blog-post-content-{{ ai_gen_id }}">
+              <div class="ai-blog-post-meta-{{ ai_gen_id }}">
+                <div class="ai-blog-post-date-{{ ai_gen_id }}">
+                  <svg class="ai-blog-post-meta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                  </svg>
+                  <time>January 1, 2025</time>
+                </div>
+              </div>
+              <h3 class="ai-blog-post-title-{{ ai_gen_id }}">Sample blog post title</h3>
+              <div class="ai-blog-post-excerpt-{{ ai_gen_id }}">
+                This is a sample excerpt for your blog post. Select a blog to display your actual posts.
+              </div>
+              <span class="ai-blog-post-link-{{ ai_gen_id }}">
+                {{ block.settings.read_more_text }}
+                <svg class="ai-blog-post-link-arrow-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                  <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+              </span>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+
+      <div class="ai-blog-posts-carousel-wrapper-{{ ai_gen_id }}">
+        <div class="ai-blog-posts-carousel-container-{{ ai_gen_id }}">
+          <div class="ai-blog-posts-carousel-{{ ai_gen_id }}">
+            {% for i in (1..block.settings.posts_to_show) %}
+              <div class="ai-blog-posts-carousel-item-{{ ai_gen_id }}">
+                <article class="ai-blog-post-card-{{ ai_gen_id }}">
+                  <div class="ai-blog-post-image-wrapper-{{ ai_gen_id }}">
+                    <div class="ai-blog-post-image-placeholder-{{ ai_gen_id }}">
+                      {{ 'image' | placeholder_svg_tag }}
+                    </div>
+                  </div>
+                  <div class="ai-blog-post-content-{{ ai_gen_id }}">
+                    <div class="ai-blog-post-meta-{{ ai_gen_id }}">
+                      <div class="ai-blog-post-date-{{ ai_gen_id }}">
+                        <svg class="ai-blog-post-meta-icon-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                          <line x1="16" y1="2" x2="16" y2="6"></line>
+                          <line x1="8" y1="2" x2="8" y2="6"></line>
+                          <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <time>January 1, 2025</time>
+                      </div>
+                    </div>
+                    <h3 class="ai-blog-post-title-{{ ai_gen_id }}">Sample blog post title</h3>
+                    <div class="ai-blog-post-excerpt-{{ ai_gen_id }}">
+                      This is a sample excerpt for your blog post. Select a blog to display your actual posts.
+                    </div>
+                    <span class="ai-blog-post-link-{{ ai_gen_id }}">
+                      {{ block.settings.read_more_text }}
+                      <svg class="ai-blog-post-link-arrow-{{ ai_gen_id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                      </svg>
+                    </span>
+                  </div>
+                </article>
+              </div>
+            {% endfor %}
+          </div>
+
+          {% if block.settings.show_carousel_navigation %}
+            <div class="ai-blog-posts-carousel-nav-{{ ai_gen_id }}">
+              <button class="ai-blog-posts-carousel-button-{{ ai_gen_id }} ai-blog-posts-carousel-prev-{{ ai_gen_id }}" aria-label="Previous">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+              </button>
+              <div class="ai-blog-posts-carousel-dots-{{ ai_gen_id }}"></div>
+              <button class="ai-blog-posts-carousel-button-{{ ai_gen_id }} ai-blog-posts-carousel-next-{{ ai_gen_id }}" aria-label="Next">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+              </button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</blog-posts-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class BlogPosts{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+      }
+
+      connectedCallback() {
+        this.setupIntersectionObserver();
+        this.setupCarousel();
+      }
+
+      setupIntersectionObserver() {
+        const grid = this.querySelector('.ai-blog-posts-grid-{{ ai_gen_id }}');
+        
+        if (!grid) return;
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('ai-blog-posts-visible-{{ ai_gen_id }}');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px'
+        });
+
+        observer.observe(grid);
+      }
+
+      setupCarousel() {
+        this.carousel = this.querySelector('.ai-blog-posts-carousel-{{ ai_gen_id }}');
+        this.prevButton = this.querySelector('.ai-blog-posts-carousel-prev-{{ ai_gen_id }}');
+        this.nextButton = this.querySelector('.ai-blog-posts-carousel-next-{{ ai_gen_id }}');
+        this.dotsContainer = this.querySelector('.ai-blog-posts-carousel-dots-{{ ai_gen_id }}');
+
+        if (!this.carousel) return;
+
+        this.items = this.carousel.querySelectorAll('.ai-blog-posts-carousel-item-{{ ai_gen_id }}');
+        this.totalItems = this.items.length;
+
+        if (this.totalItems === 0) return;
+
+        this.createDots();
+        this.updateButtons();
+
+        if (this.prevButton) {
+          this.prevButton.addEventListener('click', () => this.scrollToPrev());
+        }
+
+        if (this.nextButton) {
+          this.nextButton.addEventListener('click', () => this.scrollToNext());
+        }
+
+        this.carousel.addEventListener('scroll', () => {
+          this.updateCurrentIndex();
+        });
+
+        const resizeObserver = new ResizeObserver(() => {
+          this.updateCurrentIndex();
+        });
+        resizeObserver.observe(this.carousel);
+      }
+
+      createDots() {
+        if (!this.dotsContainer) return;
+
+        this.dotsContainer.innerHTML = '';
+
+        for (let i = 0; i < this.totalItems; i++) {
+          const dot = document.createElement('button');
+          dot.classList.add('ai-blog-posts-carousel-dot-{{ ai_gen_id }}');
+          dot.setAttribute('aria-label', `Go to slide ${i + 1}`);
+          
+          if (i === 0) {
+            dot.classList.add('active');
+          }
+
+          dot.addEventListener('click', () => {
+            this.scrollToIndex(i);
+          });
+
+          this.dotsContainer.appendChild(dot);
+        }
+
+        this.dots = this.dotsContainer.querySelectorAll('.ai-blog-posts-carousel-dot-{{ ai_gen_id }}');
+      }
+
+      updateCurrentIndex() {
+        const scrollLeft = this.carousel.scrollLeft;
+        const itemWidth = this.items[0].offsetWidth;
+        const gap = parseInt(getComputedStyle(this.carousel).gap) || 0;
+        
+        this.currentIndex = Math.round(scrollLeft / (itemWidth + gap));
+        this.updateDots();
+        this.updateButtons();
+      }
+
+      updateDots() {
+        if (!this.dots) return;
+
+        this.dots.forEach((dot, index) => {
+          if (index === this.currentIndex) {
+            dot.classList.add('active');
+          } else {
+            dot.classList.remove('active');
+          }
+        });
+      }
+
+      updateButtons() {
+        if (this.prevButton) {
+          this.prevButton.disabled = this.currentIndex === 0;
+        }
+
+        if (this.nextButton) {
+          this.nextButton.disabled = this.currentIndex >= this.totalItems - 1;
+        }
+      }
+
+      scrollToIndex(index) {
+        const itemWidth = this.items[0].offsetWidth;
+        const gap = parseInt(getComputedStyle(this.carousel).gap) || 0;
+        const scrollPosition = index * (itemWidth + gap);
+
+        this.carousel.scrollTo({
+          left: scrollPosition,
+          behavior: 'smooth'
+        });
+      }
+
+      scrollToPrev() {
+        if (this.currentIndex > 0) {
+          this.scrollToIndex(this.currentIndex - 1);
+        }
+      }
+
+      scrollToNext() {
+        if (this.currentIndex < this.totalItems - 1) {
+          this.scrollToIndex(this.currentIndex + 1);
+        }
+      }
+    }
+
+    customElements.define('blog-posts-{{ ai_gen_id }}', BlogPosts{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Blog posts",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "Blog"
+    },
+    {
+      "type": "range",
+      "id": "posts_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "label": "Posts to show",
+      "default": 3
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Latest from our blog"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "Subtitle",
+      "default": "Discover insights, tips, and stories from our team"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Show date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Show author",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Show excerpt",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "read_more_text",
+      "label": "Read more text",
+      "default": "Read more"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "Show view all button",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "view_all_text",
+      "label": "View all button text",
+      "default": "View all posts"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "container_width",
+      "min": 800,
+      "max": 1600,
+      "step": 50,
+      "unit": "px",
+      "label": "Container width",
+      "default": 1200
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "label": "Columns on desktop",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "label": "Columns on tablet",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Grid gap",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 80
+    },
+    {
+      "type": "header",
+      "content": "Mobile carousel"
+    },
+    {
+      "type": "range",
+      "id": "mobile_card_width",
+      "min": 70,
+      "max": 95,
+      "step": 5,
+      "unit": "%",
+      "label": "Card width",
+      "default": 85
+    },
+    {
+      "type": "range",
+      "id": "mobile_carousel_gap",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "mobile_carousel_spacing",
+      "min": 12,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Side spacing",
+      "default": 16
+    },
+    {
+      "type": "checkbox",
+      "id": "show_carousel_navigation",
+      "label": "Show navigation",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "image_aspect_ratio",
+      "min": 50,
+      "max": 150,
+      "step": 5,
+      "unit": "%",
+      "label": "Image aspect ratio",
+      "default": 65
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "label": "Card padding",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Card border radius",
+      "default": 12
+    },
+    {
+      "type": "select",
+      "id": "card_shadow",
+      "label": "Card shadow",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "0 2px 8px rgba(0, 0, 0, 0.08)",
+          "label": "Light"
+        },
+        {
+          "value": "0 4px 12px rgba(0, 0, 0, 0.1)",
+          "label": "Medium"
+        },
+        {
+          "value": "0 8px 16px rgba(0, 0, 0, 0.12)",
+          "label": "Strong"
+        }
+      ],
+      "default": "0 4px 12px rgba(0, 0, 0, 0.1)"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "Card background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "card_title_color",
+      "label": "Card title",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_excerpt_color",
+      "label": "Card excerpt",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "meta_color",
+      "label": "Meta text",
+      "default": "#999999"
+    },
+    {
+      "type": "color",
+      "id": "link_color",
+      "label": "Link",
+      "default": "#f68e02"
+    },
+    {
+      "type": "color",
+      "id": "carousel_button_background",
+      "label": "Carousel button background",
+      "default": "#f68e02"
+    },
+    {
+      "type": "color",
+      "id": "carousel_button_color",
+      "label": "Carousel button icon",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "carousel_dot_color",
+      "label": "Carousel dot",
+      "default": "#f68e02"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "min": 16,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "label": "Card title size",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_excerpt_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Card excerpt size",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#f68e02"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_background",
+      "label": "Hover background",
+      "default": "#d67a02"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 8
+    }
+  ],
+  "presets": [
+    {
+      "name": "Blog posts"
+    }
+  ]
+}
+{% endschema %}

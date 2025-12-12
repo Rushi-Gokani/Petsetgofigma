@@ -1,0 +1,46 @@
+{% if is_product %}
+  x-element-transition-trigger:product.animate=" {
+  {% if product.selected_or_first_available_variant.image %}
+    'variantImg': '{{ product.selected_or_first_available_variant.image | image_url }}',
+    'mediaCount': {{ product.media | size | plus: 1 }}, // in PDP we display variant image + all media
+  {% else %}
+    'mediaCount': {{ product.media | size }},
+  {% endif %}
+  'productImg': '{{ product.featured_image | image_url }}', 'title': `
+  {{- product.title | escape -}}
+  ` }" href="{{ product.url }}"
+{% elsif is_collection %}
+  x-element-transition-trigger:category.animate="{ 'title': `{{ collection.title | escape }}`,
+  {% if collection.image %}
+    'img': '
+    {{- collection.image | image_url -}}
+    '
+  {% endif %}
+  }" href="
+  {{- collection.url -}}
+  "
+{% else %}
+  {% if link == blank %}
+    role="link" aria-disabled="true"
+  {% else %}
+    {% case link.type %}
+      {% when 'product_link' %}
+        x-element-transition-trigger:product.animate=" {
+        {% if link.object.selected_or_first_available_variant.image %}
+          'variantImg': '{{ link.object.selected_or_first_available_variant.image | image_url }}',
+        {% endif %}
+        'productImg': '{{ link.object.featured_image | image_url }}', 'title': '
+        {{- link.object.title | escape -}}
+        ' } "
+      {% when 'collection_link' %}
+        x-element-transition-trigger:category.animate="{ 'title': `{{ link.object.title | escape }}`,
+        {% if link.object.image %}
+          'img': '{{ link.object.image | image_url }}',
+        {% endif %}
+        }"
+      {% else %}
+        x-element-transition-trigger
+    {% endcase %}
+    href="{{ link }}"
+  {% endif %}
+{% endif %}

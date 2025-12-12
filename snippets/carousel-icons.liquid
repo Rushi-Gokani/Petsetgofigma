@@ -1,0 +1,29 @@
+{% comment %}
+  Carousel Navigation Icons
+  Renders different styles of navigation arrows based on section settings
+{% endcomment %}
+
+{% liquid
+  assign icon_class = icon_class | default: 'h-5 w-5'
+
+  case section.settings.carousel_icons
+    when 'arrows'
+      render 'icon-arrow-left', class: icon_class
+    when 'chevrons'
+      render 'icon-chevron-left', class: icon_class
+    when 'large_arrows'
+      render 'icon-large-arrow-left', class: icon_class
+    when 'last_chevrons'
+      render 'icon-last-chevron-left', class: icon_class
+  endcase
+%}
+
+{% comment %}
+  You'll need to create these icon snippets:
+  - icon-arrow-left
+  - icon-chevron-left
+  - icon-large-arrow-left
+  - icon-last-chevron-left
+
+  For now, I'll use inline SVGs
+{% endcomment %}

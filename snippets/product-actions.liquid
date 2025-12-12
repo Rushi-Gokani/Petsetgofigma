@@ -1,0 +1,157 @@
+{% comment %}
+  Accepts:
+  product: Product object
+  is_featured: Boolean, indicates if included in a featured product
+{% endcomment %}
+
+{% capture ProductOptionPopup %}
+  {% render 'product-options-popup', product: product %}
+{% endcapture %}
+
+{% capture ProductActions %}
+  <div
+    class="relative flex flex-grow flex-wrap justify-stretch gap-3 {% unless product.selected_or_first_available_variant.unit_price_measurement == nil %}max-md:mt-4{% endunless %}"
+    id="product-actions"
+    x-transition
+    {% if request.page_type == 'product' %}
+      x-intersect:enter="toggleStickyProductActions(false)"
+      x-intersect:leave="toggleStickyProductActions(true)"
+    {% endif %}
+  >
+    {% render 'product-actions-button', product: product, is_popup: is_popup %}
+    {% render 'product-actions-in-cart', product: product, is_popup: is_popup %}
+    <span
+      class="basis-full text-error"
+      x-show="$store.cart.error.message"
+    >
+      <span x-text="$store.cart.error.message"></span>
+    </span>
+  </div>
+
+  {% if product != blank %}
+    {% liquid
+      assign gift_card_recipient_feature_active = false
+      if block.settings.show_gift_card_recipient and product.gift_card?
+        assign gift_card_recipient_feature_active = true
+      endif
+
+      assign show_dynamic_checkout = false
+      if block.settings.show_dynamic_checkout and gift_card_recipient_feature_active == false
+        assign show_dynamic_checkout = true
+      endif
+    %}
+
+    {% if show_dynamic_checkout %}
+      <div class="rte contents max-w-full">
+        {{ form | payment_button }}
+      </div>
+    {% endif %}
+    {% capture payment_terms %}
+      {{ form | payment_terms }}
+    {% endcapture %}
+
+    {% if payment_terms != blank %}
+      <div class="rte text-text-700">
+        {{ payment_terms }}
+      </div>
+    {% endif %}
+    {% liquid
+      if gift_card_recipient_feature_active
+        render 'gift-card-recipient-form', product: product, form: form, section: section
+      endif
+    %}
+  {% endif %}
+{% endcapture %}
+
+{% capture StickyProductActions %}
+  <div class="h-9"></div>
+  <template x-portal="document.getElementById('popup-fixed-content-portal')">
+    {% liquid
+      assign sticky_media = nil
+      if product.selected_or_first_available_variant.featured_media
+        assign sticky_media = product.selected_or_first_available_variant.featured_media
+      else
+        assign sticky_media = product.featured_media
+      endif
+
+      assign size_option_index = -1
+      assign color_option_index = -1
+      for option in product.options_with_values
+        if option.name contains 'Size' or option.name contains 'size'
+          assign size_option_index = forloop.index0
+        endif
+        if option.name contains 'Color' or option.name contains 'Colour' or option.name contains 'color' or option.name contains 'colour'
+          assign color_option_index = forloop.index0
+        endif
+      endfor
+    %}
+    <div
+      id="ProductBottomActionsPopup"
+      x-show="$store.popup.currentPopup == 'product_bottom_actions'"
+      class="w-full bg-bg-500 px-4 py-3 flex items-center justify-between gap-3 shadow-fadeTop rounded-t-2xl"
+    >
+      <div class="flex items-center gap-3 flex-1 min-w-0">
+        <div class="w-14 h-14 rounded-lg overflow-hidden bg-bg-400 flex-shrink-0 flex items-center justify-center">
+          {% if sticky_media %}
+            {{ sticky_media | image_url: width: 112 | image_tag: loading: 'lazy', decoding: 'async', class: 'w-12 h-12 object-cover rounded-md' }}
+          {% endif %}
+        </div>
+        <div class="min-w-0">
+          <h2 class="text-sm font-semibold truncate">{{ product.title | escape }}</h2>
+          {% if size_option_index != -1 %}
+            <p class="text-xs text-text-600 truncate">
+              Size: <span x-text="(selectedOptions && selectedOptions[{{ size_option_index }}]) ? selectedOptions[{{ size_option_index }}] : '{{ product.selected_or_first_available_variant.options | slice: size_option_index, 1 | first | escape }}'"></span>
+            </p>
+          {% endif %}
+          {% if color_option_index != -1 %}
+            <p class="text-xs text-text-600 truncate">
+              Color: <span x-text="(selectedOptions && selectedOptions[{{ color_option_index }}]) ? selectedOptions[{{ color_option_index }}] : '{{ product.selected_or_first_available_variant.options | slice: color_option_index, 1 | first | escape }}'"></span>
+            </p>
+          {% endif %}
+          <div class="mt-0.5" x-show="!isVariantInCart" x-transition>
+            {%- render '_price-element', product: product.selected_or_first_available_variant, class: 'text-base font-bold text-primary', is_inline: true, is_popup: true -%}
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="flex items-center justify-stretch gap-3"
+        :class="{ 'w-full': isVariantInCart }"
+      >
+        {% render 'product-actions-button', product: product, is_small: true %}
+        {% render 'product-actions-in-cart', product: product, is_small: true %}
+      </div>
+    </div>
+  </template>
+{% endcapture %}
+
+{% capture StickyProductActionsPopup %}
+  {% render 'popup', content: StickyProductActions, id: 'product_bottom_actions' %}
+{% endcapture %}
+
+{% capture ProductActionsPopup %}
+  {% liquid
+    assign popup_id = 'product_actions' | append: '-' | append: product.id
+
+    if is_featured
+      assign popup_id = popup_id | append: '-' | append: section.id
+    endif
+  %}
+
+  {% render 'popup', content: ProductOptionPopup, id: popup_id, isFocused: true %}
+{% endcapture %}
+
+{% assign variant_count = product.variants | size %}
+{% if variant_count > 1 %}
+  <div class="animate-on-transition md:mb-5 w-full">
+    <!-- product-options-content -->
+    {% render 'product-options', product: product %}
+    <!-- end-product-options-content -->
+  </div>
+{% endif %}
+
+{{ ProductActions }}
+{% if request.page_type == 'product' %}
+  {{ StickyProductActionsPopup }}
+{% endif %}
+{{ ProductActionsPopup }}

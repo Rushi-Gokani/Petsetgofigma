@@ -1,0 +1,68 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "name": "t:sections.footer.name",
+  "type": "footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "footer-about": {
+          "type": "link_list",
+          "settings": {
+            "heading": "Quick Links",
+            "menu": "footer"
+          }
+        },
+        "footer-categories": {
+          "type": "link_list",
+          "settings": {
+            "heading": "My Account",
+            "menu": "my-account"
+          }
+        },
+        "brand-information": {
+          "type": "brand_information",
+          "settings": {
+            "show_social": true,
+            "enable_follow_on_shop": false
+          }
+        },
+        "text_8yYUQj": {
+          "type": "text",
+          "settings": {
+            "heading": "Neopets",
+            "subtext": "<p>Available Mondays to Saturdays<br/>From 10:00 AM to 5:00 PM</p><p><strong>Phone:</strong> <a href=\"tel:+91 8287413693\" target=\"_blank\" title=\"Pet Set Go, Contact Number\"><em>+91 </em>8287413693</a></p><p><strong>Email:</strong> <a href=\"mailto:care@petsetgo.co.in\" target=\"_blank\" title=\"Pet Set Go, Email, Customer Care Team, Pet Set Go Contact Email\">care@petsetgo.co.in</a></p>",
+            "alignment": "left"
+          }
+        }
+      },
+      "block_order": [
+        "footer-about",
+        "footer-categories",
+        "brand-information",
+        "text_8yYUQj"
+      ],
+      "settings": {
+        "show_newsletter": false,
+        "newsletter_title": "Join Our Newsletter.",
+        "country_selector_enable": false,
+        "language_selector_enable": false,
+        "copyright_text": "PetSetGo,",
+        "payment_enable": true,
+        "custom_color_scheme": true,
+        "color_scheme": "scheme-4"
+      }
+    }
+  },
+  "order": [
+    "footer"
+  ]
+}

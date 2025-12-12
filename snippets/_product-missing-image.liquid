@@ -1,0 +1,96 @@
+{% liquid
+  assign show_image = false
+  if is_gift
+    if settings.gift_card_fallback_image
+      assign show_image = true
+    endif
+  elsif settings.product_fallback_image
+    assign show_image = true
+  endif
+
+  assign text = 'products.product.media.missing_image' | t
+  if settings.product_missing_image_text
+    assign text = settings.product_missing_image_text
+  endif
+
+  assign is_contain = false
+  if settings.fit_products_media == 'contain' and type != 'cart'
+    assign is_contain = true
+  endif
+
+  assign class = 'object-center'
+  assign container_class = 'aspect-product flex items-center justify-center w-full h-full transition-transform md:group-hover:scale-105'
+
+  if settings.card_gray_background
+    assign class = class | append: ' mix-blend-darken'
+  endif
+
+  if is_contain
+    assign class = class | append: ' object-contain rounded-md max-h-full w-auto'
+    if type == 'card'
+      assign class = class | append: ' p-[2%]'
+      assign container_class = container_class | append: ' p-[2%]'
+    endif
+  else
+    assign class = class | append: ' h-full w-full object-cover'
+  endif
+%}
+
+{% capture gift_card_missing_image %}
+  {% if settings.gift_card_fallback_image %}
+    {% render 'image',
+      src: settings.gift_card_fallback_image,
+      width: '100%',
+      height: '100%',
+      img_class: class,
+      container_class: container_class,
+      alt: text
+    %}
+  {% else %}
+    {% render '_gift-card-fallback', class: 'h-1/2 w-full' %}
+  {% endif %}
+{% endcapture %}
+
+<div
+  class="flex aspect-product w-full items-center justify-center {% if is_contain and type != 'card' %}p-[4%]{% endif %} {% if show_image %}bg-[--fade-in-bg]{% else %}bg-secondary-400{% endif %} text-center"
+  style="transform: translateZ(0)"
+>
+  {% if is_gift %}
+    {{ gift_card_missing_image }}
+  {% elsif settings.product_fallback_image %}
+    <div
+      class="hide-unless-transition absolute inset-0 z-10 flex items-center justify-center transition-opacity delay-1000 duration-300 {% if is_contain %}p-[4%]{% endif %}"
+      x-data="
+        TransitionImage({
+          src: '{{ settings.product_fallback_image | image_url }}',
+          imageId: 'product_fallback_image'
+        })
+      "
+      x-show="!!src"
+      :class="{ 'opacity-0': isImgLoaded }"
+    >
+      <img
+        height="100%"
+        width="100%"
+        class="max-h-full object-center {% if is_contain %}w-auto object-contain rounded-2xl{% else %}object-cover size-full{% endif %} {% if settings.card_gray_background %}mix-blend-darken{% endif %}"
+        :src="src"
+      >
+    </div>
+
+    {% render 'image',
+      src: settings.product_fallback_image,
+      width: '100%',
+      height: '100%',
+      img_class: class,
+      container_class: container_class,
+      alt: text
+    %}
+
+    {% assign class = 'md:hidden ' | append: settings.badge_position %}
+    {% render '_discount-badge', product: product.selected_or_first_available_variant, class: class %}
+  {% else %}
+    <div x-element-transition-skip>
+      {{ text }}
+    </div>
+  {% endif %}
+</div>

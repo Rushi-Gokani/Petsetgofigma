@@ -1,0 +1,177 @@
+{% comment %}
+  Renders gift card recipient form.
+  Accepts:
+  - product: {Object} product object.
+  - form: {Object} the product form object.
+  - section: {Object} section to which this snippet belongs.
+
+  Usage:
+  {% render 'gift-card-recipient-form', product: product, form: form, section: section %}
+{% endcomment %}
+
+<div>
+  <!-- Send as a gift checkbox -->
+  <label class="flex items-center gap-3" for="Recipient-checkbox-{{ section.id }}">
+    <input
+      type="checkbox"
+      x-model="properties.__shopify_send_gift_card_to_recipient"
+      id="Recipient-checkbox-{{ section.id }}"
+      class="checkbox__input"
+    >
+    <span class="checkbox__control" aria-hidden="true">
+      {% render 'icon-checkmark' %}
+    </span>
+    <span class="checkbox__label ml-0 ">
+      <span>{{ 'recipient.form.checkbox' | t }}</span>
+    </span>
+  </label>
+
+  <div
+    class="-mx-2 flex flex-col overflow-hidden px-2 py-1 transition-all duration-300 motion-reduce:transition-none"
+    :class="
+      {
+          'max-h-0': !properties.__shopify_send_gift_card_to_recipient,
+          'max-h-screen': properties.__shopify_send_gift_card_to_recipient
+      }
+    "
+    x-cloak
+  >
+    <hr class="my-5 border-primary-50 ">
+    <!-- Email input -->
+    <div class="flex flex-col">
+      <label for="Recipient-email-{{ section.id }}" class="sr-only tracking-widest">
+        {{ 'recipient.form.email_label' | t }}
+      </label>
+      <input
+        class="input__field input__field--outline bg-bg-500 h-auto px-5 py-2.5"
+        :class="
+          {
+            'border-error': $store.cart.error.errors.email,
+            'border-text-50': !$store.cart.error.errors.email
+          }
+        "
+        id="Recipient-email-{{ section.id }}"
+        type="email"
+        x-model.debounce.300ms="properties['Recipient email']"
+        placeholder="{{ 'recipient.form.email_label' | t }}"
+        value="{{ form.email }}"
+        :aria-invalid="!!$store.cart.error.errors.email"
+        :aria-describedby="$store.cart.error.errors.email ? 'RecipientForm-email-error-{{ section.id }}' : null"
+      >
+    </div>
+    <span
+      class="text-error"
+      id="RecipientForm-email-error-{{ section.id }}"
+      x-show="$store.cart.error.errors.email"
+    >
+      {{ 'recipient.form.email' | t }}
+      <span x-text="$store.cart.error.errors.email"></span>
+    </span>
+    <!-- Email input -->
+
+    <!-- Name input -->
+    <div class="mt-5 flex flex-col">
+      <label for="Recipient-name-{{ section.id }}" class="sr-only tracking-widest">
+        {{- 'recipient.form.name_label' | t -}}
+      </label>
+      <input
+        class="input__field input__field--outline bg-bg-500 h-auto px-5 py-2.5"
+        :class="
+          {
+            'border-error': $store.cart.error.errors.name,
+            'border-text-50': !$store.cart.error.errors.name
+          }
+        "
+        id="Recipient-name-{{ section.id }}"
+        x-model="properties['Recipient name']"
+        type="text"
+        placeholder="{{ 'recipient.form.name_label' | t }}"
+        value="{{ form.name }}"
+        :aria-invalid="!!$store.cart.error.errors.name"
+        :aria-describedby="$store.cart.error.errors.name ? 'RecipientForm-name-error-{{ section.id }}' : null"
+        autocomplete="name"
+      >
+    </div>
+    <span
+      class="text-error"
+      id="RecipientForm-name-error-{{ section.id }}"
+      x-show="$store.cart.error.errors.name"
+    >
+      {{ 'recipient.form.name' | t }}
+      <span x-text="$store.cart.error.errors.name"></span>
+    </span>
+    <!-- Name input -->
+
+    <!-- Message input -->
+    <div class="mt-5 flex flex-col">
+      {%- assign max_chars_message_rendered = 'recipient.form.max_characters' | t: max_chars: max_chars_message -%}
+      {%- assign message_label_rendered = 'recipient.form.message_label' | t -%}
+      <label for="Recipient-message-{{ section.id }}" class="sr-only tracking-widest">
+        {{ message_label_rendered }}
+      </label>
+      <textarea
+        rows="5"
+        x-model="properties.Message"
+        class="input__field input__field--outline bg-bg-500 h-auto px-5 py-2.5"
+        :class="
+          {
+            'border-error': $store.cart.error.errors.message,
+            'border-text-50': !$store.cart.error.errors.message
+          }
+        "
+        id="Recipient-message-{{ section.id }}"
+        maxlength="200"
+        placeholder="{{ 'recipient.form.message_label' | t }}"
+        aria-label="{{ message_label_rendered }} {{ max_chars_message_rendered }}"
+        :aria-invalid="!!$store.cart.error.errors.message"
+        :aria-describedby="$store.cart.error.errors.message ? 'RecipientForm-message-error-{{ section.id }}' : null"
+      >{{ form.message }}</textarea>
+    </div>
+    <span
+      class="text-error"
+      id="RecipientForm-message-error-{{ section.id }}"
+      x-show="$store.cart.error.errors.message"
+    >
+      {{ 'recipient.form.message' | t }}
+      <span x-text="$store.cart.error.errors.message"></span>
+    </span>
+    <!-- Message input -->
+
+    <!-- Send on input -->
+    <div class="mt-5 flex flex-col">
+      <label for="Recipient-send-on-{{ section.id }}" class="sr-only tracking-widest">
+        {{ 'recipient.form.send_on_label' | t }}
+      </label>
+      <input
+        class="
+          input__field input__field--outline bg-bg-500 h-auto px-5 py-2.5
+          before:content-['{{ 'recipient.form.send_on_label' | t | replace: ' ', '_' }}'] before:text-sm before:text-gray-500
+        "
+        :class="
+          {
+            'border-error': $store.cart.error.errors.send_on,
+            'border-text-50': !$store.cart.error.errors.send_on
+          }
+        "
+        id="Recipient-send-on-{{ section.id }}"
+        type="date"
+        x-model="properties['Send on']"
+        placeholder="{{ 'recipient.form.send_on_label' | t }}"
+        pattern="\d{4}-\d{2}-\d{2}"
+        value="{{ form.send_on }}"
+        :aria-invalid="!!$store.cart.error.errors.send_on"
+        :aria-describedby="$store.cart.error.errors.send_on ? 'RecipientForm-send_on-error-{{ section.id }}' : null"
+        autocomplete="send_on"
+      >
+    </div>
+    <span
+      class="text-error"
+      id="RecipientForm-message-send_on-{{ section.id }}"
+      x-show="$store.cart.error.errors.send_on"
+    >
+      {{ 'recipient.form.send_on' | t }}
+      <span x-text="$store.cart.error.errors.send_on"></span>
+    </span>
+    <!-- Send on input -->
+  </div>
+</div>

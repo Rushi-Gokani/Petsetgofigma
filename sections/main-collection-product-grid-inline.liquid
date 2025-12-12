@@ -1,0 +1,651 @@
+{%- liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+  assign path = collection.handle | prepend: '/collections/'
+  assign sidebar_menu = section.settings.collection_sidebar_menu
+  assign sidebar_links = blank
+  assign show_collection_sidebar = false
+
+  if section.settings.show_collection_sidebar and sidebar_menu != blank
+    assign sidebar_links = sidebar_menu.links
+    if sidebar_links != blank and sidebar_links.size > 0
+      assign show_collection_sidebar = true
+    endif
+  endif
+-%}
+-%}
+
+{% style %}
+  #shopify-section-{{ section.id }} .collection-layout {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  #shopify-section-{{ section.id }} .collection-layout > .flex-1 {
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar {
+    --collection-sidebar-offset: 110px;
+    --collection-sidebar-bottom-gap: 20px;
+    width: 240px;
+    flex-shrink: 0;
+    position: -webkit-sticky;
+    position: sticky;
+    top: var(--collection-sidebar-offset);
+    height: calc(100vh - var(--collection-sidebar-offset) - var(--collection-sidebar-bottom-gap));
+    max-height: calc(100vh - var(--collection-sidebar-offset) - var(--collection-sidebar-bottom-gap));
+    align-self: flex-start;
+    z-index: 2;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__inner {
+    height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-right: 1rem;
+    padding-bottom: 0.75rem;
+    margin-right: 1rem;
+    border-right: 1px solid var(--color-background-400);
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-500) transparent;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__inner::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__inner::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__inner::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-500);
+    border-radius: 999px;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__heading {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--color-text-600);
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem 0.75rem 1.5rem;
+    border-radius: 20px;
+    background-color: var(--color-background-500);
+    border: 1px solid var(--color-background-400);
+    color: var(--color-text-600);
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__link:hover {
+    border-color: var(--color-primary-500);
+    color: var(--color-primary-600);
+    box-shadow: 0 3px 12px rgba(17, 24, 39, 0.08);
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__link.is-active {
+    border-color: var(--color-primary-500);
+    background-color: var(--color-primary-50);
+    color: var(--color-primary-700);
+    box-shadow: 0 6px 18px rgba(17, 24, 39, 0.1);
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__link.is-active::before {
+    content: "";
+    position: absolute;
+    left: -1rem;
+    top: 6px;
+    bottom: 6px;
+    width: 3px;
+    border-radius: 999px;
+    background-color: var(--color-primary-500);
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__label {
+    font-weight: 600;
+    color: inherit;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__thumb {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 9999px;
+    background-color: var(--color-background-100);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__thumb--empty {
+    border: 1px solid var(--color-background-400);
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__thumb-media {
+    width: 100%;
+    height: 100%;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__thumb-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+
+  #shopify-section-{{ section.id }} .collection-sidebar__thumb-fallback {
+    font-weight: 600;
+    color: var(--color-text-500);
+  }
+
+  @media (max-width: 1023px) {
+    #shopify-section-{{ section.id }} .collection-layout {
+      gap: 0.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar {
+      width: 110px;
+      --collection-sidebar-offset: 84px;
+      --collection-sidebar-bottom-gap: 26px;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__inner {
+      padding-right: 0.5rem;
+      margin-right: 0.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__list {
+      gap: 0.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__link {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__link.is-active::before {
+      left: 50%;
+      top: auto;
+      bottom: -6px;
+      width: 40px;
+      height: 3px;
+      transform: translateX(-50%);
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__label {
+      font-size: 0.875rem;
+      line-height: 1.3;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__thumb {
+      width: 52px;
+      height: 52px;
+    }
+  }
+
+  @media (max-width: 767px) {
+    #shopify-section-{{ section.id }} .collection-layout {
+      position: relative;
+      --collection-sidebar-mobile-width: 96px;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.35rem;
+      flex-wrap: nowrap;
+    }
+
+    #shopify-section-{{ section.id }} #ProductGridContainer {
+      position: relative;
+      overflow: visible;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar {
+      flex: 0 0 var(--collection-sidebar-mobile-width, 96px);
+      width: var(--collection-sidebar-mobile-width, 96px);
+      --collection-sidebar-offset: 70px;
+      --collection-sidebar-bottom-gap: 16px;
+      height: calc(100vh - var(--collection-sidebar-offset) - var(--collection-sidebar-bottom-gap));
+      max-height: calc(100vh - var(--collection-sidebar-offset) - var(--collection-sidebar-bottom-gap));
+      position: -webkit-sticky;
+      position: sticky;
+      top: var(--collection-sidebar-offset);
+      align-self: flex-start;
+      z-index: 10;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__inner {
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 0.25rem;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__placeholder {
+      flex: 0 0 var(--collection-sidebar-mobile-width, 96px);
+      display: none;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__link.is-active::before {
+      bottom: -4px;
+      height: 3px;
+    }
+
+    #shopify-section-{{ section.id }} .collection-sidebar__label {
+      font-size: 0.8125rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    #shopify-section-{{ section.id }} .collection-sidebar {
+      width: var(--collection-sidebar-mobile-width, 96px);
+      --collection-sidebar-offset: 65px;
+      --collection-sidebar-bottom-gap: 12px;
+    }
+  }
+{% endstyle %}
+
+{% capture categoryNoProducts %}
+  <div class="flex w-full flex-col gap-5 py-5 md:items-start">
+    <p class="">
+      <b class="text-secondary-700">{{ 'sections.collection_template.empty_oops' | t }}</b>
+      {{ 'sections.collection_template.empty' | t }}
+    </p>
+    <button type="button" class="button button--outline-secondary" @click="resetAll">
+      {{ 'sections.collection_template.reset' | t }}
+    </button>
+  </div>
+{% endcapture %}
+
+<section class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    id="ProductGridContainer"
+    class="content-wrapper animate-on-transition mx-auto"
+    x-ref="ProductGridContainer"
+    x-data="ProductList('{{ path }}')"
+    key="ProductList-{{ collection.id | default: 'all' }}"
+    style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px"
+  >
+    {% if section.settings.enable_sorting or section.settings.enable_filtering %}
+      {% render 'filters',
+        results: collection,
+        enable_sorting: section.settings.enable_sorting,
+        enable_filtering: section.settings.enable_filtering
+      %}
+    {% endif %}
+
+    <div class="collection-layout flex gap-4 md:gap-6">
+      {% if show_collection_sidebar %}
+        <div class="collection-sidebar__placeholder" aria-hidden="true"></div>
+        <aside
+          class="collection-sidebar"
+          aria-label="{{ section.settings.collection_sidebar_heading | default: 'Collections' }}"
+        >
+          <div class="collection-sidebar__inner">
+            {% if section.settings.collection_sidebar_heading != blank %}
+              <h2 class="collection-sidebar__heading">
+                {{ section.settings.collection_sidebar_heading }}
+              </h2>
+            {% endif %}
+            <ul class="collection-sidebar__list" role="list">
+              {% for link in sidebar_links %}
+                {% liquid
+                  assign linked_collection = blank
+                  if link.type == 'collection_link' or link.type == 'catalog_link'
+                    assign linked_collection = link.object
+                  endif
+                  assign item_image = blank
+                  if linked_collection != blank
+                    assign item_image = linked_collection.featured_image | default: linked_collection.image
+                  endif
+                  assign is_active = false
+                  if link.current or link.active
+                    assign is_active = true
+                  elsif collection != blank and linked_collection != blank and linked_collection.id == collection.id
+                    assign is_active = true
+                  endif
+                %}
+                <li class="collection-sidebar__item" role="listitem">
+                  <a href="{{ link.url }}" class="collection-sidebar__link {% if is_active %}is-active{% endif %}">
+                    <span class="collection-sidebar__thumb{% if item_image == blank %} collection-sidebar__thumb--empty{% endif %}">
+                      {% if item_image %}
+                        {% render 'image',
+                          src: item_image,
+                          alt: linked_collection.title | default: link.title,
+                          loading: 'lazy',
+                          index: forloop.index0,
+                          container_class: 'collection-sidebar__thumb-media',
+                          img_class: 'collection-sidebar__thumb-img'
+                        %}
+                      {% else %}
+                        <span class="collection-sidebar__thumb-fallback">
+                          {{ link.title | slice: 0, 1 | upcase }}
+                        </span>
+                      {% endif %}
+                    </span>
+                    <span class="collection-sidebar__label">{{ link.title }}</span>
+                  </a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </aside>
+      {% endif %}
+
+      <div class="flex-1">
+        <div class="flex md:items-start">
+          {%- paginate collection.products by section.settings.products_per_page -%}
+            {%- if collection.products.size == 0 -%}
+              {{ categoryNoProducts }}
+            {%- else -%}
+              <div class="flex-grow">
+                <div
+                  data-content-wrapper
+                  id="product-grid"
+                  style="
+                    --cols-sm: {{ section.settings.column_amount_sm }};
+                    --cols-md: {{ section.settings.column_amount_md }};
+                    --cols-lg: {{ section.settings.column_amount_lg }};
+                    --cols-xl: {{ section.settings.column_amount_xl }};
+                    --cols-2xl: {{ section.settings.column_amount_2xl }};
+                  "
+                  class="
+                    mb-5 grid grid-cols-[repeat(var(--cols-sm),minmax(0,1fr))] gap-5 transition-opacity duration-100 ease-linear md:mb-16
+                    md:grid-cols-[repeat(var(--cols-md),minmax(0,1fr))] lg:grid-cols-[repeat(var(--cols-lg),minmax(0,1fr))]
+                    xl:grid-cols-[repeat(var(--cols-xl),minmax(0,1fr))] 2xl:grid-cols-[repeat(var(--cols-2xl),minmax(0,1fr))]
+                  "
+                  :class="
+                    {
+                      'opacity-0': isLoadingProducts,
+                    }
+                  "
+                >
+                  <!-- pagination-content -->
+                  {%- for product in collection.products -%}
+                    {% render 'card-product',
+                      card_product: product,
+                      show_vendor: section.settings.show_vendor,
+                      index: forloop.index0,
+                      nth_product_large: 5,
+                      allow_mobile_wide_card: false,
+                      lazy_load: false,
+                      badge_position_override: 'top right'
+                    %}
+                  {%- endfor -%}
+                  <!-- end-pagination-content -->
+                </div>
+
+                {%- if paginate.pages > 1 and paginate.next -%}
+                  <div class="my-7 flex flex-col items-center">
+                    <a
+                      href="#"
+                      x-pagination-trigger="{ 'lastPage': {{ paginate.pages }}, 'autoLoad': true }"
+                      class="button btn--size-md button--ghost-primary w-full cursor-pointer text-center md:w-auto pagination-loader"
+                      :class="{ 'opacity-0 pointer-events-none': isLoadingProducts }"
+                    >
+                      <span class="pagination-loader__text">
+                        {{ 'general.pagination.load_more_products' | t }}
+                      </span>
+                      <span class="button__icon button__icon--right top-[1px] text-lg">
+                        {%- render 'icon-arrow-bottom' -%}
+                      </span>
+                    </a>
+                    <div
+                      x-show="isLoadingProducts"
+                      x-transition:enter="transition ease-out duration-300"
+                      x-transition:enter-start="opacity-0 transform translate-y-2"
+                      x-transition:enter-end="opacity-100 transform translate-y-0"
+                      x-transition:leave="transition ease-in duration-200"
+                      x-transition:leave-start="opacity-100"
+                      x-transition:leave-end="opacity-0"
+                      class="flex items-center gap-2 text-sm text-gray-600 mt-2"
+                    >
+                      <div class="pagination-loader__spinner"></div>
+                      <span>Loading more products...</span>
+                    </div>
+                  </div>
+                {%- endif -%}
+              </div>
+            {%- endif -%}
+          {%- endpaginate -%}
+          {% if section.settings.enable_sorting or section.settings.enable_filtering %}
+            <aside class="relative">
+              <div class="absolute end-0 top-[-68px] ms-8 md:ps-2">
+                <button
+                  type="button"
+                  class="button button--filled-primary hidden w-[275px] min-w-[275px] md:inline-flex"
+                  @click="$store.productList.toggleFiltersSidebar()"
+                >
+                  <span
+                    x-text="$store.productList.isFiltersSidebarExpanded ? '{{ 'products.facets.filter_hide' | t }}' : '{{ 'products.facets.filter_show' | t }}'"
+                  >
+                    {{ 'products.facets.filter_hide' | t }}
+                  </span>
+                  <span class="button__icon ms-3 text-xl">
+                    {% render 'icon-filter' %}
+                  </span>
+                </button>
+              </div>
+
+              <div
+                class="ms-8 hidden w-[275px] min-w-[275px] overflow-hidden transition-[width,min-width] motion-reduce:transition-none md:sticky md:top-[--scroll-top] md:block"
+                :class="
+                  {
+                    'w-[275px] min-w-[275px] ms-8': $store.productList.isFiltersSidebarExpanded,
+                    'w-0 min-w-0 ms-0': !$store.productList.isFiltersSidebarExpanded
+                  }
+                "
+                x-sticky-scroll="
+                  {
+                    top: 90,
+                    bottom: 24,
+                  }
+                "
+              >
+                <div
+                  id="filters-sidebar"
+                  class="w-[275px] min-w-[275px] translate-x-0 transition-transform motion-reduce:transition-none"
+                  :class="
+                    {
+                      'translate-x-full': !$store.productList.isFiltersSidebarExpanded,
+                      'translate-x-0': $store.productList.isFiltersSidebarExpanded
+                    }
+                  "
+                  :inert="!$store.productList.isFiltersSidebarExpanded"
+                ></div>
+              </div>
+            </aside>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if section.settings.enable_sorting or section.settings.enable_filtering %}
+      {% comment %} Needed to offset bottom filters at the bottom {% endcomment %}
+      <div class="h-[60px] md:hidden"></div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main collection grid",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "default": 12,
+      "label": "t:sections.main-collection-product-grid.settings.products_per_page.label"
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_sm",
+      "label": "t:sections.main-collection-product-grid.settings.columns.sm.label",
+      "info": "t:sections.main-collection-product-grid.settings.columns.sm.info",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_md",
+      "label": "t:sections.main-collection-product-grid.settings.columns.md.label",
+      "info": "t:sections.main-collection-product-grid.settings.columns.md.info",
+      "default": 2
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_lg",
+      "label": "t:sections.main-collection-product-grid.settings.columns.lg.label",
+      "info": "t:sections.main-collection-product-grid.settings.columns.lg.info",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_xl",
+      "label": "t:sections.main-collection-product-grid.settings.columns.xl.label",
+      "info": "t:sections.main-collection-product-grid.settings.columns.xl.info",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_2xl",
+      "label": "t:sections.main-collection-product-grid.settings.columns.2xl.label",
+      "info": "t:sections.main-collection-product-grid.settings.columns.2xl.info",
+      "default": 5
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__3.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.main-collection-product-grid.settings.show_vendor.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_filtering.label",
+      "info": "t:sections.main-collection-product-grid.settings.enable_filtering.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_sorting.label"
+    },
+    {
+      "type": "header",
+      "content": "Collection sidebar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_sidebar",
+      "default": false,
+      "label": "Show collection list"
+    },
+    {
+      "type": "link_list",
+      "id": "collection_sidebar_menu",
+      "label": "Sidebar menu"
+    },
+    {
+      "type": "text",
+      "id": "collection_sidebar_heading",
+      "label": "Sidebar heading",
+      "default": "Shop by category"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

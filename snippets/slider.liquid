@@ -1,0 +1,112 @@
+{% comment %}
+  Renders a slider
+
+  Accepts:
+    - slides: {Object} Slides to render.
+    - gap: {Number} Gap between each slide
+    - slides_amount_in_view: {String} Number slide to show in the view (Json format)
+    - class: {String} custom slider class. (optional)
+    - title: {String} slider title. (optional)
+    - id: {String} slider id which be like {string}-slider. (optional)
+    - custom_actions: {Object} To render custom action pass your custom html object to it. MUST HAVE 1 Parent AND BE AN ELEMENT. (optional)
+    - is_full_page: {Boolean} To make slider compatible with full page size (optional)
+    - is_header_disabled: {Boolean} Disable Header (optional)
+    - is_actions_disabled: {Boolean} Disable Prev/Next butons (optional)
+    - is_custom_slider_x_data: {Boolean} Use custom Slider x-data
+    - is_scrollbar_hidden: {Boolean} Hide horizontal scrollbar
+    - is_auto_play: {Boolean} Auto play slider
+    - autoplay_speed: {number} Auto play speed in milliseconds
+
+  Usage:
+    {% render 'slider',
+      slides: <div class="slide">slide1</div>...<div class="slide">slide n</div>,
+      gap: 16,
+      slides_amount_in_view: '{xs: 1, sm: 2, md: 3, lg: 4, xl: 5, xxl: 6}',
+      class: 'my-slider-class',
+      title: 'my slider title',
+      id: 'my-slider-id',
+      custom_actions: <a href="#somewhere"> my custom action </a>,
+      is_full_page: true,
+      is_header_disabled: true,
+      is_actions_disabled: true
+    %}
+{% endcomment %}
+{% comment %} vvv Creating css variables of slide counts {% endcomment %}
+{% assign slides_amount_in_view_config = slides_amount_in_view
+  | strip
+  | remove: ' '
+  | remove: '{'
+  | remove: '}'
+  | split: ','
+%}
+{% assign converted_slides_amount_in_view = '' %}
+{% for config in slides_amount_in_view_config %}
+  {% assign breakpoint_and_value = config | split: ':' %}
+  {% assign breakpoint = breakpoint_and_value[0] %}
+  {% assign value = breakpoint_and_value[1] %}
+
+  {% if forloop.first == false -%}
+    {%- assign converted_slides_amount_in_view = converted_slides_amount_in_view | append: ';' -%}
+  {%- endif %}
+
+  {% assign key = '--slide-count-' | append: breakpoint %}
+  {% assign entry = key | append: ': ' | append: value %}
+  {% assign converted_slides_amount_in_view = converted_slides_amount_in_view | append: entry %}
+{% endfor %}
+
+<div
+  class="slider {% if is_full_page %} slider--full-width {% endif %}"
+  x-init="
+    configureAndStart({
+      slidesAmountInView: {{ slides_amount_in_view }},
+      gap: {{ gap }},
+      isAutoplay: {{ is_auto_play | default: false }},
+      autoplaySpeed: {{ autoplay_speed | default: 0 }}
+    })
+  "
+  {% unless is_custom_slider_x_data %}
+    x-data="Slider()"
+  {% endunless %}
+  {% if id %}
+    id="{{ id }}-slider"
+  {% endif %}
+  :class="'{{ class }}'"
+  {%- comment -%}
+    vvv If you use alpine directive it will wait for alpine to init and then add it to element
+    vvv therefore your variables will not be available quick enough and your slider will be broken on load (without cache) and then get fixed.
+  {%- endcomment -%}
+  style="
+    --slide-gap: {{ gap }}px;
+    {{ converted_slides_amount_in_view }}
+  "
+>
+  {%- unless is_header_disabled -%}
+    <div class="slider__header">
+      {%- if title -%}
+        <h1 class="slider__title">{{ title }}</h1>
+      {%- endif -%}
+      <div class="slider__actions">
+        {%- if custom_actions -%}
+          <template x-if="!$store.main.isMobile">
+            {{ custom_actions }}
+          </template>
+        {%- endif -%}
+        {%- unless is_actions_disabled -%}
+          {%- render 'slider-buttons' -%}
+        {%- endunless -%}
+      </div>
+    </div>
+  {%- endunless -%}
+  <div
+    class="slider__slides {% if is_scrollbar_hidden %}scrollbar-hidden pb-0{% endif %} {% if is_header_disabled %}pt-0{% endif %}"
+    x-ref="slider"
+    @scroll="handleManualScroll"
+  >
+    {{ slides }}
+  </div>
+  {%- if custom_actions -%}
+    <template x-if="$store.main.isMobile">
+      {{ custom_actions }}
+    </template>
+  {%- endif -%}
+</div>

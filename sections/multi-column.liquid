@@ -1,0 +1,158 @@
+<section class="multi-column-section color-{{ section.settings.color_scheme }} gradient" id="{{ section.id }}">
+    <div class="container mx-auto px-4">
+        {% if section.settings.title != blank %}
+        <h2 class="text-center section-title text-2xl md:text-3xl font-bold mb-6">{{ section.settings.title }}</h2>
+        {% endif %}
+        <div class="grid multicolumn-grid grid-cols-{{ section.settings.mob_columns }} md:grid-cols-{{section.settings.tablet_columns}} lg:grid-cols-{{section.settings.desktop_columns}} gap-y-4 gap-x-4  mt-3">
+            {% for block in section.blocks %}
+            <div class="relative multi-column-card" {{ block.shopify_attributes }}>
+                {% if block.settings.image != blank %}
+                {% render 'image'
+                , src: block.settings.image
+                , alt: block.settings.image.alt
+                , img_class: 'w-full h-auto rounded-lg object-contain'
+                , container_class: 'overflow-hidden rounded-lg z-0 bg-white'
+                %}
+                {% else %}
+                <div
+                    class="category-image-placeholder bg-gray-200 rounded-lg aspect-square flex items-center justify-center">
+                    {{ 'image' | placeholder_svg_tag: 'w-16 h-16 text-gray-400' }}
+                </div>
+                {% endif %}
+                {% if block.settings.link != blank %}
+                <a href="{{ block.settings.link }}" class="absolute inset-0 z-1 multi-column-card-link"></a>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+    #{{section.id}} {
+        
+        --color-background-500: {{ section.settings.color_scheme.settings.background }};
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+
+        & .multicolumn-grid{
+            gap: 2rem;
+        }
+
+        & .multi-column-card {
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        & .multi-column-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        & .multi-column-card-link {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+    }
+</style>
+
+{% schema %}
+{
+    "name": "Category Slider",
+    "tag": "section",
+    "class": "section",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Heading",
+            "default": "Shop by Category"
+        },
+        {
+            "type": "range",
+            "id": "mob_columns",
+            "label": "Mobile columns",
+            "min": 1,
+            "max": 4,
+            "step": 1,
+            "default": 2
+        },
+        {
+            "type": "range",
+            "id": "tablet_columns",
+            "label": "Tablet columns",
+            "min": 1,
+            "max": 4,
+            "step": 1,
+            "default": 2
+        },
+        {
+            "type": "range",
+            "id": "desktop_columns",
+            "label": "Desktop columns",
+            "min": 1,
+            "max": 4,
+            "step": 1,
+            "default": 2
+        },
+        {
+            "type": "color_scheme",
+            "id": "color_scheme",
+            "label": "Color scheme",
+            "default": "scheme-1"
+        },
+        {
+            "type": "range",
+            "id": "padding_top",
+            "label": "Top padding",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "default": 36
+        },
+        {
+            "type": "range",
+            "id": "padding_bottom",
+            "label": "Bottom padding",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "default": 36
+        },
+    ],
+    "blocks":[
+        {
+            "type": "card",
+            "name": "Card",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Multi Column",
+            "category": "Content"
+        }
+    ]
+}
+{% endschema %}

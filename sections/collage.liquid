@@ -1,0 +1,165 @@
+{% unless section.blocks == empty %}
+  {% liquid
+    assign top_padding = section.settings.padding_top | round: 0
+    assign bottom_padding = section.settings.padding_bottom | round: 0
+  %}
+  <div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+    <div
+      class="content-wrapper m-auto grid grid-cols-2 gap-5 md:grid-cols-3"
+      style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px"
+    >
+      {% for block in section.blocks %}
+        {% liquid
+          case block.type
+            when 'product'
+              assign product = block.settings.product
+              assign image = product.featured_image
+              assign title = product.title
+              if block.settings.product == blank
+                assign title = 'sections.cart.headings.product' | t
+              endif
+              capture link_attrs
+                render '_link-attributes', is_product: true, product: product
+              endcapture
+            when 'collection'
+              assign collection = block.settings.collection
+              assign image = collection.featured_image
+              assign title = collection.title
+              if block.settings.collection == blank
+                assign title = 'sections.collection_template.title' | t
+              endif
+              capture link_attrs
+                render '_link-attributes', is_collection: true, collection: collection
+              endcapture
+          endcase
+        %}
+        <a
+          class="contrast-border card-hover group relative flex items-end justify-stretch rounded-md p-5 font-semibold {% if forloop.first %}col-span-2 row-span-2 md:p-7 max-md:min-h-[300px]{% else %}md:col-start-3 md:p-5 md:min-h-[250px] min-h-[200px]{% endif %}"
+          {{ link_attrs }}
+          {{ block.shopify_attributes }}
+        >
+          <div class="absolute left-0 top-0 h-full w-full overflow-hidden rounded-md">
+            {% if image %}
+              {% assign alt = image.alt | default: title | append: ' Collage' %}
+              {% render 'image',
+                src: image,
+                width: '100%',
+                height: '100%',
+                img_class: 'object-cover object-center size-full',
+                container_class: 'transition-transform md:group-hover:scale-105 size-full',
+                alt: alt,
+                is_mix: settings.card_gray_background
+              %}
+            {% else %}
+              {% assign placeholder_type = block.type | append: '-' | append: forloop.index %}
+              {{
+                placeholder_type
+                | placeholder_svg_tag: 'bg-secondary-400 transition-transform md:group-hover:scale-105 size-full object-cover object-center'
+              }}
+            {% endif %}
+          </div>
+          <div class="flex w-full flex-grow justify-between gap-7" style="filter:url(#border)">
+            <h2 class="flex-grow-1 truncate {% if forloop.first %}text-2xl{% endif %}">{{ title }}</h2>
+            {% if product %}
+              <span class="font-medium">
+                {{- product.price | money_without_trailing_zeros -}}
+              </span>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endunless %}
+
+{% schema %}
+{
+  "name": "t:sections.collage.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "t:sections.collage.blocks.product.name",
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.collage.blocks.product.settings.product.label"
+        }
+      ]
+    },
+    {
+      "type": "collection",
+      "name": "t:sections.collage.blocks.collection.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.collage.blocks.collection.settings.collection.label"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "t:sections.collage.presets.name",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "product"
+        },
+        {
+          "type": "product"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

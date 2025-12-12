@@ -1,0 +1,135 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+  assign title = section.settings.heading | escape
+  assign slides_amount_in_view = '{xs: 2.2, sm: 2.5, md: 3, lg: 4, xl: 5, xxl: 5}'
+%}
+
+<div
+  style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px"
+  id="related-products-wrapper"
+  class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+>
+  {% if recommendations.performed and recommendations.products_count > 0 %}
+    {%- capture slides -%}
+    {% for recommendation in recommendations.products %}
+        {%- capture slideContent -%}
+          {%- render 'card-product',
+            card_product: recommendation,
+            show_vendor: true,
+            class: 'animate-fadeIn',
+            badge_position_override: 'top right'
+          -%}
+        {%- endcapture -%}
+        {%- render 'slider-slide', content: slideContent -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+    {% comment %}
+      {% capture custom_actions %}
+        {% if section.settings.show_view_all %}
+          <a
+            {%- render '_link-attributes', is_collection: true, collection: section.settings.collection -%}
+          >
+            {{ 'sections.featured_collection.view_all' | t }}
+          </a>
+        {% endif %}
+      {% endcapture %}
+    {% endcomment %}
+
+    {%- render 'slider',
+      slides: slides,
+      gap: 16,
+      slides_amount_in_view: slides_amount_in_view,
+      title: title,
+      is_full_page: true
+    -%}
+  {% else %}
+    <div
+      id="related-products"
+      x-init="
+        () => {
+          $data.fetchProductRecommendations('related-products', '{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit=12');
+        }
+      "
+    >
+      {%- capture slides -%}
+      {% for num in (1..6) %}
+          {%- capture slideContent -%}
+            {%- render 'card-product' -%}
+          {%- endcapture -%}
+          {%- render 'slider-slide', content: slideContent -%}
+        {%- endfor -%}
+      {%- endcapture -%}
+
+      {%- render 'slider',
+        slides: slides,
+        gap: 16,
+        slides_amount_in_view: slides_amount_in_view,
+        title: title,
+        is_full_page: true
+      -%}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.product-recommendations.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.product-recommendations.settings.paragraph__1.content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "You may also like",
+      "label": "t:sections.product-recommendations.settings.heading.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

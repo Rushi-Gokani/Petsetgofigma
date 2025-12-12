@@ -1,0 +1,82 @@
+{% comment %}
+  Renders product price
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - class: {String} Class to be passed to wrapper element
+  - is_alpine_template: {Boolean} should implement via alpine code or normal liquid
+  - is_inline: {Boolean} Display price and price per item in same line
+  - is_popup: {Boolean} Price is rendered in a popup
+
+  Usage:
+  {% render '_price-element', product: product, class: 'class', is_alpine_template: true, is_inline: true %}
+{% endcomment %}
+
+{% if is_alpine_template %}
+  <template x-if="product.compare_at_price_min > product.price">
+    <div class="price__element z-10 flex items-center gap-2 text-text-500 {{ class }}">
+      <span class="sr-only">{{ 'products.product.price.sale_price' | t }}</span>
+      <span class="text-primary-600 font-bold product-price-enhanced" x-text="$store.main.getPrice(product.price)"></span>
+      <s x-text="$store.main.getPrice(product.compare_at_price_min)"></s>
+    </div>
+  </template>
+  <template x-if="product.compare_at_price_min <= product.price && product.price_min != product.price_max">
+    <div class="price__element z-10 flex items-center gap-2 text-text-500 {{ class }}">
+      <span>{{ 'products.product.price.from' | t }}</span>
+      <span class="text-primary-600 font-bold product-price-enhanced" x-text="$store.main.getPrice(product.price_min)"></span>
+    </div>
+  </template>
+  <template x-if="product.compare_at_price_min <= product.price && product.price_min == product.price_max">
+    <div class="price__element z-10 flex items-center gap-2 text-text-500 {{ class }}">
+      <span class="sr-only">{{ 'products.product.price.regular_price' | t }}</span>
+      <span class="text-primary-600 font-bold product-price-enhanced" x-text="$store.main.getPrice(product.price)"></span>
+    </div>
+  </template>
+{% else %}
+  {% liquid
+    if settings.currency_code_enabled
+      assign price_min = product.price_min | money_with_currency | remove: ',00'
+      assign price = product.price | default: 1999 | money_with_currency | remove: ',00'
+      assign compare_at_price = product.compare_at_price | money_with_currency | remove: ',00'
+      assign unit_price = product.unit_price | money_with_currency | remove: ',00'
+    else
+      assign price_min = product.price_min | money_without_trailing_zeros
+      assign price = product.price | default: 1999 | money_without_trailing_zeros
+      assign compare_at_price = product.compare_at_price | money_without_trailing_zeros
+      assign unit_price = product.unit_price | money_without_trailing_zeros
+    endif
+  %}
+
+  <div class="{% if is_inline %}flex items-end flex-grow gap-3 {% unless is_popup %}mt-3{% endunless %} [&>div]:mt-0{% else %}contents{% endif %}">
+    <div class="price__element z-10 flex items-center gap-2 text-text-500 {{ class }}">
+      {% if product.price_varies %}
+        <span>{{ 'products.product.price.from' | t }}</span>
+        <span class="text-primary-600 font-bold product-price-enhanced">{{ price_min }}</span>
+      {% elsif product.compare_at_price > product.price %}
+        <span class="sr-only">{{ 'products.product.price.sale_price' | t }}</span>
+        <span class="text-primary-600 font-bold product-price-enhanced">{{ price }}</span>
+        <s>{{ compare_at_price }}</s>
+      {% else %}
+        <span class="sr-only">{{ 'products.product.price.regular_price' | t }}</span>
+        <span class="text-primary-600 font-bold product-price-enhanced">{{ price }}</span>
+      {% endif %}
+      {% if show_badge %}
+        {% render '_discount-badge', product: product, class: 'ms-3 static max-md:hidden !bg-secondary-500' %}
+      {% endif %}
+    </div>
+    <div class="mt-2 text-md  {% if product.unit_price_measurement == nil %}hidden{% endif %}">
+      <span class="sr-only">{{ 'products.product.price.unit_price' | t }}</span>
+      <span class="text-primary-600">
+        <span>{{- unit_price -}}</span>
+        <span aria-hidden="true">/</span>
+        <span class="sr-only">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+        <span>
+          {%- if product.unit_price_measurement.reference_value != 1 -%}
+            {{- product.unit_price_measurement.reference_value -}}
+          {%- endif -%}
+          {{ product.unit_price_measurement.reference_unit }}
+        </span>
+      </span>
+    </div>
+  </div>
+{% endif %}

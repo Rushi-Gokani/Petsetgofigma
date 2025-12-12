@@ -1,0 +1,208 @@
+{%- liquid
+  case section.settings.sort
+    when 'products_high', 'products_low'
+      assign collections = collections | sort: 'all_products_count'
+    when 'date', 'date_reversed'
+      assign collections = collections | sort: 'published_at'
+  endcase
+
+  if section.settings.sort == 'products_high' or section.settings.sort == 'date_reversed' or section.settings.sort == 'alphabetical_reversed'
+    assign collections = collections | reverse
+  endif
+
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+-%}
+
+{%- paginate collections by section.settings.page_size -%}
+  <div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+    <div
+      class="content-wrapper mx-auto"
+      style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px"
+    >
+      <div class="py-4">
+        <h1 class="heading text-2xl text-text-500">{{ section.settings.title | escape }}</h1>
+      </div>
+
+      <div
+        data-content-wrapper
+        style="
+          --cols-sm: {{ section.settings.column_amount_sm }};
+          --cols-md: {{ section.settings.column_amount_md }};
+          --cols-lg: {{ section.settings.column_amount_lg }};
+          --cols-xl: {{ section.settings.column_amount_xl }};
+          --cols-2xl: {{ section.settings.column_amount_2xl }};
+        "
+        class="
+          mb-5 grid grid-cols-[repeat(var(--cols-sm),minmax(0,1fr))] gap-8 pt-5
+          md:grid-cols-[repeat(var(--cols-md),minmax(0,1fr))] lg:grid-cols-[repeat(var(--cols-lg),minmax(0,1fr))]
+          xl:grid-cols-[repeat(var(--cols-xl),minmax(0,1fr))] 2xl:grid-cols-[repeat(var(--cols-2xl),minmax(0,1fr))]
+        "
+      >
+        <!-- pagination-content -->
+        {%- for card_collection in collections -%}
+          {% render 'card-collection', card_collection: card_collection, lazy_load: true %}
+        {%- endfor -%}
+        <!-- end-pagination-content -->
+      </div>
+
+      {%- if paginate.pages > 1 and paginate.next -%}
+        <div class="my-7 flex flex-col items-center">
+          <a
+            x-pagination-trigger="{ 'lastPage': {{ paginate.pages }} }"
+            class="button btn--size-md button--outline-primary cursor-pointer"
+          >
+            {{ 'general.pagination.load_more' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "t:sections.main-list-collections.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.main-list-collections.settings.title.label",
+      "default": "Collections"
+    },
+    {
+      "type": "select",
+      "id": "sort",
+      "options": [
+        {
+          "value": "alphabetical",
+          "label": "t:sections.main-list-collections.settings.sort.options__1.label"
+        },
+        {
+          "value": "alphabetical_reversed",
+          "label": "t:sections.main-list-collections.settings.sort.options__2.label"
+        },
+        {
+          "value": "date_reversed",
+          "label": "t:sections.main-list-collections.settings.sort.options__3.label"
+        },
+        {
+          "value": "date",
+          "label": "t:sections.main-list-collections.settings.sort.options__4.label"
+        },
+        {
+          "value": "products_high",
+          "label": "t:sections.main-list-collections.settings.sort.options__5.label"
+        },
+        {
+          "value": "products_low",
+          "label": "t:sections.main-list-collections.settings.sort.options__6.label"
+        }
+      ],
+      "default": "alphabetical",
+      "label": "t:sections.main-list-collections.settings.sort.label"
+    },
+    {
+      "type": "range",
+      "id": "page_size",
+      "min": 1,
+      "max": 100,
+      "step": 1,
+      "label": "t:sections.main-list-collections.settings.page_size.label",
+      "default": 6
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_sm",
+      "label": "t:sections.main-list-collections.settings.columns.sm.label",
+      "info": "t:sections.main-list-collections.settings.columns.sm.info",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_md",
+      "label": "t:sections.main-list-collections.settings.columns.md.label",
+      "info": "t:sections.main-list-collections.settings.columns.md.info",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_lg",
+      "label": "t:sections.main-list-collections.settings.columns.lg.label",
+      "info": "t:sections.main-list-collections.settings.columns.lg.info",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_xl",
+      "label": "t:sections.main-list-collections.settings.columns.xl.label",
+      "info": "t:sections.main-list-collections.settings.columns.xl.info",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "id": "column_amount_2xl",
+      "label": "t:sections.main-list-collections.settings.columns.2xl.label",
+      "info": "t:sections.main-list-collections.settings.columns.2xl.info",
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 0
+    }
+  ]
+}
+{% endschema %}

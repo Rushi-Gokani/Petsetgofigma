@@ -1,0 +1,71 @@
+{% comment %}
+  Renders a dropdown
+
+  Accepts:
+    id: string,
+    placement: string: top, bottom, right, left,
+    label: string,
+    withSearch: boolean,
+    options: {Object} options to render.
+{% endcomment %}
+
+<div class="relative" x-data="Dropdown()" x-ref="DropdownWrapper">
+  <button
+    @click="toggleDropdown()"
+    id="{{ id }}-button"
+    data-dropdown-toggle="{{ id }}"
+    data-dropdown-placement="{{ placement }}"
+    class="inline-flex items-center justify-between gap-6 whitespace-nowrap rounded-sm border border-text-500 bg-bg-500 px-6 py-3"
+    type="button"
+    :aria-expanded="isDropdownVisible"
+    aria-controls="{{ id }}"
+  >
+    {{ label }}
+    <span
+      class="transition-transform motion-reduce:transition-none"
+      :class="{ 'rotate-180': isDropdownVisible }"
+    >
+      {% render 'icon-caret', class: 'text-xs' %}
+    </span>
+  </button>
+
+  <!-- Dropdown menu -->
+  <div
+    id="{{ id }}"
+    x-a11y-trap="isDropdownVisible"
+    class="
+      absolute start-1/2 z-10 hidden min-w-full -translate-x-1/2 transform rounded-sm border border-text-500 bg-bg-500 p-2 rtl:translate-x-1/2
+      {% if placement == 'top' %}bottom-full{% endif %}
+      {% if placement == 'bottom' %}top-full{% endif %}
+      {% if placement == 'right' %}inset-inline-start-full{% endif %}
+      {% if placement == 'left' %}inset-inline-end-full{% endif %}
+    "
+    :class="
+      {
+          'block': isDropdownVisible,
+          'hidden': !isDropdownVisible,
+      }
+    "
+  >
+    {% if withSearch == true %}
+      <div class="p-2">
+        <label for="{{ id }}-search" class="sr-only">
+          {{ 'general.search.search' | t }}
+        </label>
+        <input
+          type="text"
+          id="{{ id }}-search"
+          class="input__field"
+          placeholder="{{ 'general.search.search' | t }}"
+          @input.debounce.300ms="search($event.target.value)"
+        >
+      </div>
+    {% endif %}
+    <ul
+      class="max-h-48 overflow-y-auto p-2 text-sm"
+      aria-labelledby="{{ id }}-button"
+    >
+      {{ options }}
+    </ul>
+  </div>
+</div>

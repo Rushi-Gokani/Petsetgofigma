@@ -1,0 +1,105 @@
+{% comment %}
+  Mobile Product Gallery Slider
+  ----------------------------
+  This snippet creates a slider for product images on mobile view.
+{% endcomment %}
+
+{% liquid
+  assign is_contain = false
+  if settings.fit_products_media == 'contain'
+    assign is_contain = true
+  endif
+
+  assign default_media = product.selected_or_first_available_variant.featured_media | default: product.featured_media
+  assign product_gallery_carousel_id = 'product-gallery-mobile-carousel-' | append: product.id | append: '-' | append: section.id
+  assign total_media = product.media.size
+  assign default_media_index = 0
+  for media_item in product.media
+    if media_item == default_media
+      assign default_media_index = forloop.index0
+    endif
+  endfor
+  assign initial_position = default_media_index | plus: 1
+  assign initial_progress = 0
+  if total_media > 0
+    assign initial_progress = initial_position | times: 1.0 | divided_by: total_media
+    assign initial_progress = initial_progress | round: 4
+  endif
+%}
+
+<div class="product-gallery-mobile md:hidden" id="product-gallery-mobile-{{ product.id }}">
+  {% if product.media.size > 1 %}
+    <div class="product-gallery-mobile__wrapper" data-gallery-wrapper data-gallery-total="{{ total_media }}" data-gallery-initial="{{ default_media_index }}">
+      <div class="product-gallery-mobile__top">
+        <div class="product-gallery-mobile__counter" data-gallery-counter aria-live="polite">
+          <span class="product-gallery-mobile__counter-current" data-gallery-counter-current>{{ initial_position }}</span>
+          <span class="product-gallery-mobile__counter-divider">{{ 'general.slider.of' | t }}</span>
+          <span class="product-gallery-mobile__counter-total" data-gallery-counter-total>{{ total_media }}</span>
+        </div>
+      </div>
+
+      <div class="product-gallery-mobile__viewport">
+        <button type="button" class="product-gallery-mobile__nav product-gallery-mobile__nav--prev" data-gallery-prev aria-controls="{{ product_gallery_carousel_id }}" aria-label="{{ 'general.slider.previous_slide' | t }}" {% if default_media_index == 0 %}disabled{% endif %}>
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 6l-6 6 6 6" />
+          </svg>
+        </button>
+
+        <scroll-carousel adaptive-height id="{{ product_gallery_carousel_id }}" class="product-gallery-mobile__carousel scroll-area" role="region" data-gallery-carousel>
+        {% for media in product.media %}
+          <div class="product-gallery-mobile__media snap-center {% if media == default_media %}is-initial{% endif %}" data-media-type="{{ media.media_type }}" data-media-id="{{ media.id }}" data-gallery-slide-index="{{ forloop.index0 }}" role="group" aria-label="{{ 'general.accessibility.item_nth_of_count' | t: index: media.position, count: product.media.size }}">
+            {% liquid
+              assign class = 'object-center '
+              assign container_class = 'flex items-center justify-center size-full '
+              if is_contain
+                assign class = class | append: 'object-contain rounded-[5%] md:rounded-[3%] max-h-full w-auto'
+                assign container_class = container_class | append: 'p-[4%]'
+              else
+                assign class = class | append: 'object-cover size-full'
+                assign container_class = container_class | append: 'size-full'
+              endif
+            %}
+
+            {% render 'media',
+              media: media,
+              class: class,
+              container_class: container_class,
+              variant_image: true,
+              index: forloop.index0,
+              title: product.title,
+              loop: section.settings.enable_video_looping,
+              autoplay: section.settings.enable_video_autoplay
+            %}
+          </div>
+        {% endfor %}
+      </scroll-carousel>
+
+        <button type="button" class="product-gallery-mobile__nav product-gallery-mobile__nav--next" data-gallery-next aria-controls="{{ product_gallery_carousel_id }}" aria-label="{{ 'general.slider.next_slide' | t }}" {% if default_media_index == total_media | minus: 1 %}disabled{% endif %}>
+          <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+        </button>
+
+        <span class="product-gallery-mobile__edge product-gallery-mobile__edge--left" aria-hidden="true"></span>
+        <span class="product-gallery-mobile__edge product-gallery-mobile__edge--right" aria-hidden="true"></span>
+      </div>
+
+      <div class="product-gallery-mobile__progress" aria-hidden="true">
+        <span class="product-gallery-mobile__progress-bar" data-gallery-progress style="transform: scaleX({{ initial_progress }});"></span>
+      </div>
+
+      <carousel-navigation class="product-gallery-mobile__thumbnails" aria-controls="{{ product_gallery_carousel_id }}">
+        {% for media in product.media %}
+          <button type="button" class="product-gallery-mobile__thumbnail-btn {% if media == default_media %}product-gallery-mobile__thumbnail-btn--active{% endif %}" data-media-type="{{ media.media_type }}" aria-current="{% if media == default_media %}true{% else %}false{% endif %}">
+            <div class="product-gallery-mobile__thumbnail">
+              {{- media | image_url: width: 150 | image_tag: loading: 'lazy', sizes: '60px', widths: '60,120,180', class: 'product-gallery-mobile__thumbnail-img' -}}
+            </div>
+            <span class="sr-only">{{ 'general.accessibility.go_to_item' | t: index: media.position }}</span>
+          </button>
+        {% endfor %}
+      </carousel-navigation>
+    </div>
+  {% else %}
+    {{ mobileFeaturedImage }}
+  {% endif %}
+</div>

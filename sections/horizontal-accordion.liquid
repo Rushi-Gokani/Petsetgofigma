@@ -1,0 +1,452 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+%}
+
+<section
+  id="{{ section.id }}"
+  class="horizontal-accordion-section {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% endif %}"
+  style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px;"
+  x-data="HorizontalAccordion()"
+>
+  <div class="content-wrapper mx-auto px-4 max-w-7xl">
+    {% if section.settings.heading != blank %}
+      <div class="text-center mb-12">
+        <h2 class="section-title text-3xl md:text-5xl font-bold text-gray-900 mb-4">
+          {{ section.settings.heading | escape }}
+        </h2>
+        {% if section.settings.subheading != blank %}
+          <p class="section-subtitle text-lg text-gray-600 max-w-2xl mx-auto">
+            {{ section.settings.subheading | escape }}
+          </p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- Desktop Layout -->
+    <div class="hidden md:flex horizontal-accordion-desktop h-96">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'horizontal_accordion_item' %}
+            <div
+              class="horizontal-accordion-card"
+              :class="{ 'expanded': isActive({{ forloop.index0 }}), 'collapsed': !isActive({{ forloop.index0 }}) }"
+              @click="setActive({{ forloop.index0 }})"
+              {{ block.shopify_attributes }}
+            >
+              <!-- Expanded State -->
+              <div 
+                x-show="isActive({{ forloop.index0 }})"
+                x-transition:enter="transition-all ease-out duration-500"
+                x-transition:enter-start="opacity-0 transform scale-95 -translate-x-4"
+                x-transition:enter-end="opacity-100 transform scale-100 translate-x-0"
+                x-transition:leave="transition-all ease-in duration-300"
+                x-transition:leave-start="opacity-100 transform scale-100 translate-x-0"
+                x-transition:leave-end="opacity-0 transform scale-95 translate-x-4"
+                class="expanded-content h-full relative"
+              >
+                {% if block.settings.image != blank %}
+                  <div class="background-image inset-0">
+                    {% render 'image',
+                      src: block.settings.image,
+                      alt: block.settings.image.alt,
+                      img_class: 'w-full h-full object-cover',
+                      container_class: 'w-full h-full'
+                    %}
+                    <div class="overlay absolute inset-0 "></div>
+                  </div>
+                {% endif %}
+                
+                {% comment %}
+                <div class="content-overlay absolute bottom-0 left-0 right-0 p-8 text-white">
+                  {% if block.settings.content != blank %}
+                    <div class="description text-white/90 mb-6 text-base leading-relaxed">
+                      {{ block.settings.content }}
+                    </div>
+                  {% endif %}
+                  
+                  {% if block.settings.button_label != blank %}
+                    <a 
+                      href="{{ block.settings.button_link | default: '#' }}"
+                      class="cta-button inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 uppercase tracking-wide"
+                    >
+                      {{ block.settings.button_label | escape }}
+                    </a>
+                  {% endif %}
+                </div>
+                {% endcomment %}
+              </div>
+
+              <!-- Collapsed State -->
+              <div 
+                x-show="!isActive({{ forloop.index0 }})"
+                x-transition:enter="transition-all ease-out duration-400"
+                x-transition:enter-start="opacity-0 transform scale-95 translate-x-4"
+                x-transition:enter-end="opacity-100 transform scale-100 translate-x-0"
+                x-transition:leave="transition-all ease-in duration-300"
+                x-transition:leave-start="opacity-100 transform scale-100 translate-x-0"
+                x-transition:leave-end="opacity-0 transform scale-95 -translate-x-4"
+                class="collapsed-content justify-between h-full flex flex-col text-center p-6"
+              >
+                <h3 class="text-xl font-semibold text-gray-800 mt-4 mb-auto">
+                  {{ block.settings.title | escape }}
+                </h3>
+                <div class="arrow-icon-container mb-4 flex justify-center">
+                  <div class="flex items-center justify-center" style="rotate: -90deg; border: 1px solid #000; border-radius: 50px; padding: 5px;">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="fill: none !important" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6L8 10L12 6" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+
+    <!-- Mobile Layout -->
+    <div class="md:hidden horizontal-accordion-mobile space-y-2">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'horizontal_accordion_item' %}
+            <div
+              class="mobile-accordion-item"
+              {{ block.shopify_attributes }}
+            >
+              <!-- Mobile Header -->
+              <button
+                class="mobile-accordion-header w-full text-left bg-blue-100 hover:bg-blue-200 rounded-2xl px-3 py-3 transition-colors duration-200"
+                @click="setActive({{ forloop.index0 }})"
+                type="button"
+                :aria-expanded="isActive({{ forloop.index0 }})"
+                x-show="!isActive({{ forloop.index0 }})"
+              >
+                <div class="flex items-center justify-between">
+                  <h3 class="text-base font-semibold text-gray-800">
+                    {{ block.settings.title | escape }}
+                  </h3>
+                  <div class="mobile-accordion-icon transform transition-transform duration-300" :class="{ 'rotate-180': isActive({{ forloop.index0 }}) }">
+                    <div class="flex items-center justify-center" style="border: 1px solid #000; border-radius: 50px; padding: 5px;">
+                    <svg width="16" height="16" viewBox="0 0 16 16" style="fill: none !important" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M4 6L8 10L12 6" stroke="#222222" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  </div>
+                </div>
+              </button>
+
+              <!-- Mobile Content -->
+              <div
+                class="mobile-accordion-content overflow-hidden"
+                x-show="isActive({{ forloop.index0 }})"
+                x-transition:enter="transition-all ease-out duration-400"
+                x-transition:enter-start="max-h-0 opacity-0 transform -translate-y-2"
+                x-transition:enter-end="max-h-96 opacity-100 transform translate-y-0"
+                x-transition:leave="transition-all ease-in duration-300"
+                x-transition:leave-start="max-h-96 opacity-100 transform translate-y-0"
+                x-transition:leave-end="max-h-0 opacity-0 transform -translate-y-2"
+                x-cloak
+              >
+                <div class="mobile-content-inner rounded-2xl overflow-hidden">
+                  {% if block.settings.image != blank %}
+                    <div class="mobile-image">
+                      {% render 'image',
+                        src: block.settings.image,
+                        alt: block.settings.image.alt,
+                        img_class: 'w-full object-cover',
+                        container_class: 'overflow-hidden'
+                      %}
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  .horizontal-accordion-section {
+    background-color: #f5f5f5;
+    font-family: 'Satoshi', sans-serif;
+  }
+
+  /* Desktop Horizontal Layout */
+  .horizontal-accordion-desktop {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .horizontal-accordion-card {
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+  }
+
+  .horizontal-accordion-card:first-child {
+    border-top-left-radius: 24px;
+    border-bottom-left-radius: 24px;
+  }
+
+  .horizontal-accordion-card:last-child {
+    border-top-right-radius: 24px;
+    border-bottom-right-radius: 24px;
+  }
+
+  .horizontal-accordion-card.expanded {
+    flex: 2.5;
+  }
+
+  .horizontal-accordion-card.collapsed {
+    flex: 1;
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  }
+
+  .expanded-content {
+    position: relative;
+  }
+
+  .background-image {
+    overflow: hidden;
+  }
+
+  .content-overlay {
+    background: linear-gradient(transparent, rgba(0,0,0,0.8));
+  }
+
+  .collapsed-content {
+    background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+    height: 100%;
+  }
+
+  .collapsed-content h3 {
+    color: #1976d2;
+    font-weight: 600;
+  }
+
+  .arrow-icon-container {
+    color: #1976d2;
+  }
+
+  .arrow-icon-border {
+    border-color: #1976d2;
+    color: #1976d2;
+  }
+
+  /* Mobile Vertical Layout */
+  .horizontal-accordion-mobile {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .mobile-accordion-header {
+    background: #e3f2fd !important;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .mobile-accordion-header:hover {
+    background: #bbdefb !important;
+  }
+
+  .mobile-content-inner {
+    background: #2c2c2c;
+  }
+
+  .mobile-text-content {
+    background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(0,0,0,0.8));
+  }
+
+  /* CTA Buttons */
+  .cta-button,
+  .mobile-cta-button {
+    background: #ff9800;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+  }
+
+  .cta-button:hover,
+  .mobile-cta-button:hover {
+    background: #f57c00;
+    transform: translateY(-1px);
+  }
+
+  /* Hover Effects */
+  .horizontal-accordion-card:hover {
+    transform: translateY(-2px);
+  }
+
+  .horizontal-accordion-card.expanded {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+
+  .horizontal-accordion-card.collapsed {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+
+  /* Responsive */
+  @media (max-width: 767px) {
+    .section-title {
+      font-size: 2rem !important;
+    }
+  }
+</style>
+
+<script>
+  function HorizontalAccordion() {
+    return {
+      activeIndex: 0,
+      
+      setActive(index) {
+        this.activeIndex = index;
+      },
+      
+      isActive(index) {
+        return this.activeIndex === index;
+      }
+    }
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Horizontal Accordion",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Section Heading",
+      "default": "Find Your Pet's Perfect Fit!"
+    },
+    {
+      "type": "text",
+      "id": "subheading",
+      "label": "Section Subheading",
+      "info": "Optional subheading text below the main heading"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "horizontal_accordion_item",
+      "name": "Accordion Item",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Accordion Title",
+          "default": "Section Title"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Accordion Image"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Accordion Content",
+          "default": "<p>Add your accordion content description here.</p>"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button Label",
+          "default": "START QUIZ"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button Link"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Horizontal Accordion",
+      "blocks": [
+        {
+          "type": "horizontal_accordion_item",
+          "settings": {
+            "title": "Can't Choose the Perfect T-shirt for Your Pet?",
+            "content": "<p>Take our quiz and find the best T-shirt fit for your furry friend</p>",
+            "button_label": "START QUIZ"
+          }
+        },
+        {
+          "type": "horizontal_accordion_item",
+          "settings": {
+            "title": "Section Two",
+            "content": "<p>Content for section two</p>",
+            "button_label": "LEARN MORE"
+          }
+        },
+        {
+          "type": "horizontal_accordion_item",
+          "settings": {
+            "title": "Section Three",
+            "content": "<p>Content for section three</p>",
+            "button_label": "EXPLORE"
+          }
+        },
+        {
+          "type": "horizontal_accordion_item",
+          "settings": {
+            "title": "Section Four",
+            "content": "<p>Content for section four</p>",
+            "button_label": "DISCOVER"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

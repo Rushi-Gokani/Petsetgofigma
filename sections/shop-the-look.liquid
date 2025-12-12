@@ -1,0 +1,158 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+%}
+<div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    class="content-wrapper m-auto"
+    style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px;"
+    x-data="Slider()"
+  >
+    {% if section.settings.heading %}
+      <h2 class="heading mb-5 text-3xl text-text-500 md:text-4xl">{{ section.settings.heading | escape }}</h2>
+    {% endif %}
+
+    <div class="flex grid-cols-5 flex-col items-start gap-5 md:grid max-md:justify-center">
+      <div class="relative col-span-3 w-full">
+        <div class="relative overflow-hidden rounded-md">
+          {% if section.settings.image %}
+            {%- assign alt = section.settings.image.alt | default: section.settings.heading -%}
+            {% render 'image', src: section.settings.image, width: '100%', height: '100%', alt: alt %}
+          {% else %}
+            {{ 'image' | placeholder_svg_tag: 'w-full min-h-[500px] bg-secondary-400' }}
+          {% endif %}
+        </div>
+        {% for block in section.blocks %}
+          <button
+            class="absolute -translate-x-1/2 -translate-y-1/2 before:block before:h-10 before:w-10 before:rounded-[50%] before:bg-bg-500 before:opacity-45 before:transition-all before:content-[''] after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:m-auto after:h-6 after:w-6 after:origin-center after:rounded-[50%] after:bg-primary-500 after:transition-all after:content-['']   md:hover:before:opacity-75 md:hover:after:scale-75"
+            style="left: {{ block.settings.x_position }}%; top: {{ block.settings.y_position }}%;"
+            @click="goToSlide({{ forloop.index }}, true)"
+            aria-label="{{ 'sections.shop_the_look.view_product' | t: title: block.settings.product.title }}"
+            type="button"
+          ></button>
+        {% endfor %}
+      </div>
+
+      {%- capture slides -%}
+      {% for block in section.blocks %}
+        {%- capture slideContent -%}
+          {% render 'card-product', card_product: block.settings.product, lazy_load: true %}
+        {%- endcapture -%}
+  
+        {%- render 'slider-slide', content: slideContent -%}
+      {%- endfor -%}
+    {%- endcapture -%}
+
+      <div class="relative col-span-2 w-full">
+        {%- render 'slider',
+          slides: slides,
+          gap: 16,
+          slides_amount_in_view: '{xs: 2.2, sm: 2.5, md: 1.4, lg: 1.4, xl: 1.4, xxl: 1.5}',
+          is_custom_slider_x_data: true
+        -%}
+        <div
+          class="absolute right-0 top-[34px] z-10 h-[calc(100%-34px)] w-12 bg-gradient-to-l from-bg-500 to-transparent max-md:hidden"
+        ></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.shop-the-look.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.shop-the-look.settings.image.label"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.shop-the-look.settings.heading.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "t:sections.shop-the-look.blocks.product.name",
+      "limit": 6,
+      "settings": [
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.shop-the-look.blocks.product.settings.product.label",
+          "info": "t:sections.shop-the-look.blocks.product.settings.product.info"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.shop-the-look.blocks.product.settings.product.position"
+        },
+        {
+          "type": "range",
+          "id": "x_position",
+          "default": 50,
+          "min": 0,
+          "max": 100,
+          "label": "t:sections.shop-the-look.blocks.product.settings.product.x"
+        },
+        {
+          "type": "range",
+          "id": "y_position",
+          "default": 50,
+          "min": 0,
+          "max": 100,
+          "label": "t:sections.shop-the-look.blocks.product.settings.product.y"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.shop-the-look.presets.name"
+    }
+  ]
+}
+{% endschema %}

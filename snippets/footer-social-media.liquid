@@ -1,0 +1,184 @@
+{% if settings.social_twitter_link != blank
+  or settings.social_facebook_link != blank
+  or settings.social_pinterest_link != blank
+  or settings.social_instagram_link != blank
+  or settings.social_tiktok_link != blank
+  or settings.social_tumblr_link != blank
+  or settings.social_snapchat_link != blank
+  or settings.social_youtube_link != blank
+  or settings.social_vimeo_link != blank
+  or block.settings.enable_follow_on_shop
+%}
+  <div
+    class="flex-1 md:flex md:flex-col md:gap-4"
+    x-data="Accordion(!$store.main.isMobile, 300, true)"
+  >
+    <button
+      class="group flex h-11 w-full items-center rounded-md p-3 md:h-auto md:cursor-text md:px-[3px] md:py-0 md:hover:bg-inherit"
+      x-ref="AccordionButton"
+      :disabled="!$store.main.isMobile"
+      :aria-expanded="isExpanded && $store.main.isMobile"
+      aria-controls="{{ block.id }}_panel"
+      aria-labelledby="{{ block.id }}_label"
+      type="button"
+    >
+      <h2 class="grow text-start text-text-500" id="{{ block.id }}_label">
+        {{ 'sections.footer.social_media_column_title' | t }}
+      </h2>
+      <div class="button button--outline-secondary icon-button icon-button--size-xs group-hoverable md:hidden">
+        <span x-ref="AccordionIcon">
+          {% render 'icon-chevron-down' %}
+        </span>
+      </div>
+    </button>
+    <div
+      x-cloak
+      x-ref="AccordionPanel"
+      class="overflow-hidden"
+      :class="
+        {
+          'transition-none': $store.main.isReducedMotion,
+          'transition': $store.main.isReducedMotion,
+        }
+      "
+      id="{{ block.id }}_panel"
+      role="region"
+      aria-labelledby="{{ block.id }}_label"
+    >
+      <div class="flex flex-col gap-3 px-3 pb-5 pt-2 md:p-[3px]">
+        {% if block.settings.show_social %}
+          {%- if settings.social_twitter_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_twitter_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-twitter' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.twitter' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_facebook_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_facebook_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-facebook' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.facebook' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_pinterest_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_pinterest_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-pinterest' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.pinterest' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_instagram_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_instagram_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-instagram' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.instagram' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_tiktok_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_tiktok_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-tiktok' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.tiktok' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_tumblr_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_tumblr_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-tumblr' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.tumblr' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_snapchat_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_snapchat_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-snapchat' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.snapchat' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_youtube_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_youtube_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-youtube' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.youtube' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+          {%- if settings.social_vimeo_link != blank -%}
+            <a
+              :tabindex="isExpanded ? 0 : -1"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="{{ settings.social_vimeo_link }}"
+              class="group flex items-center gap-x-3 md:hover:text-text-500"
+            >
+              {%- render 'icon-vimeo' -%}
+              <span class="link border-transparent md:group-hover:border-current md:group-hover:text-text-500">
+                {{ 'general.social.links.vimeo' | t }}
+              </span>
+            </a>
+          {%- endif -%}
+        {% endif %}
+
+        {%- if shop.features.follow_on_shop? and block.settings.enable_follow_on_shop -%}
+          {{ shop | login_button: action: 'follow' }}
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+{% endif %}

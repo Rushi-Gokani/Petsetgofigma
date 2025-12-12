@@ -1,0 +1,480 @@
+{% comment %}
+  Coupon Display Snippet
+  ----------------------
+  Displays coupons from template settings
+  Parameters:
+  - block: block object with settings
+  - product: product object
+{% endcomment %}
+
+{% liquid
+  assign display_coupon = false
+  assign coupon_count = 0
+  
+  if block.settings.coupon_code_1 != blank and block.settings.coupon_text_1 != blank
+    assign coupon_count = coupon_count | plus: 1
+  endif
+  if block.settings.coupon_code_2 != blank and block.settings.coupon_text_2 != blank
+    assign coupon_count = coupon_count | plus: 1
+  endif
+  if block.settings.coupon_code_3 != blank and block.settings.coupon_text_3 != blank
+    assign coupon_count = coupon_count | plus: 1
+  endif
+  if block.settings.coupon_code_4 != blank and block.settings.coupon_text_4 != blank
+    assign coupon_count = coupon_count | plus: 1
+  endif
+  if block.settings.coupon_code_5 != blank and block.settings.coupon_text_5 != blank
+    assign coupon_count = coupon_count | plus: 1
+  endif
+  
+  if coupon_count > 0
+    assign display_coupon = true
+  endif
+%}
+
+{% if display_coupon %}
+  <div class="coupon-display-wrapper mb-6 px-4 md:px-0" {{ block.shopify_attributes }}>
+    <div class="coupon-container flex gap-3 overflow-x-auto pb-2">
+      
+      {% if block.settings.coupon_code_1 != blank and block.settings.coupon_text_1 != blank %}
+        <div class="coupon-item flex-shrink-0">
+          <div class="coupon-card group relative bg-gradient-to-r from-yellow-50 to-orange-50 border border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 flex-1">
+                <div class="coupon-icon bg-yellow-100 p-2 rounded-full">
+                  <svg class="h-6 w-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div class="coupon-content flex-1">
+                  <div class="coupon-code font-bold text-gray-900 text-lg uppercase tracking-wide mb-1">
+                    {{ block.settings.coupon_code_1 }}
+                  </div>
+                  <div class="coupon-description text-sm text-gray-700 leading-relaxed">
+                    {{ block.settings.coupon_text_1 }}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="copy-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg transition-colors duration-200 flex-shrink-0"
+                data-coupon-code="{{ block.settings.coupon_code_1 }}"
+                title="Copy coupon code"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="coupon-copied absolute inset-0 flex items-center justify-center rounded-xl bg-green-500 text-white opacity-0 transition-all duration-300 transform scale-95">
+              <div class="flex items-center gap-2 text-center">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-bold text-lg">Copied!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.coupon_code_2 != blank and block.settings.coupon_text_2 != blank %}
+        <div class="coupon-item flex-shrink-0">
+          <div class="coupon-card group relative bg-gradient-to-r from-yellow-50 to-orange-50 border border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 flex-1">
+                <div class="coupon-icon bg-yellow-100 p-2 rounded-full">
+                  <svg class="h-6 w-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div class="coupon-content flex-1">
+                  <div class="coupon-code font-bold text-gray-900 text-lg uppercase tracking-wide mb-1">
+                    {{ block.settings.coupon_code_2 }}
+                  </div>
+                  <div class="coupon-description text-sm text-gray-700 leading-relaxed">
+                    {{ block.settings.coupon_text_2 }}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="copy-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg transition-colors duration-200 flex-shrink-0"
+                data-coupon-code="{{ block.settings.coupon_code_2 }}"
+                title="Copy coupon code"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="coupon-copied absolute inset-0 flex items-center justify-center rounded-xl bg-green-500 text-white opacity-0 transition-all duration-300 transform scale-95">
+              <div class="flex items-center gap-2 text-center">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-bold text-lg">Copied!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.coupon_code_3 != blank and block.settings.coupon_text_3 != blank %}
+        <div class="coupon-item flex-shrink-0">
+          <div class="coupon-card group relative bg-gradient-to-r from-yellow-50 to-orange-50 border border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 flex-1">
+                <div class="coupon-icon bg-yellow-100 p-2 rounded-full">
+                  <svg class="h-6 w-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div class="coupon-content flex-1">
+                  <div class="coupon-code font-bold text-gray-900 text-lg uppercase tracking-wide mb-1">
+                    {{ block.settings.coupon_code_3 }}
+                  </div>
+                  <div class="coupon-description text-sm text-gray-700 leading-relaxed">
+                    {{ block.settings.coupon_text_3 }}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="copy-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg transition-colors duration-200 flex-shrink-0"
+                data-coupon-code="{{ block.settings.coupon_code_3 }}"
+                title="Copy coupon code"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="coupon-copied absolute inset-0 flex items-center justify-center rounded-xl bg-green-500 text-white opacity-0 transition-all duration-300 transform scale-95">
+              <div class="flex items-center gap-2 text-center">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-bold text-lg">Copied!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.coupon_code_4 != blank and block.settings.coupon_text_4 != blank %}
+        <div class="coupon-item flex-shrink-0">
+          <div class="coupon-card group relative bg-gradient-to-r from-yellow-50 to-orange-50 border border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 flex-1">
+                <div class="coupon-icon bg-yellow-100 p-2 rounded-full">
+                  <svg class="h-6 w-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div class="coupon-content flex-1">
+                  <div class="coupon-code font-bold text-gray-900 text-lg uppercase tracking-wide mb-1">
+                    {{ block.settings.coupon_code_4 }}
+                  </div>
+                  <div class="coupon-description text-sm text-gray-700 leading-relaxed">
+                    {{ block.settings.coupon_text_4 }}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="copy-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg transition-colors duration-200 flex-shrink-0"
+                data-coupon-code="{{ block.settings.coupon_code_4 }}"
+                title="Copy coupon code"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="coupon-copied absolute inset-0 flex items-center justify-center rounded-xl bg-green-500 text-white opacity-0 transition-all duration-300 transform scale-95">
+              <div class="flex items-center gap-2 text-center">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-bold text-lg">Copied!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if block.settings.coupon_code_5 != blank and block.settings.coupon_text_5 != blank %}
+        <div class="coupon-item flex-shrink-0">
+          <div class="coupon-card group relative bg-gradient-to-r from-yellow-50 to-orange-50 border border-dashed border-orange-300 rounded-xl p-4 hover:border-orange-400 hover:shadow-lg transition-all duration-300">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex items-start gap-3 flex-1">
+                <div class="coupon-icon bg-yellow-100 p-2 rounded-full">
+                  <svg class="h-6 w-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                  </svg>
+                </div>
+                <div class="coupon-content flex-1">
+                  <div class="coupon-code font-bold text-gray-900 text-lg uppercase tracking-wide mb-1">
+                    {{ block.settings.coupon_code_5 }}
+                  </div>
+                  <div class="coupon-description text-sm text-gray-700 leading-relaxed">
+                    {{ block.settings.coupon_text_5 }}
+                  </div>
+                </div>
+              </div>
+              <button
+                type="button"
+                class="copy-button bg-yellow-500 hover:bg-yellow-600 text-white p-2 rounded-lg transition-colors duration-200 flex-shrink-0"
+                data-coupon-code="{{ block.settings.coupon_code_5 }}"
+                title="Copy coupon code"
+              >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                </svg>
+              </button>
+            </div>
+            <div class="coupon-copied absolute inset-0 flex items-center justify-center rounded-xl bg-green-500 text-white opacity-0 transition-all duration-300 transform scale-95">
+              <div class="flex items-center gap-2 text-center">
+                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span class="font-bold text-lg">Copied!</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <style>
+    .coupon-container::-webkit-scrollbar {
+      height: 6px;
+    }
+    
+    .coupon-container::-webkit-scrollbar-track {
+      background: #f3f4f6;
+      border-radius: 3px;
+    }
+    
+    .coupon-container::-webkit-scrollbar-thumb {
+      background: #f59e0b;
+      border-radius: 3px;
+    }
+    
+    .coupon-container::-webkit-scrollbar-thumb:hover {
+      background: #d97706;
+    }
+    
+    .coupon-item {
+      min-width: 280px;
+    }
+    
+    .coupon-card {
+      min-width: 280px;
+      position: relative;
+      overflow: hidden;
+      border-width: 1px;
+      border-style: dashed;
+      border-color: #fdba74;
+      transition: border-color 0.3s ease, border-width 0.3s ease;
+      cursor: pointer;
+    }
+
+    .coupon-card:hover {
+      border-color: #fb923c;
+      border-width: 1.5px;
+    }
+    
+    .coupon-card::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -10px;
+      width: 20px;
+      height: 20px;
+      background: #f3f4f6;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    
+    .coupon-card::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -10px;
+      width: 20px;
+      height: 20px;
+      background: #f3f4f6;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      z-index: 1;
+    }
+    
+    .coupon-card:hover {
+      transform: translateY(-2px);
+    }
+    
+    .coupon-icon {
+      transition: all 0.3s ease;
+    }
+    
+    .coupon-card:hover .coupon-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+    
+    .copy-button {
+      transition: all 0.2s ease;
+    }
+    
+    .copy-button:hover {
+      transform: scale(1.05);
+    }
+    
+    .coupon-card.copied {
+      border-color: #ea580c;
+      border-width: 2px;
+      background-image: linear-gradient(to right, #f0fdf4, #dcfce7);
+      box-shadow: 0 10px 25px rgba(234, 88, 12, 0.25);
+    }
+    
+    .copy-button.copied {
+      background-color: #ea580c;
+    }
+
+    .coupon-copied {
+      background: #ea580c !important;
+      color: white !important;
+      font-weight: 600 !important;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    
+    .coupon-copied.active {
+      opacity: 1 !important;
+      z-index: 50;
+      transform: scale(1) !important;
+    }
+    @media (max-width: 768px) {
+      .coupon-item {
+        min-width: 250px;
+      }
+      
+      .coupon-card {
+        min-width: 250px;
+      }
+    }
+  </style>
+
+  <script>
+    (function () {
+      function initCouponCopy() {
+        var couponCards = document.querySelectorAll('.coupon-card');
+        if (!couponCards.length) {
+          return;
+        }
+
+        Array.prototype.forEach.call(couponCards, function (couponCard) {
+          if (couponCard.dataset.couponCopyInit === 'true') {
+            return;
+          }
+
+          couponCard.addEventListener('click', function (event) {
+            // Don't prevent default or stop propagation to allow normal click behavior
+            
+            var copyButton = couponCard.querySelector('.copy-button');
+            var couponCode = copyButton ? copyButton.getAttribute('data-coupon-code') : null;
+
+            if (!couponCode) {
+              console.log('No coupon code found');
+              return;
+            }
+
+            console.log('Copying coupon code:', couponCode);
+            var copiedElement = couponCard.querySelector('.coupon-copied');
+
+            var triggerFeedback = function () {
+              console.log('Triggering feedback');
+              couponCard.classList.add('copied');
+              if (copyButton) {
+                copyButton.classList.add('copied');
+              }
+              if (copiedElement) {
+                copiedElement.classList.add('active');
+                console.log('Added active class to copied element');
+              } else {
+                console.log('No copied element found');
+              }
+
+              window.setTimeout(function () {
+                couponCard.classList.remove('copied');
+                if (copyButton) {
+                  copyButton.classList.remove('copied');
+                }
+                if (copiedElement) {
+                  copiedElement.classList.remove('active');
+                }
+              }, 2000);
+            };
+
+            var fallbackCopy = function () {
+              var tempInput = document.createElement('textarea');
+              tempInput.value = couponCode;
+              tempInput.setAttribute('readonly', '');
+              tempInput.style.position = 'absolute';
+              tempInput.style.left = '-9999px';
+              document.body.appendChild(tempInput);
+
+              tempInput.select();
+              tempInput.setSelectionRange(0, couponCode.length);
+
+              try {
+                document.execCommand('copy');
+              } catch (copyError) {
+                console.error('Unable to copy coupon code', copyError);
+              }
+
+              document.body.removeChild(tempInput);
+              triggerFeedback();
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(couponCode).then(function() {
+                console.log('Clipboard API success');
+                triggerFeedback();
+              }).catch(function (error) {
+                console.log('Clipboard API failed, using fallback:', error);
+                fallbackCopy();
+              });
+            } else {
+              console.log('Clipboard API not available, using fallback');
+              fallbackCopy();
+            }
+          });
+
+          // Prevent the copy button from triggering double events
+          var copyButton = couponCard.querySelector('.copy-button');
+          if (copyButton) {
+            copyButton.addEventListener('click', function (event) {
+              event.stopPropagation();
+            });
+          }
+
+          couponCard.dataset.couponCopyInit = 'true';
+        });
+      }
+
+      document.addEventListener('DOMContentLoaded', initCouponCopy);
+      if (document.readyState !== 'loading') {
+        initCouponCopy();
+      }
+      document.addEventListener('shopify:section-load', initCouponCopy);
+      document.addEventListener('shopify:block:select', initCouponCopy);
+    })();
+  </script>
+{% endif %}

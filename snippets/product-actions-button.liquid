@@ -1,0 +1,230 @@
+{% comment %}
+  Renders a product action button
+
+  Accepts:
+  - product: {Object} Product Liquid object
+  - is_small: {Boolean} Whether the button should be small
+  - is_popup: {Boolean} Whether the button is in popup
+{% endcomment %}
+
+{% liquid
+  if product.selected_or_first_available_variant
+    assign variant_qty = cart | item_count_for_variant: product.selected_or_first_available_variant.id | default: 0
+    if variant_qty > 0
+      assign is_variant_in_cart = true
+    else
+      assign is_variant_in_cart = false
+    endif
+    assign is_variant_in_stock = product.selected_or_first_available_variant.available
+  else
+    assign is_variant_in_cart = false
+    assign is_variant_in_stock = false
+  endif
+
+  assign variant_count = product.variants | size
+
+  assign is_popup = is_popup | default: false
+  assign is_small = is_small | default: false
+
+  assign variant_options = product.variants | map: 'options'
+  assign selected_options = product.selected_or_first_available_variant.options
+  assign is_variant_available = false
+  for option in variant_options
+    if option == selected_options
+      assign is_variant_available = true
+    endif
+  endfor
+%}
+
+<!-- Quantity Controls -->
+<div
+  class="contents {% unless is_popup %}max-md:hidden{% endunless %}"
+>
+  <button
+    type="button"
+    class="animate-on-transition button button--outline-secondary icon-button select-none {% if is_small %} icon-button--size-sm {%-else-%} icon-button--size-md md:icon-button--size-lg {% endif %}"
+    :class="
+      {
+        'button--disabled': (!isVariantInCart && variantQty === 1) || !isVariantAvailable || !{{ is_variant_in_stock }}
+      }
+    "
+    :aria-label="
+      variantQty > 1
+      ? '{{- 'products.product.quantity.decrease_quantity' | t | escape -}}'
+      : '{{- 'sections.cart.remove_from_cart' | t | escape -}}'
+    "
+    :disabled="(!isVariantInCart && variantQty === 1) || !isVariantAvailable || !{{ is_variant_in_stock }}"
+    @click.prevent.stop="decreaseQty()"
+  >
+    <span class="sr-only">
+      {{- 'products.product.quantity.decrease' | t: product: product.title | escape -}}
+    </span>
+    <span
+      {% if variant_qty > 1 %}
+        style="display: none"
+      {% endif %}
+      x-show="variantQty < 2"
+    >
+      {% render 'icon-remove' %}
+    </span>
+    <span
+      {% if variant_qty < 2 %}
+        style="display: none"
+      {% endif %}
+      x-show="variantQty > 1"
+    >
+      {% render 'icon-minus' %}
+    </span>
+  </button>
+
+  <label for="quantity_{{ section.id }}_{{ product.id }}" class="sr-only tracking-widest">
+    {{- 'sections.cart.quantity' | t -}}
+  </label>
+  <input
+    type="number"
+    value="{{ variant_qty }}"
+    :value="variantQty"
+    class="animate-on-transition input__field flex-shrink-0 basis-14 text-center md:h-auto bg-transparent{% if is_small %} h-9 px-3 {% endif %}"
+    min="1"
+    @change.lazy="setQuantity($event.target.value)"
+    aria-label="{{ 'sections.cart.quantity' | t }}"
+    id="quantity_{{ section.id }}_{{ product.id }}"
+    :disabled="!isVariantAvailable || !{{ is_variant_in_stock }}"
+  >
+
+  <button
+    type="button"
+    class="animate-on-transition button button--outline-secondary icon-button select-none {% if is_small %} icon-button--size-sm {% else %}icon-button--size-md md:icon-button--size-lg{% endif %}"
+    :aria-label="'{{- 'products.product.quantity.increase_quantity' | t | escape -}}'"
+    @click.prevent.stop="increaseQty()"
+    :class="
+      {
+        'button--disabled': !isVariantAvailable || !{{ is_variant_in_stock }}
+      }
+    "
+    :disabled="!isVariantAvailable || !{{ is_variant_in_stock }}"
+  >
+    <span class="sr-only">
+      {{- 'products.product.quantity.increase_quantity' | t | escape -}}
+    </span>
+    {% render 'icon-plus' %}
+  </button>
+</div>
+
+<!-- Hide variants popup trigger on mobile -->
+<a style="display:none" class="md:hidden"></a>
+
+<!-- Hide "Select another option" on mobile; pills are inline now -->
+<div class="md:hidden" style="display:none"></div>
+
+{% liquid
+  if is_variant_in_stock
+    assign is_hide_out_of_stock = true
+  else
+    if is_popup != true and variant_count > 1
+      assign is_hide_out_of_stock = true
+    else
+      assign is_hide_out_of_stock = false
+    endif
+  endif
+
+  assign in_cart_and_no_popup = false
+  if is_variant_in_cart and is_popup != true
+    assign in_cart_and_no_popup = true
+  endif
+%}
+<button
+  {% if in_cart_and_no_popup or is_variant_in_stock != true %}
+    style="display: none"
+  {% endif %}
+  x-show="(!isVariantInCart || {{ is_popup }}) && isVariantAvailable"
+  class="animate-on-transition button button--disabled button--outline-secondary {% unless is_small %}w-full max-md:basis-full md:w-auto{% endunless %} {% if is_small %} button--size-sm {% endif %} {% if is_hide_out_of_stock %} max-md:hidden {% endif %}{% if is_variant_in_stock %} md:hidden {% endif %} md:flex-grow"
+  disabled
+  type="button"
+>
+  {{ 'products.product.out_of_stock' | t }}
+</button>
+
+<button
+  {% if is_variant_available %}
+    style="display: none"
+  {% endif %}
+  x-show="!isVariantAvailable"
+  class="animate-on-transition button button--disabled button--outline-secondary {% unless is_small %}w-full max-md:basis-full md:w-auto{% endunless %} {% unless is_popup %}max-md:hidden{% endunless %} {% if is_small %} button--size-sm {% endif %} md:flex-grow"
+  disabled
+  x-cloak
+  type="button"
+>
+  {{ 'products.product.unavailable' | t }}
+</button>
+
+{% liquid
+  if is_variant_in_stock == false
+    assign is_hide_add_to_cart_on_mobile = true
+  else
+    if is_popup == true and is_variant_in_cart
+      assign is_hide_add_to_cart_on_mobile = true
+    else
+      assign is_hide_add_to_cart_on_mobile = false
+    endif
+  endif
+
+  assign is_variants_popup = is_popup
+  if is_popup and variant_count == 1
+    assign is_variants_popup = false
+  endif
+%}
+<button
+  {% if is_variant_in_cart and is_variants_popup != true and is_variant_in_stock %}
+    style="display: none"
+  {% endif %}
+  x-show="(!isVariantInCart || {{ is_variants_popup }}) && {{ is_variant_in_stock }} && isVariantAvailable"
+  class="animate-on-transition button button--filled-primary {% unless is_small %}w-full max-md:basis-full md:w-auto{% endunless %} {% if is_small %} button--size-sm {% endif %} {% if is_hide_add_to_cart_on_mobile %} max-md:hidden {% endif %}{% if is_variant_in_stock == false %} md:hidden {% endif %} md:flex-grow"
+  @click.prevent="addToCart()"
+  :class="
+    {
+      'button--disabled': isProductBeingAdded || isProductBeingRemoved
+    }
+  "
+  :disabled="isProductBeingAdded || isProductBeingRemoved"
+  type="button"
+>
+  <span
+    class="flex items-center"
+    x-show="!isProductBeingAdded && !isProductBeingRemoved"
+  >
+    {{ 'products.product.add_to_cart' | t }}
+    <span
+      class="button__icon button__icon--right {% if is_small %} text-lg {% endif %}"
+    >
+      {% render 'icon-shopping-bag' %}
+    </span>
+  </span>
+
+  <span style="display: none" x-show="isProductBeingRemoved">
+    {{ 'products.product.removing_from_cart' | t }}
+  </span>
+
+  <span style="display: none" x-show="isProductBeingAdded">
+    {{ 'products.product.adding_to_cart' | t }}
+  </span>
+</button>
+
+<button
+  {% unless is_variant_in_cart %}
+    style="display: none"
+  {% endunless %}
+  x-show="isVariantInCart && contentId !== 'product-options'"
+  class="animate-on-transition button button--disabled button--outline-secondary {% unless is_small %}w-full max-md:basis-full md:w-auto{% endunless %} {% if is_small %} button--size-sm {% endif %} {% if variant_count > 1 %}max-md:hidden{% endif %} md:flex-grow"
+  {% if settings.cart_type == 'page' %}
+    href="{{ routes.cart_url }}"
+    x-element-transition-trigger
+  {% else %}
+    @click.prevent="$store.cart.showCart()"
+  {% endif %}
+  type="button"
+>
+  <span>
+    {{ 'products.product.already_in_cart' | t }}
+  </span>
+</button>

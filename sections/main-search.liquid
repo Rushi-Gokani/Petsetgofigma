@@ -1,0 +1,253 @@
+{% assign terms = search.terms | escape %}
+
+{%- capture searchDetails -%}
+  <article class="flex items-end justify-between pb-5 pt-3 md:pb-7" aria-label="{{ 'templates.search.search_details' | t }}">
+    <div class="flex flex-col items-start gap-3">
+      <h2 class="heading text-lg">{{ 'templates.search.search_results_title' | t: searchQuery: terms }}</h2>
+      <p class="">
+        {{ 'templates.search.search_results_subtitle' | t }}
+      </p>
+    </div>
+  </article>
+{%- endcapture -%}
+
+{%- capture searchNoProducts -%}
+  <div class="flex w-full flex-col gap-5 py-5 md:items-start">
+    <p class="">
+      <b class="text-secondary-700">{{ 'templates.search.empty_oops' | t }}</b>
+      {{ 'templates.search.empty' | t }}
+    </p>
+    {% if search.performed and search.filters != empty %}
+      <button type="button" class="button button--outline-secondary" @click="resetAll">
+        {{ 'templates.search.reset' | t }}
+      </button>
+    {% endif %}
+  </div>
+{%- endcapture -%}
+
+{%- capture noSearchTerm -%}
+  <p class="py-5">
+    <b class="text-secondary-700">{{ 'templates.search.empty_oops' | t }}</b>
+    {{ 'templates.search.empty_search_term' | t }}
+  </p>
+{%- endcapture -%}
+
+<section class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    id="ProductGridContainer"
+    class="content-wrapper mx-auto"
+    aria-label="{{ 'templates.search.search_results' | t }}"
+    x-ref="ProductGridContainer"
+    x-data="ProductList('{{ routes.search_url }}')"
+    key="ProductList-{{ terms | md5 }}"
+  >
+    {{ searchDetails }}
+    {%- paginate search.results by 50 -%}
+      {%- if terms == blank -%}
+        {{ noSearchTerm }}
+      {%- elsif search.results_count == 0 -%}
+        {{ searchNoProducts }}
+      {%- else -%}
+        {%- if section.settings.enable_sorting or section.settings.enable_filtering -%}
+          {% render 'filters',
+            results: search,
+            enable_sorting: section.settings.enable_sorting,
+            enable_filtering: section.settings.enable_filtering,
+            is_search: true
+          %}
+        {%- endif -%}
+        <div
+          class="animate-on-transition flex md:items-start"
+        >
+          <div class="flex-grow">
+            <div
+              data-content-wrapper
+              id="product-grid"
+              class="mb-5 grid grid-cols-2 gap-5 transition-opacity duration-100 ease-linear lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+              :class="
+                {
+                  'opacity-0': isLoadingProducts,
+                }
+              "
+            >
+              <!-- pagination-content -->
+              {%- for item in search.results -%}
+                {% assign lazy_load = false %}
+                {%- if forloop.index > 4 -%}
+                  {%- assign lazy_load = true -%}
+                {%- endif -%}
+                {%- case item.object_type %}
+                  {%- when 'product' %}
+                    {% render 'card-product',
+                      card_product: item,
+                      show_vendor: section.settings.show_vendor,
+                      index: forloop.index0,
+                      nth_product_large: 5,
+                      lazy_load: lazy_load
+                    %}
+                  {%- when 'page' %}
+                    {% render 'card-page', page: item, index: forloop.index0, nth_page_large: 5 %}
+                  {%- when 'article' %}
+                    {% comment %} TODO: card-article is a placeholder. it should be merged with existing article-card or the other way around {% endcomment %}
+                    {% render 'card-article',
+                      article: item,
+                      index: forloop.index0,
+                      nth_article_large: 5,
+                      lazy_load: lazy_load
+                    %}
+                {%- endcase -%}
+              {%- endfor -%}
+              <!-- end-pagination-content -->
+            </div>
+
+            {%- if paginate.pages > 1 and paginate.next -%}
+              <div class="my-7 flex flex-col items-center">
+                <a
+                  href="#"
+                  x-pagination-trigger="{ 'lastPage': {{ paginate.pages }} }"
+                  class="button btn--size-md button--ghost-primary w-full cursor-pointer text-center md:w-auto"
+                >
+                  {{ 'general.pagination.load_more_products' | t }}
+                  <span class="button__icon button__icon--right top-[1px] text-lg">
+                    {%- render 'icon-arrow-bottom' -%}
+                  </span>
+                </a>
+              </div>
+            {%- endif -%}
+          </div>
+
+          {% if section.settings.enable_sorting or section.settings.enable_filtering %}
+            <aside class="relative">
+              <div class="absolute end-0 top-[-68px] ms-8 md:ps-2">
+                <button
+                  type="button"
+                  class="button button--filled-primary hidden w-[275px] min-w-[275px] md:inline-flex"
+                  @click="$store.productList.toggleFiltersSidebar()"
+                >
+                  <span
+                    x-text="$store.productList.isFiltersSidebarExpanded ? '{{ 'products.facets.filter_hide' | t }}' : '{{ 'products.facets.filter_show' | t }}'"
+                  >
+                    {{ 'products.facets.filter_hide' | t }}
+                  </span>
+                  <span class="button__icon ms-3 text-xl">
+                    {% render 'icon-filter' %}
+                  </span>
+                </button>
+              </div>
+              <div
+                class="ms-8 hidden w-[275px] min-w-[275px] overflow-hidden transition-[width,min-width] motion-reduce:transition-none md:sticky md:top-[--scroll-top] md:block"
+                :class="
+                              {
+                  'w-[275px] min-w-[275px] ms-8': $store.productList.isFiltersSidebarExpanded,
+                  'w-0 min-w-0 ms-0': !$store.productList.isFiltersSidebarExpanded
+                    }
+                "
+                x-sticky-scroll="
+                  {
+                    top: 90,
+                    bottom: 24,
+                  }
+                "
+              >
+                <div
+                  id="filters-sidebar"
+                  class="w-[275px] min-w-[275px] translate-x-0 transition-transform motion-reduce:transition-none"
+                  :class="
+                    {
+                      'translate-x-full': !$store.productList.isFiltersSidebarExpanded,
+                      'translate-x-0': $store.productList.isFiltersSidebarExpanded
+                    }
+                  "
+                  :inert="!$store.productList.isFiltersSidebarExpanded"
+                ></div>
+              </div>
+            </aside>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+
+    {%- if section.settings.enable_sorting or section.settings.enable_filtering -%}
+      {% comment %} Needed to offset bottom filters at the bottom {% endcomment %}
+      <div class="h-[60px] md:hidden"></div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "t:sections.main-search.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.main-search.settings.header__1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": false,
+      "label": "t:sections.main-search.settings.show_vendor.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-collection-product-grid.settings.header__1.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_filtering.label",
+      "info": "t:sections.main-collection-product-grid.settings.enable_filtering.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "default": true,
+      "label": "t:sections.main-collection-product-grid.settings.enable_sorting.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

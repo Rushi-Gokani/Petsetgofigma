@@ -1,0 +1,264 @@
+{% comment %}
+  Renders a product card
+
+  Accepts:
+  - card_product: {Object} Product Liquid object (optional)
+  - example_product: {Boolean} Product example placeholder (optional)
+  - show_vendor: {Boolean} Show the product vendor. Default: false
+  - show_price: {Boolean} Show the product price. Default: true
+  - is_alpine_template: {Boolean} Render template with AlpineJS data
+  - index: {Number}
+  - nth_product_large: {Number}
+  - lazy_load: {Boolean}
+  - truncate_title: {Boolean}
+
+  Usage:
+  {% render 'card-product', show_vendor: section.settings.show_vendor %}
+{% endcomment %}
+{% liquid
+  if show_price == null
+    assign show_price = true
+  endif
+
+  if allow_mobile_wide_card == null
+    assign allow_mobile_wide_card = true
+  endif
+%}
+
+{%- if is_alpine_template or card_product and card_product != empty -%}
+  {% liquid
+    assign nthProductLarge = nth_product_large | default: 0
+    assign isLargeMod = index | plus: 1 | modulo: nthProductLarge
+    assign isLarge = false
+    if allow_mobile_wide_card and nthProductLarge > 0 and isLargeMod == 0 and section.settings.column_amount_sm == 2
+      assign isLarge = true
+    endif
+
+    assign imageLoad = 'eager'
+    if lazy_load
+      assign imageLoad = 'lazy'
+    endif
+
+    if card_product.selected_or_first_available_variant.compare_at_price > card_product.selected_or_first_available_variant.price and card_product.selected_or_first_available_variant.available
+      assign difference = card_product.selected_or_first_available_variant.compare_at_price | minus: card_product.selected_or_first_available_variant.price
+      assign discount_percentage = difference | times: 100.0 | divided_by: card_product.selected_or_first_available_variant.compare_at_price | round
+    endif
+  %}
+
+  {% capture productCardAspectRatioDiv %}
+    <div class="absolute h-0 w-0 pointer-events-none" style="padding-bottom: calc(100% * 1 / var(--product-aspect-ratio) + 81px)"></div>
+  {% endcapture %}
+  {% capture productDetailsArticle %}
+    <article
+      class="contrast-border z-10 flex h-full w-full flex-col items-stretch justify-start overflow-hidden rounded-xl text-start"
+      x-data="ProductPage()"
+      {% unless is_alpine_template %}
+        x-init="
+        () => {
+          $data.setProductPageProps({
+            manuallySelectedVariantId: {{ card_product.selected_variant.id | default: 0 }},
+            selectedVariantId: {{ card_product.selected_or_first_available_variant.id }},
+            selectedOptions: {{ card_product.selected_or_first_available_variant.options | json | escape }},
+            productId: {{ card_product.id }},
+            productUrl: '{{ card_product.url }}',
+            isSyncedWithUrl: false,
+            isScrollingToTop: false,
+            variants: {{ card_product.variants | json | escape }}
+          })
+        }
+      "
+      {% endunless %}
+    >
+      {% comment %} this image is needed to avoid blink in preview on desktop as there, the select variant is shown, not featured image {% endcomment %}
+      {% unless is_alpine_template %}
+        {% if card_product.selected_or_first_available_variant.image %}
+          <img width="0" height="0" class="pointer-events-none invisible absolute hidden h-0 w-0 md:block" src="{{ card_product.selected_or_first_available_variant.image | image_url }}" alt="">
+        {% endif %}
+      {% endunless %}
+      <div class="relative overflow-hidden rounded-md bg-[--fade-in-bg]" x-element-transition-src="img" style="transform: translateZ(0)">
+        {% if is_alpine_template %}
+          <template x-if="product.featured_image?.url">
+            <div class="flex aspect-product h-full w-full items-center justify-center {% if settings.fit_products_media == 'contain' %}p-[4%]{% endif %} bg-[--fade-in-bg] transition-transform  md:group-hover:scale-105">
+              <img
+                :src="product.featured_image.url"
+                :alt="product.featured_image?.alt"
+                class="{% if settings.fit_products_media == 'contain' %}object-contain rounded-md{% else %}object-cover h-full w-full{% endif %} max-h-full object-center {% if settings.card_gray_background %}mix-blend-darken{% endif %}"
+                loading="{{ imageLoad }}"
+                width=""
+                height=""
+              >
+            </div>
+          </template>
+        {% else %}
+          {% if card_product.featured_image %}
+            {% liquid 
+              assign class = 'object-center max-h-full '
+              assign container_class = 'aspect-product size-full flex min-h-0 items-center justify-center transition-transform md:group-hover:scale-105 '
+              if settings.fit_products_media == 'contain'
+              assign class = class | append: 'object-contain rounded-[5%] md:rounded-[3%]'
+              assign container_class = container_class | append: 'p-[4%]'
+              else
+                assign class = class | append: 'object-cover h-full w-full'
+              endif
+            %}
+            {%
+              render 'image',
+              src: card_product.featured_image,
+              alt: card_product.title,
+              img_class: class,
+              container_class: container_class,
+              loading: imageLoad,
+              index: index,
+              is_mix: settings.card_gray_background
+            %}
+          {% else %}
+            {% render '_product-missing-image', is_gift: card_product.gift_card?, type: 'card' %}
+          {% endif %}
+        {% endif %}
+        {% assign badge_position = badge_position_override | default: settings.badge_position %}
+        {% assign class = 'py-1 ' | append: badge_position %}
+        {% render '_card-badge', is_alpine_template: is_alpine_template, product: card_product, class: class %}
+
+        <!-- Review Rating Badge at bottom left -->
+        {% unless is_alpine_template %}
+          {% if card_product.metafields.reviews.rating.value %}
+            {% assign rating_value = card_product.metafields.reviews.rating.value %}
+            {% assign rating_decimal = rating_value | round: 1 %}
+            <div class="product-card-rating-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="#FFB800" style="flex-shrink: 0;">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="product-card-rating-text">{{ rating_value }}</span>
+            </div>
+          {% endif %}
+        {% endunless %}
+
+        <!-- Add to cart badge inside card image -->
+        {% unless is_alpine_template %}
+          <button
+            type="button"
+            class="absolute bottom-3 atc_inside_image_card right-3 bg-white rounded-full flex items-center justify-center md:hidden"
+            style="position: absolute !important; z-index: 50 !important; background: white !important; border: 2px solid white !important; box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important; width: 2rem !important; height: 2rem !important; right: 2% !important; bottom: 2% !important; cursor: pointer !important;"
+            @click.prevent.stop="quickBuy()"
+            aria-label="{{ 'products.product.quick_view' | t }}"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" style="stroke: #ff6600 !important; stroke-width: 3 !important; pointer-events: none;">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </button>
+        {% endunless %}
+      </div>
+      <div class="relative flex flex-1 flex-col">
+        <div class="mt-4 flex flex-1 flex-col gap-1 contrast-more:px-3">
+          <h2
+            class="text-md card_product_title text-text-500 max-md:w-[calc(100%-40px)] {% if truncate_title %}truncate{% endif %}"
+            {% if is_alpine_template %}
+              x-text="product.title"
+            {% endif %}
+          >
+            {{ card_product.title }}
+          </h2>
+          {%- if show_vendor -%}
+            <p
+              class="truncate text-[14px] max-md:w-[calc(100%-40px)]"
+              {% if is_alpine_template %}
+                x-text="product.vendor"
+              {% endif %}
+            >
+              {{ card_product.vendor }}
+            </p>
+          {%- endif -%}
+        </div>
+        {% if show_price %}
+          {% render '_price-element',
+            product: card_product,
+            class: 'text-md md:text[13px] mt-3 md:mt-2 contrast-more:px-3 contrast-more:pb-3 product_card_prices',
+            is_alpine_template: is_alpine_template,
+            is_inline: true
+          %}
+        {% endif %}
+      </div>
+    </article>
+  {% endcapture %}
+
+  <div
+    {% unless is_alpine_template %}
+      x-element-transition-area="p-{{ card_product.id }}"
+      key="{{ card_product.id }}"
+    {% endunless %}
+    class="{{ class }} {% if isLarge %}col-span-2 md:col-auto{% endif %} card-product"
+  >
+    {% unless request.page_type == 'product' or product.id == card_product.id  %}
+      {%- assign popup_id = 'product_actions' | append: '-' | append: card_product.id -%}
+      {% render 'quick-buy-popup', product: card_product, popup_id: popup_id %}
+    {% endunless %}
+    <a
+      {% if is_alpine_template %}
+        :href="product.url"
+        x-element-transition-trigger:product.desktop
+        {%- unless is_search_card %}.preview.desktop{% endunless -%}
+        .animate.desktop="
+          {
+            'productImg': product.image,
+            'title': product.title,
+            'mediaCount': 3
+          }
+        "
+      {% else %}
+        x-element-transition-trigger:product.desktop
+        {%- if settings.product_card_behavior == 'preview' %}.preview.desktop{% endif -%}
+        .animate.desktop="
+          {
+            {% if card_product.selected_or_first_available_variant.image %}
+              'variantImg': '{{ card_product.selected_or_first_available_variant.image | image_url }}',
+              'mediaCount': {{ card_product.media | size | plus: 1}}, // in PDP we display variant image + all media
+            {% else %}
+              'mediaCount': {{ card_product.media | size }},
+            {% endif %}
+            {% if card_product.featured_image %}
+              'productImg': '{{ card_product.featured_image | image_url }}',
+            {% endif %}
+            'title': '{{ card_product.title | escape }}',
+            'discount_percentage': {{ discount_percentage | default: false }}
+          }
+        "
+        href="{{ card_product.url }}"
+      {% endif %}
+      class="card-hover group relative flex min-w-0 rounded-md"
+    >
+      {{ productCardAspectRatioDiv }}
+      {{ productDetailsArticle }}
+    </a>
+  </div>
+{%- elsif example_product -%}
+  <div class="{{ class }} {% if isLarge %}col-span-2 md:col-auto{% endif %} card-product">
+    <article
+      class="contrast-border card-hover group z-10 flex h-full w-full flex-col items-stretch justify-start rounded-xl text-start"
+    >
+      <div class="relative overflow-hidden rounded-md bg-secondary-400">
+        {{
+          'product-'
+          | append: index
+          | placeholder_svg_tag: 'w-full h-full md:group-hover:scale-105 transition-transform aspect-product'
+        }}
+      </div>
+      <div class="relative mt-4 flex flex-1 flex-col gap-1 contrast-more:px-3">
+        <h2 class="text-md text-text-500 {% if truncate_title %}truncate{% endif %}">
+          {{ 'onboarding.product_title' | t }}
+        </h2>
+      </div>
+      {% if show_price %}
+        {% render '_price-element', class: 'text-md mt-3 contrast-more:px-3 contrast-more:pb-3' %}
+      {% endif %}
+    </article>
+  </div>
+{%- else -%}
+  <div class="col-span-2 md:col-auto {{ class }}">
+    <div class="relative flex min-w-0 rounded-md">
+      <div
+        class="h-0 w-full animate-pulse rounded-md bg-secondary-400"
+        style="padding-bottom: calc(100% * 1 / var(--product-aspect-ratio) + 82px)"
+      ></div>
+    </div>
+  </div>
+{%- endif -%}

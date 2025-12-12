@@ -1,0 +1,27 @@
+{% if is_alpine_template %}
+  <div
+    class="card-product__badge-container z-10 bg-red-500 px-3 text-sm text-white {{ class }}"
+    style="background-color: #ef4444 !important; color: white !important; border-radius: 0 20px;"
+    x-show="$store['transition'].pageData?.discount_percentage"
+  >
+    <span
+      class="font-semibold"
+      x-text="`-${$store['transition'].pageData?.discount_percentage}% OFF`"
+    >
+    </span>
+  </div>
+{% else %}
+  {%- if product.compare_at_price > product.price and product.available -%}
+    {%- assign difference = product.compare_at_price | minus: product.price -%}
+    {%- assign discount_percentage = difference | times: 100.0 | divided_by: product.compare_at_price | round -%}
+    <div
+      class="card-product__badge-container z-10 bg-red-500 px-3 text-sm text-white {{ class }}"
+      style="background-color: #ef4444 !important; color: white !important; border-radius: 0 20px;"
+      x-element-transition-skip='{"transformOrigin": "left bottom"}'
+    >
+      <span class="font-semibold">
+        {{ 'products.product.discount_percentage' | t: percentage: discount_percentage }}
+      </span>
+    </div>
+  {%- endif -%}
+{% endif %}

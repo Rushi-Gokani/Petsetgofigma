@@ -1,0 +1,28 @@
+{% comment %}
+  Initializes Swiper for product cards
+{% endcomment %}
+
+<script defer>
+  document.addEventListener('DOMContentLoaded', function() {
+    const productSwipers = document.querySelectorAll('[class*="product-swiper-"]');
+    productSwipers.forEach(function(swiperEl) {
+      const productId = swiperEl.className.match(/product-swiper-(\d+)/)?.[1];
+      if (productId) {
+        new Swiper(swiperEl, {
+          autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+          },
+          loop: swiperEl.querySelectorAll('.swiper-slide').length > 1,
+          slidesPerView: 1,
+          grabCursor: true,
+          pagination: {
+            el: swiperEl.querySelector('.swiper-pagination'),
+            type: 'bullets',
+            dynamicBullets: true,
+          },
+        });
+      }
+    });
+  });
+</script>

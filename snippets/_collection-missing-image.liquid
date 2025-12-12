@@ -1,0 +1,25 @@
+{% liquid
+  assign text = 'products.product.media.missing_image' | t
+  if settings.collection_missing_image_text
+    assign text = settings.collection_missing_image_text
+  endif
+
+  assign class = 'aspect-square h-full w-full object-cover object-center'
+  if settings.card_gray_background
+    assign class = class | append: ' mix-blend-darken'
+  endif
+%}
+<div class="flex aspect-square w-full items-center justify-center bg-secondary-100">
+  {% if settings.collection_fallback_image %}
+    {% render 'image',
+      src: settings.collection_fallback_image,
+      width: '100%',
+      height: '100%',
+      img_class: class,
+      container_class: 'transition-transform md:group-hover:scale-105',
+      alt: text
+    %}
+  {% else %}
+    {{ text }}
+  {% endif %}
+</div>

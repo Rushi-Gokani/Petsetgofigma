@@ -1,0 +1,390 @@
+{% doc %}
+  @prompt
+    2 image cards with link where 2 cards are in the same row as display banners with some animation and matching the theme make sure they are made with best practices and this theme, the code is perfect but add some option for horizontal gap space setting and padding too rest all remains the same 
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-banner-cards-wrapper-{{ ai_gen_id }} {
+    padding: {{ block.settings.padding_top }}px {{ block.settings.padding_horizontal }}px {{ block.settings.padding_bottom }}px;
+  }
+
+  .ai-banner-cards-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: {{ block.settings.gap }}px;
+    max-width: 100%;
+  }
+
+  .ai-banner-card-{{ ai_gen_id }} {
+    position: relative;
+    overflow: hidden;
+    border-radius: {{ block.settings.border_radius }}px;
+    aspect-ratio: {{ block.settings.aspect_ratio }};
+    display: block;
+    text-decoration: none;
+  }
+
+  .ai-banner-card-image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s ease;
+  }
+
+  .ai-banner-card-{{ ai_gen_id }}:hover .ai-banner-card-image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-banner-card-placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-banner-card-placeholder-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .ai-banner-card-overlay-{{ ai_gen_id }} {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, {{ block.settings.overlay_opacity }}) 0%,
+      rgba(0, 0, 0, 0) 60%
+    );
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: {{ block.settings.content_padding }}px;
+    transition: background 0.4s ease;
+  }
+
+  .ai-banner-card-{{ ai_gen_id }}:hover .ai-banner-card-overlay-{{ ai_gen_id }} {
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, {{ block.settings.overlay_opacity | times: 1.2 | at_most: 1 }}) 0%,
+      rgba(0, 0, 0, 0) 60%
+    );
+  }
+
+  .ai-banner-card-title-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.title_size }}px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    transform: translateY(0);
+    transition: transform 0.4s ease;
+  }
+
+  .ai-banner-card-{{ ai_gen_id }}:hover .ai-banner-card-title-{{ ai_gen_id }} {
+    transform: translateY(-4px);
+  }
+
+  .ai-banner-card-subtitle-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.subtitle_size }}px;
+    margin: 0;
+    opacity: 0.9;
+    transform: translateY(10px);
+    transition: transform 0.4s ease, opacity 0.4s ease;
+  }
+
+  .ai-banner-card-{{ ai_gen_id }}:hover .ai-banner-card-subtitle-{{ ai_gen_id }} {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .ai-banner-card-empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-banner-cards-wrapper-{{ ai_gen_id }} {
+      padding: {{ block.settings.padding_top | times: 0.75 }}px {{ block.settings.padding_horizontal | times: 0.75 }}px {{ block.settings.padding_bottom | times: 0.75 }}px;
+    }
+
+    .ai-banner-cards-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: {{ block.settings.gap | times: 0.75 }}px;
+    }
+
+    .ai-banner-card-title-{{ ai_gen_id }} {
+      font-size: {{ block.settings.title_size | times: 0.8 }}px;
+    }
+
+    .ai-banner-card-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_size | times: 0.8 }}px;
+    }
+
+    .ai-banner-card-overlay-{{ ai_gen_id }} {
+      padding: {{ block.settings.content_padding | times: 0.75 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-banner-cards-wrapper-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-banner-cards-{{ ai_gen_id }}">
+    <a
+      href="{{ block.settings.card_1_link }}"
+      class="ai-banner-card-{{ ai_gen_id }}"
+      {% if block.settings.card_1_link == blank %}aria-disabled="true"{% endif %}
+    >
+      {% if block.settings.card_1_image %}
+        <img
+          src="{{ block.settings.card_1_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.card_1_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.card_1_image.width }}"
+          height="{{ block.settings.card_1_image.height }}"
+          class="ai-banner-card-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-banner-card-placeholder-{{ ai_gen_id }}">
+          {{ 'collection-apparel-1' | placeholder_svg_tag }}
+          <div class="ai-banner-card-empty-state-{{ ai_gen_id }}">
+            Add an image for card 1
+          </div>
+        </div>
+      {% endif %}
+      <div class="ai-banner-card-overlay-{{ ai_gen_id }}">
+        {% if block.settings.card_1_title != blank %}
+          <h3 class="ai-banner-card-title-{{ ai_gen_id }}">{{ block.settings.card_1_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_1_subtitle != blank %}
+          <p class="ai-banner-card-subtitle-{{ ai_gen_id }}">{{ block.settings.card_1_subtitle }}</p>
+        {% endif %}
+      </div>
+    </a>
+
+    <a
+      href="{{ block.settings.card_2_link }}"
+      class="ai-banner-card-{{ ai_gen_id }}"
+      {% if block.settings.card_2_link == blank %}aria-disabled="true"{% endif %}
+    >
+      {% if block.settings.card_2_image %}
+        <img
+          src="{{ block.settings.card_2_image | image_url: width: 1200 }}"
+          alt="{{ block.settings.card_2_image.alt | escape }}"
+          loading="lazy"
+          width="{{ block.settings.card_2_image.width }}"
+          height="{{ block.settings.card_2_image.height }}"
+          class="ai-banner-card-image-{{ ai_gen_id }}"
+        >
+      {% else %}
+        <div class="ai-banner-card-placeholder-{{ ai_gen_id }}">
+          {{ 'collection-apparel-1' | placeholder_svg_tag }}
+          <div class="ai-banner-card-empty-state-{{ ai_gen_id }}">
+            Add an image for card 2
+          </div>
+        </div>
+      {% endif %}
+      <div class="ai-banner-card-overlay-{{ ai_gen_id }}">
+        {% if block.settings.card_2_title != blank %}
+          <h3 class="ai-banner-card-title-{{ ai_gen_id }}">{{ block.settings.card_2_title }}</h3>
+        {% endif %}
+        {% if block.settings.card_2_subtitle != blank %}
+          <p class="ai-banner-card-subtitle-{{ ai_gen_id }}">{{ block.settings.card_2_subtitle }}</p>
+        {% endif %}
+      </div>
+    </a>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Banner cards",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Card 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_1_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_1_title",
+      "label": "Title",
+      "default": "Featured Collection"
+    },
+    {
+      "type": "text",
+      "id": "card_1_subtitle",
+      "label": "Subtitle",
+      "default": "Explore our latest arrivals"
+    },
+    {
+      "type": "url",
+      "id": "card_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Card 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_2_image",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "card_2_title",
+      "label": "Title",
+      "default": "Special Offers"
+    },
+    {
+      "type": "text",
+      "id": "card_2_subtitle",
+      "label": "Subtitle",
+      "default": "Save up to 50% off"
+    },
+    {
+      "type": "url",
+      "id": "card_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Gap between cards",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "aspect_ratio",
+      "min": 0.5,
+      "max": 2,
+      "step": 0.1,
+      "label": "Aspect ratio",
+      "default": 1.2
+    },
+    {
+      "type": "header",
+      "content": "Content style"
+    },
+    {
+      "type": "range",
+      "id": "content_padding",
+      "min": 16,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Content padding",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Title size",
+      "default": 28
+    },
+    {
+      "type": "range",
+      "id": "subtitle_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Subtitle size",
+      "default": 16
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "label": "Overlay opacity",
+      "default": 0.5
+    }
+  ],
+  "presets": [
+    {
+      "name": "Banner cards"
+    }
+  ]
+}
+{% endschema %}

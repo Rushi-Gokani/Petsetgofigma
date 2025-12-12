@@ -1,0 +1,70 @@
+{% liquid
+  assign hasImage = false
+  assign nthArticleLarge = nth_article_large | default: 0
+  assign isLargeMod = index | plus: 1 | modulo: nthArticleLarge
+  assign isLarge = false
+
+  if nthArticleLarge > 0 and isLargeMod == 0
+    assign isLarge = true
+  endif
+
+  if article.image
+    assign hasImage = true
+  endif
+
+  assign imageLoad = 'lazy'
+  if lazy_load == false
+    assign imageLoad = 'eager'
+  endif
+%}
+
+{%- capture articleDetails -%}
+  <h3 class="text-md {% if hasImage %}truncate{% else %}text-center{% endif %}">
+    {{ article.title | escape }}
+  </h3>
+  <p class="text-md ">{{ 'templates.search.article' | t }}</p>
+{%- endcapture -%}
+
+<div
+  key="article-{{ article.id }}"
+  {% if isLarge %}
+    class="max-md:col-span-2"
+  {% endif %}
+>
+  <a
+    x-element-transition-trigger:article.animate="
+      {
+        'title': `{{ article.title | escape }}`,
+        'show_date': {{ show_date | default: true }},
+        'date': '{{ article.published_at | date: '%b %d, %Y' }}',
+        'tags': JSON.parse(`{{ article.tags | json | escape }}`)
+      }
+    "
+    href="{{ article.url }}"
+    class="contrast-border card-hover group relative flex min-w-0 rounded-md"
+  >
+    <div class="h-0 w-0" style="padding-bottom: calc(100% * 1 / var(--product-aspect-ratio) + 81px)"></div>
+    <article class="absolute left-0 top-0 z-10 h-full w-full flex-col items-stretch justify-start text-start">
+      {% if hasImage %}
+        <div class="overflow-hidden rounded-md bg-secondary-100">
+          {%- assign alt = article.image.alt | default: article.title -%}
+          {% render 'image',
+            src: article.image,
+            width: 900,
+            loading: imageLoad,
+            img_class: 'aspect-product w-full h-full object-cover object-center',
+            container_class: 'transition-transform md:group-hover:scale-105',
+            alt: alt
+          %}
+        </div>
+        <div class="relative mt-4 flex flex-col gap-1">
+          {{ articleDetails }}
+        </div>
+      {% else %}
+        <div class="flex h-full flex-col items-center justify-center gap-2 overflow-hidden rounded-md bg-secondary-100 p-4">
+          {{ articleDetails }}
+        </div>
+      {% endif %}
+    </article>
+  </a>
+</div>

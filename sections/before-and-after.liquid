@@ -1,0 +1,178 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+%}
+<div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    id="{{ section.id }}"
+    class="content-wrapper m-auto"
+    x-data="BeforeAfter({ id: '{{ section.id }}' })"
+    style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px; --exposure: 50%;"
+  >
+    <div
+      class="
+        relative overflow-hidden rounded-md
+        {% case section.settings.section_height %}
+          {% when 'small' %}h-[40vh]
+          {% when 'medium' %}h-[60vh]
+          {% when 'large' %}h-[80vh]
+        {% endcase %}
+      "
+    >
+      {% if section.settings.image_after %}
+        {%- assign alt_after = section.settings.image_after.alt | default: 'before_and_after.image_after' | t -%}
+        {% render 'image',
+          src: section.settings.image_after,
+          width: '100%',
+          height: '100%',
+          img_class: 'h-full object-cover object-center',
+          container_class: 'h-full',
+          alt: alt_after
+        %}
+      {% else %}
+        {{
+          'lifestyle-2'
+          | placeholder_svg_tag: 'w-full h-full min-h-[300px] bg-secondary-100 text-text-on-primary-bg '
+        }}
+      {% endif %}
+      <div
+        class="absolute left-0 top-0 h-full w-full"
+        style="clip-path: inset(0 var(--exposure) 0 0);"
+      >
+        {% if section.settings.image_before %}
+          {%- assign alt_before = section.settings.image_before.alt | default: 'before_and_after.image_before' | t -%}
+          {% render 'image',
+            src: section.settings.image_before,
+            width: '100%',
+            height: '100%',
+            img_class: 'h-full object-cover object-center',
+            container_class: 'h-full',
+            alt: alt_before
+          %}
+        {% else %}
+          {{
+            'lifestyle-1'
+            | placeholder_svg_tag: 'w-full h-full min-h-[300px] bg-secondary-400 text-text-on-primary-bg'
+          }}
+        {% endif %}
+      </div>
+      <div class="absolute right-[--exposure] top-0 h-full w-[2px] touch-none select-none bg-bg-500">
+        <label for="exposure_{{ section.id }}" class="sr-only tracking-widest">
+          {{- 'before_and_after.exposure' | t -}}
+        </label>
+        <input
+          class="[&:focus-visible_+_.button]:focus-ring sr-only"
+          type="range"
+          min="0"
+          max="100"
+          step="1"
+          x-model="exposure"
+          name="exposure"
+          tabindex="-1"
+          id="exposure_{{ section.id }}"
+        >
+        <span
+          class="button button--filled-secondary icon-button icon-button--size-sm absolute bottom-0 top-0 m-auto -translate-x-1/2 text-secondary-500 rtl:translate-x-1/2 [&_svg]:rotate-90"
+          @pointerdown="onPointerDown"
+          @keydown="onKeyDown"
+          tabindex="0"
+          role="slider"
+          :aria-valuenow="parseInt(exposure, 10)"
+          aria-label="{{ 'before_and_after.exposure' | t }}"
+          id="exposure"
+        >
+          {% render 'icon-menu' %}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.before-and-after.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "select",
+      "id": "section_height",
+      "options": [
+        {
+          "value": "adapt_image",
+          "label": "t:sections.before-and-after.settings.section_height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.before-and-after.settings.section_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.before-and-after.settings.section_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.before-and-after.settings.section_height.options__4.label"
+        }
+      ],
+      "default": "adapt_image",
+      "label": "t:sections.before-and-after.settings.section_height.label",
+      "info": "t:sections.before-and-after.settings.section_height.info"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_before",
+      "label": "t:sections.before-and-after.settings.image-before.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_after",
+      "label": "t:sections.before-and-after.settings.image-after.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.before-and-after.presets.name"
+    }
+  ]
+}
+{% endschema %}

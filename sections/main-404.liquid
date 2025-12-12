@@ -1,0 +1,11 @@
+<div class="flex h-full flex-col items-center justify-center gap-5">
+  <p class="text-[80px] leading-none">
+    {{ 'templates.404.subtext' | t }}
+  </p>
+  <h1 class="heading text-2xl text-text-500">
+    {{ 'templates.404.title' | t }}
+  </h1>
+  <a x-element-transition-trigger href="{{ routes.all_products_collection_url }}" class="button button--filled-primary">
+    {{ 'general.continue_shopping' | t }}
+  </a>
+</div>

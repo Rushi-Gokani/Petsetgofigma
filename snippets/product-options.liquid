@@ -1,0 +1,315 @@
+{% comment %}
+  Accepts:
+  product: Product object
+{% endcomment %}
+
+<div class="flex flex-col gap-5 max-md:mx-2">
+  {%- for option in product.options_with_values -%}
+    {% liquid
+      assign optionLabel = option.name | downcase
+      assign isVariantOptionType = false
+      assign isColorSwatchOptionType = false
+
+      assign condition = false
+      if section.settings.primary_option != ''
+        assign primaryOption = section.settings.primary_option | downcase
+        if primaryOption == optionLabel
+          assign condition = true
+        endif
+      elsif option.position == 1
+        assign condition = true
+      endif
+
+      if condition
+        if section.settings.primary_option_type == 'variant_image'
+          assign isVariantOptionType = true
+        elsif section.settings.primary_option_type == 'color_swatch'
+          assign isColorSwatchOptionType = true
+        endif
+      else
+        if section.settings.secondary_option_type == 'variant_image'
+          assign isVariantOptionType = true
+        elsif section.settings.secondary_option_type == 'color_swatch'
+          assign isColorSwatchOptionType = true
+        endif
+      endif
+
+      assign is_contain = false
+      if settings.fit_products_media == 'contain'
+        assign is_contain = true
+      endif
+    %}
+    <div
+      role="radiogroup"
+      aria-required="true"
+      aria-label="{{ 'products.product.select_your_option' | t: option: optionLabel }}"
+      class="flex h-full w-full variants-radio-group flex-col items-center justify-between {% if forloop.index0 == 0 %}gap-2{% else %}gap-3{% endif %}"
+      style="order: {{ option.position }}"
+    >
+      <div
+        class="flex h-full w-full flex-row items-center justify-between pb-2 {% if forloop.index0 == 0 %}max-md:sticky top-0 z-10 {% else %}relative{% endif %}"
+      >
+        <span
+          class="font-semibold text-text-500"
+        >
+          {% if optionLabel contains 'size' %}
+            Size
+          {% elsif optionLabel contains 'color' or optionLabel contains 'colour' %}
+            Color
+          {% else %}
+            {{ 'products.product.select_your_option' | t: option: optionLabel }}
+          {% endif %}
+        </span>
+
+        <div class="flex items-center gap-2">
+          {% if optionLabel contains 'size' %}
+            <button
+              type="button"
+              class="text-sm text-primary-500 flex items-center gap-2"
+              @click.prevent.stop="openSizeChart()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 24 24"><path fill="currentColor" d="M20.875 7H3.125C1.953 7 1 7.897 1 9v6c0 1.103.953 2 2.125 2h17.75C22.047 17 23 16.103 23 15V9c0-1.103-.953-2-2.125-2zM7 12H5V9h2v3zm4 1H9V9h2v4zm4-1h-2V9h2v3zm4 1h-2V9h2v4z"/></svg>
+              <span>Size chart</span>
+            </button>
+          {% endif %}
+
+          {% if forloop.index0 == 0 %}
+           {% comment %} <button
+              type="button"
+              class="button button--outline-secondary icon-button icon-button--size-xs md:hidden"
+              aria-label="{{ 'products.facets.filters_popup.close' | t }}"
+              href="#"
+              @click.prevent="hideProductActions()"
+            >
+              {% render 'icon-close' %} 
+            </button> {% endcomment %}
+          {% endif %}
+        </div>
+      </div>
+      
+      <div class="pill_scroll_wrapper">
+        <article
+          class="flex h-fit w-full gap-3 variant-pill-scroll"
+          data-scroll="true"
+        >
+          
+          {%- assign option_index = forloop.index -%}
+          {%- for value in option.values -%}
+            {% liquid
+              capture new_options_string
+                for option_value in product.selected_or_first_available_variant.options
+                  if forloop.index == option_index
+                    echo value
+                  else
+                    echo option_value
+                  endif
+
+                  unless forloop.last
+                    echo ','
+                  endunless
+                endfor
+              endcapture
+
+              assign option_variant_available = false
+
+              for variant in product.variants
+                assign options_string = variant.options | join: ','
+                if options_string == new_options_string
+                  assign variant_id = variant.id
+                  if variant.image
+                    assign variant_img = variant.image | image_url
+                  else
+                    assign variant_img = null
+                  endif
+                  assign option_variant_available = variant.available
+                  break
+                endif
+              endfor
+
+              # Prepare color pattern
+              assign label = value
+              assign cssValue = null
+
+              if isColorSwatchOptionType and value contains '['
+                assign pattern = value | split: '['
+                assign label = pattern | first | strip
+                assign cssValue = pattern | last | remove: ']' | strip
+                # Check gradient
+                if cssValue contains '/'
+                  assign colors = cssValue | split: '/'
+                  assign cssValue = 'linear-gradient(90deg, '
+                  assign start = 0
+                  assign size = colors.size | times: 1.0
+                  assign percent = 100 | divided_by: size
+                  for color in colors
+                    assign end = percent | plus: start
+                    assign cssValue = cssValue | append: color | append: ' ' | append: start | append: '%, ' | append: color | append: ' ' | append: end | append: '%'
+                    assign start = end
+                    unless forloop.index == colors.size
+                      assign cssValue = cssValue | append: ', '
+                    endunless
+                  endfor
+                  assign cssValue = cssValue | append: ')'
+                endif
+              endif
+
+              # Use section color swatch mapping when available
+              if isColorSwatchOptionType and cssValue == null and section.settings.color_swatch_map != blank
+                assign map_lines = section.settings.color_swatch_map | newline_to_br | split: '<br />'
+                assign target_name = label | downcase
+                for line in map_lines
+                  assign parts = line | split: ':'
+                  assign map_name = parts[0] | strip | downcase
+                  assign map_color = parts[1] | default: '' | strip
+                  if map_name == target_name and map_color != ''
+                    assign cssValue = map_color
+                    break
+                  endif
+                endfor
+              endif
+
+              # Fallbacks for color swatches when no explicit [color] provided
+              if isColorSwatchOptionType and cssValue == null
+                if value contains '#'
+                  assign cssValue = value
+                else
+                  assign cssValue = value
+                endif
+              endif
+            %}
+              {% assign is_pill_option = true %}
+              {% if isVariantOptionType or cssValue %}
+                {% assign is_pill_option = false %}
+              {% endif %}
+
+              
+            <div
+              class="
+                select-none transition-all ease-in-out
+                {% if is_pill_option %}
+                  variant-pill
+                {% else %}
+                  button button--size-sm
+                {% endif %}
+                {% if isVariantOptionType %}aspect-product max-md:w-full h-auto md:h-40 p-[2%]{% endif %}
+                {% if cssValue %}aspect-square max-md:w-full h-auto md:h-24 p-1 md:p-2{% endif %}
+                {% unless value.available %}line-through{% endunless %}
+              "
+              @click="selectOptionAndSetVariantId({{ option_index | minus: 1 }}, `{{ value | escape }}`, {{ variant_id | default: 0 }}, '{{ variant_img }}')"
+              :class="{
+                'variant-pill--selected': {{ is_pill_option | json }} && selectedOptions[{{ option_index | minus: 1 }}] === `{{ value | escape }}`,
+                'variant-pill--disabled': {{ is_pill_option | json }} && !({{ option_variant_available | json }}),
+                'button--outline-primary button--disabled opacity-100 !bg-bg-700': !{{ is_pill_option | json }} && selectedOptions[{{ option_index | minus: 1 }}] === `{{ value | escape }}`,
+                'button--outline-secondary': !{{ is_pill_option | json }} && selectedOptions[{{ option_index | minus: 1 }}] !== `{{ value | escape }}`
+              }"
+              role="radio"
+              title="{{ label }}"
+              aria-label="{{ label }}"
+              :tabindex="selectedOptions[{{ option_index | minus: 1 }}] === `{{ value | escape }}` ? '0' : '-1'"
+              :aria-checked="selectedOptions[{{ option_index | minus: 1 }}] === `{{ value | escape }}` ? 'true' : 'false'"
+              :aria-disabled="!({{ option_variant_available | json }})"
+              x-a11y-radio
+            >
+              {% if isVariantOptionType %}
+                {% if variant_img %}
+                  <img
+                    src="{{ variant_img }}"
+                    alt="{{ value }}"
+                    width="100%"
+                    height="100%"
+                    class="scale scale max-h-full rounded-sm bg-center bg-no-repeat {% if is_contain %}object-contain{% else %}object-cover h-full{% endif %}"
+                    loading="lazy"
+                  >
+                  <span
+                    class="absolute flex size-full items-center justify-center text-2xl text-primary-500 [&>svg]:stroke-bg-400 [&>svg]:stroke-1 [&>svg]:drop-shadow-lg {% if product.selected_or_first_available_variant.id != variant_id %}hidden{% endif %}"
+                    :class="
+                      {
+                        'hidden': selectedOptions[{{ option_index | minus: 1 }}] !== `{{ value | escape }}`,
+                      }
+                    "
+                  >
+                    {% render 'icon-checkmark' %}
+                  </span>
+
+                {% else %}
+                  <div class="w-full rounded-sm bg-secondary-400 md:h-full">
+                    {{ 'image' | placeholder_svg_tag: 'w-full h-full scale-150' }}
+                  </div>
+                {% endif %}
+              {% elsif cssValue %}
+                <span
+                  style="background: {{ cssValue }}"
+                  class="relative size-full rounded-[6px]"
+                >
+                  <span
+                    class="absolute flex size-full items-center justify-center text-2xl text-primary-500 [&>svg]:stroke-bg-400 [&>svg]:stroke-1 [&>svg]:drop-shadow-lg {% if product.selected_or_first_available_variant.id != variant_id %}hidden{% endif %}"
+                    :class="
+                      {
+                        'hidden': selectedOptions[{{ option_index | minus: 1 }}] !== `{{ value | escape }}`,
+                      }
+                    "
+                  >
+                    {% render 'icon-checkmark' %}
+                  </span>
+                </span>
+              {% else %}
+                <span class="variant-pill__label text-sm md:text-md font-semibold whitespace-nowrap">{{ value }}</span>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </article>
+      </div>
+      {% if optionLabel contains 'size' %}
+        {% assign suitable_block = section.blocks | where: 'type', 'suitable_for' | first %}
+        {% if suitable_block and suitable_block.settings.suitable_for_content != blank %}
+          <div class="w-full text-sm text-text-600" style="padding-top:10px;">
+            Suitable for: {{ suitable_block.settings.suitable_for_content }}
+          </div>
+        {% endif %}
+        
+        {%- comment -%} Dynamic Variant-Specific Suitable For Breeds {%- endcomment -%}
+        {% assign breeds_block = section.blocks | where: 'type', 'suitable_for_breeds' | first %}
+        {% if breeds_block %}
+          {% liquid
+            assign namespace = breeds_block.settings.metafield_namespace | default: 'custom'
+            assign key = breeds_block.settings.metafield_key | default: 'suitable_breeds'
+            assign label = breeds_block.settings.label_text | default: 'Suitable for'
+            assign current_variant = product.selected_or_first_available_variant
+            assign breeds_value = current_variant.metafields[namespace][key].value
+          %}
+          
+          <div 
+            id="suitable-breeds-display" 
+            class="w-full text-sm text-text-600 transition-opacity duration-200" 
+            data-namespace="{{ namespace }}"
+            data-key="{{ key }}"
+            data-label="{{ label }}"
+          >
+            {% if breeds_value != blank %}
+              <span class="font-semibold">{{ label }}:</span> <span id="breeds-content">{{ breeds_value.description }} for {{ breeds_value.number }}</span>
+            {% endif %}
+          </div>
+          
+          {%- comment -%} Hidden data for all variants {%- endcomment -%}
+          <script type="application/json" id="variant-breeds-data">
+            {
+              {%- for variant in product.variants -%}
+                "{{ variant.id }}": {{ variant.metafields[namespace][key].value | json }}
+                {%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            }
+          </script>
+        {% endif %}
+      {% endif %}
+    </div>
+  {%- endfor -%}
+</div>
+
+<!-- Size Chart Modal -->
+{% render 'size-chart' %}
+
+<script>
+function openSizeChart() {
+  window.dispatchEvent(new CustomEvent('open-size-chart'));
+}
+</script>

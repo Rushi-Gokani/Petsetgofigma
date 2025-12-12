@@ -1,0 +1,179 @@
+<div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    class="content-wrapper mx-auto"
+    style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+  >
+    <div
+      class="rounded-md bg-secondary-400 px-7 py-8 md:p-12"
+      x-data="Slider()"
+    >
+      <div class="mb-7 flex w-full items-center justify-between md:mb-8">
+        <h1
+          class="
+            heading text-text-500
+            {% case section.settings.heading_size %}
+              {% when 'small' %}text-base
+              {% when 'medium' %}text-lg
+              {% when 'large' %}text-xl
+            {% endcase %}
+          "
+        >
+          {{ section.settings.heading | escape }}
+        </h1>
+        <div>
+          {% render 'slider-buttons' %}
+        </div>
+      </div>
+
+      {%- capture slides -%}
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'quote' -%}
+              {% capture slideContent %}
+                <div {{ block.shopify_attributes }}>
+                  {% render 'rating', rating_value: block.settings.rating, rating_max: 5, class: 'flex gap-2 text-xl mb-5' %}
+                  <div class="rte mb-5 text-lg text-text-500 md:text-2xl [&>p]:m-0">{{ block.settings.text }}</div>
+                  {% if block.settings.name != blank %}
+                    <span class="text-text-500">– {{ block.settings.name | escape }}</span>
+                  {% endif %}
+                </div>
+              {% endcapture %}
+  
+              {%- render 'slider-slide',
+                content: slideContent,
+                class: 'animate-on-transition relative flex-shrink-0 overflow-hidden'
+              -%}
+          {%- endcase -%}
+        {%- endfor -%}
+      {% endcapture %}
+
+      {%- render 'slider',
+        slides: slides,
+        gap: 0,
+        slides_amount_in_view: '{xs: 1, sm: 1, md: 1, lg: 1, xl: 1, xxl: 1}',
+        is_custom_slider_x_data: true,
+        is_header_disabled: true,
+        is_scrollbar_hidden: true
+      -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.quotes.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Quotes",
+      "label": "t:sections.quotes.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.all.heading_size.options__1.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.all.heading_size.options__2.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.all.heading_size.options__3.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.all.heading_size.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quote",
+      "name": "t:sections.quotes.blocks.quote.name",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 0,
+          "max": 5,
+          "step": 0.5,
+          "default": 5,
+          "label": "t:sections.quotes.blocks.quote.settings.rate.label"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Add a quote.</p>",
+          "label": "t:sections.quotes.blocks.quote.settings.text.label"
+        },
+        {
+          "type": "text",
+          "id": "name",
+          "default": "Author name",
+          "label": "t:sections.quotes.blocks.quote.settings.author.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.quotes.presets.name",
+      "blocks": [
+        {
+          "type": "quote"
+        },
+        {
+          "type": "quote"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

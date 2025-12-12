@@ -1,0 +1,203 @@
+{% comment %}
+  Accepts:
+  - is_alpine_template: {Boolean} Render template with AlpineJS data
+{% endcomment %}
+
+{% liquid
+  assign condition = false
+  assign isNoMobile = false
+
+  if template == 'index' or template == 'cart' or template == 'list-collections' or template == '404' or template == 'customers/account' or template == 'customers/addresses' or template == 'customers/order' or template == 'gift_card'
+    assign condition = true
+  endif
+
+  if template == 'collection' or template == 'product' or template == 'search'
+    assign isNoMobile = true
+  endif
+%}
+
+{% if is_alpine_template or condition == false %}
+  {% assign t = template | split: '.' | first %}
+
+  <nav
+    class="breadcrumbs content-wrapper mx-auto my-8 px-4 {% if isNoMobile %}hidden md:block{% endif %}"
+    role="navigation"
+    aria-label="{{ 'general.breadcrumbs.aria_label' | t }}"
+  >
+    <div role="list" class="truncate px-2">
+      <div role="listitem" class="inline font-semibold">
+        <a class="inline-flex hover:underline" x-element-transition-trigger href="{{ routes.root_url }}">
+          {{ 'general.breadcrumbs.home' | t }}
+        </a>
+      </div>
+
+      <div
+        role="listitem"
+        class="mx-4 inline-block"
+        aria-hidden="true"
+      >
+        {% render 'breadcrumb-arrow' %}
+      </div>
+
+      {% if is_alpine_template %}
+        <template x-if="$store['transition'].pageType === 'category'">
+          <div class="contents">
+            <div
+              role="listitem"
+              class="breadcrumb text-text-500"
+              x-html="$store['transition'].pageData?.title"
+            ></div>
+          </div>
+        </template>
+
+        <template x-if="$store['transition'].pageType === 'article'">
+          <div class="contents">
+            <div role="listitem" class="breadcrumb">
+              <a
+                class="inline-flex hover:underline"
+                x-element-transition-trigger
+                href="{{ blog.url }}"
+                aria-current="page"
+              >
+                {{- blog.title -}}
+              </a>
+            </div>
+            <div
+              role="listitem"
+              class="mx-4 inline-block"
+              aria-hidden="true"
+            >
+              {% render 'breadcrumb-arrow' %}
+            </div>
+            <div
+              role="listitem"
+              class="breadcrumb text-text-500"
+              x-html="$store['transition'].pageData?.title"
+            ></div>
+          </div>
+        </template>
+
+        <template x-if="$store['transition'].pageType === 'product'">
+          <div class="contents">
+            <div
+              role="listitem"
+              class="breadcrumb text-text-500"
+              x-html="$store['transition'].pageData?.title"
+            ></div>
+          </div>
+        </template>
+
+        <template x-if="$store['transition'].pageType === 'search'">
+          <div class="contents">
+            <div
+              role="listitem"
+              class="breadcrumb text-text-500"
+              x-html="'{{ 'general.search.search' | t }}: {{ 'templates.search.results_with_count_and_term' | t: count: '...', terms: 'XXX' | escape }}'.replace('XXX', $store['transition'].pageData?.search)"
+            ></div>
+          </div>
+        </template>
+      {% else %}
+        {% case t %}
+          {% when 'page' %}
+            <div role="listitem" class="breadcrumb text-text-500">
+              {{ page.title }}
+            </div>
+
+          {% when 'product' %}
+            {% comment %} Kept in case enabled for products {% endcomment %}
+            {% if collection.url %}
+              <div role="listitem" class="breadcrumb">
+                {{ collection.title | link_to: collection.url }}
+              </div>
+              <div
+                role="listitem"
+                class="mx-4 inline-block"
+                aria-hidden="true"
+              >
+                {% render 'breadcrumb-arrow' %}
+              </div>
+            {% endif %}
+
+            <div role="listitem" class="breadcrumb text-text-500">
+              {{ product.title }}
+            </div>
+
+          {% when 'collection' and collection.handle %}
+            {% if current_tags %}
+              <div role="listitem" class="breadcrumb">
+                {{ collection.title | link_to: collection.url }}
+              </div>
+              <div
+                role="listitem"
+                class="mx-4 inline-block"
+                aria-hidden="true"
+              >
+                {% render 'breadcrumb-arrow' %}
+              </div>
+              <div role="listitem" class="breadcrumb text-text-500">
+                {{- current_tags | join: ' + ' -}}
+              </div>
+            {% else %}
+              <div role="listitem" class="breadcrumb text-text-500">
+                {{- collection.title -}}
+              </div>
+            {% endif %}
+
+          {% when 'blog' %}
+            {% if current_tags %}
+              <div role="listitem" class="breadcrumb">
+                <a
+                  class="inline-flex hover:underline"
+                  x-element-transition-trigger
+                  href="{{ blog.url }}"
+                  aria-current="page"
+                >
+                  {{- blog.title -}}
+                </a>
+              </div>
+              <div
+                role="listitem"
+                class="mx-4 inline-block"
+                aria-hidden="true"
+              >
+                {% render 'breadcrumb-arrow' %}
+              </div>
+              <div role="listitem" class="breadcrumb text-text-500">
+                {{- current_tags | join: ' + ' -}}
+              </div>
+            {% else %}
+              <div role="listitem" class="breadcrumb text-text-500">
+                {{ blog.title }}
+              </div>
+            {% endif %}
+
+          {% when 'article' %}
+            <div role="listitem" class="breadcrumb">
+              <a
+                class="inline-flex hover:underline"
+                x-element-transition-trigger
+                href="{{ blog.url }}"
+                aria-current="page"
+              >
+                {{- blog.title -}}
+              </a>
+            </div>
+            <div
+              role="listitem"
+              class="mx-4 inline-block"
+              aria-hidden="true"
+            >
+              {% render 'breadcrumb-arrow' %}
+            </div>
+            <div role="listitem" class="breadcrumb text-text-500">
+              {{ article.title }}
+            </div>
+          {% else %}
+            <div role="listitem" class="breadcrumb text-text-500" aria-current="page">
+              {{ page_title }}
+            </div>
+        {% endcase %}
+      {% endif %}
+    </div>
+  </nav>
+{% endif %}

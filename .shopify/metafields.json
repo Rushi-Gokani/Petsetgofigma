@@ -1,0 +1,618 @@
+{
+  "article": [],
+  "blog": [],
+  "collection": [
+    {
+      "key": "f_c_i_1",
+      "namespace": "logo_list",
+      "name": "Featured Collection 1 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "f_c_i_2",
+      "namespace": "logo_list",
+      "name": " Featured Collection 2 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_3_image",
+      "namespace": "custom",
+      "name": " Featured Collection 3 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_4_image",
+      "namespace": "custom",
+      "name": " Featured Collection 4 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_5_image",
+      "namespace": "custom",
+      "name": " Featured Collection 5 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_6_image",
+      "namespace": "custom",
+      "name": " Featured Collection 6 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_7_image",
+      "namespace": "custom",
+      "name": " Featured Collection 7 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_8_image",
+      "namespace": "custom",
+      "name": " Featured Collection 8 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_9_image",
+      "namespace": "custom",
+      "name": " Featured Collection 9 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "_featured_collection_10_image",
+      "namespace": "custom",
+      "name": " Featured Collection 10 Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "featured_collection_1_text",
+      "namespace": "custom",
+      "name": "Featured Collection 1 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_2_text",
+      "namespace": "custom",
+      "name": "Featured Collection 2 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_3_text",
+      "namespace": "custom",
+      "name": "Featured Collection 3 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_4_text",
+      "namespace": "custom",
+      "name": "Featured Collection 4 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_5_text",
+      "namespace": "custom",
+      "name": "Featured Collection 5 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_6_text",
+      "namespace": "custom",
+      "name": "Featured Collection 6 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_7_text",
+      "namespace": "custom",
+      "name": "Featured Collection 7 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_8_text",
+      "namespace": "custom",
+      "name": "Featured Collection 8 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_9_text",
+      "namespace": "custom",
+      "name": "Featured Collection 9 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_10_text",
+      "namespace": "custom",
+      "name": "Featured Collection 10 Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "featured_collection_1",
+      "namespace": "custom",
+      "name": "Featured Collection 1",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_2",
+      "namespace": "custom",
+      "name": "Featured Collection 2",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_3",
+      "namespace": "custom",
+      "name": "Featured Collection 3",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_4",
+      "namespace": "custom",
+      "name": "Featured Collection 4",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_5",
+      "namespace": "custom",
+      "name": "Featured Collection 5",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_6",
+      "namespace": "custom",
+      "name": "Featured Collection 6",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_7",
+      "namespace": "custom",
+      "name": "Featured Collection 7",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_8",
+      "namespace": "custom",
+      "name": "Featured Collection 8",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_9",
+      "namespace": "custom",
+      "name": "Featured Collection 9",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "featured_collection_10",
+      "namespace": "custom",
+      "name": "Featured Collection 10",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "banner_image",
+      "namespace": "custom",
+      "name": "Top Banner Image",
+      "description": "",
+      "type": {
+        "name": "file_reference",
+        "category": "REFERENCE"
+      }
+    }
+  ],
+  "company": [],
+  "company_location": [],
+  "location": [],
+  "market": [],
+  "order": [],
+  "page": [],
+  "product": [
+    {
+      "key": "details_care",
+      "namespace": "custom",
+      "name": "Details & Care",
+      "description": "",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_description",
+      "namespace": "custom",
+      "name": "Product Description",
+      "description": "",
+      "type": {
+        "name": "rich_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "size_chart",
+      "namespace": "custom",
+      "name": "Size Chart",
+      "description": "",
+      "type": {
+        "name": "page_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "queries",
+      "namespace": "shopify--discovery--product_search_boost",
+      "name": "Search product boosts",
+      "description": "List of search queries for which a product gets higher rank in search results",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "related_products",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "Related products",
+      "description": "List of related products",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "related_products_display",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "Related products settings",
+      "description": "Determines how related products are displayed along with algorithmic product recommendations",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "complementary_products",
+      "namespace": "shopify--discovery--product_recommendation",
+      "name": "Complementary products",
+      "description": "List of complementary products",
+      "type": {
+        "name": "list.product_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "rating",
+      "namespace": "reviews",
+      "name": "Product rating",
+      "description": "Average rating from customers",
+      "type": {
+        "name": "rating",
+        "category": "RATING"
+      }
+    },
+    {
+      "key": "rating_count",
+      "namespace": "reviews",
+      "name": "Product rating count",
+      "description": "Total number of ratings from customers",
+      "type": {
+        "name": "number_integer",
+        "category": "NUMBER"
+      }
+    },
+    {
+      "key": "color-pattern",
+      "namespace": "shopify",
+      "name": "Color",
+      "description": "Defines the primary color or pattern, such as blue or striped",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "accessory-size",
+      "namespace": "shopify",
+      "name": "Accessory size",
+      "description": "Defines the size of an accessory product, such as one size or compact",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "material",
+      "namespace": "custom",
+      "name": "Material",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_coupon_code",
+      "namespace": "custom",
+      "name": "Product Coupon Code",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_coupon_text",
+      "namespace": "custom",
+      "name": "Product Coupon Text",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_coupon_codes",
+      "namespace": "custom",
+      "name": "product_coupon_codes",
+      "description": "The list of coupon codes, whether its single or multiple.",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_coupon_texts",
+      "namespace": "custom",
+      "name": "product_coupon_texts",
+      "description": "The List of texts whether it is single or multiple, sequence of list matters.",
+      "type": {
+        "name": "list.single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "custom_badge",
+      "namespace": "scraft",
+      "name": "Custom Badge",
+      "description": "Select the custom badge from list. ",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "material",
+      "namespace": "shopify",
+      "name": "Material",
+      "description": "Defines a product's primary material, such as cotton or wool",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "animal-type",
+      "namespace": "shopify",
+      "name": "Animal type",
+      "description": "Specifies the type of animal a product is intended for, such as ducks, deer, or dogs",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "dog-toy-type",
+      "namespace": "shopify",
+      "name": "Dog toy type",
+      "description": "Classifies the type of dog toy, such as plush or squeaky",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "suitable-for-breed-size",
+      "namespace": "shopify",
+      "name": "Suitable for breed size",
+      "description": "Identifies the appropriate breed size for pet products, such as large or medium",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "swatch_enabled_variants",
+      "namespace": "scraft",
+      "name": "Swatch Enabled Variants",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "swatch_method",
+      "namespace": "scraft",
+      "name": "Swatch Method",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "product_faq",
+      "namespace": "custom",
+      "name": "Product Faq",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    },
+    {
+      "key": "fabric",
+      "namespace": "shopify",
+      "name": "Fabric",
+      "description": "Identifies the type of fabric used in a product, for example, cotton or denim",
+      "type": {
+        "name": "list.metaobject_reference",
+        "category": "REFERENCE"
+      }
+    },
+    {
+      "key": "binkit_url",
+      "namespace": "custom",
+      "name": "binkit URL",
+      "description": "",
+      "type": {
+        "name": "url",
+        "category": "URL"
+      }
+    },
+    {
+      "key": "suitable_for",
+      "namespace": "custom",
+      "name": "Suitable For",
+      "description": "",
+      "type": {
+        "name": "single_line_text_field",
+        "category": "TEXT"
+      }
+    }
+  ],
+  "variant": [
+    {
+      "key": "breed_info",
+      "namespace": "scraft",
+      "name": "Breed info",
+      "description": "",
+      "type": {
+        "name": "metaobject_reference",
+        "category": "REFERENCE"
+      }
+    }
+  ],
+  "shop": [
+    {
+      "key": "fastbundleconf",
+      "namespace": "rbrfb",
+      "name": "Fast Bundle Conf",
+      "description": "App's config for the widgets",
+      "type": {
+        "name": "json",
+        "category": "JSON"
+      }
+    }
+  ]
+}

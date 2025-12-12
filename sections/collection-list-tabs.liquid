@@ -1,0 +1,360 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+%}
+
+<div class="section-{{ section.id }} collection-tabs-section" id="section-{{ section.id }}"
+  style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px; background-color: {{ section.settings.background_color }};">
+  <div class="container mx-auto px-4">
+    {% if section.settings.title != blank %}
+      <h2 class="section-title text-center mb-8" style="color: {{ section.settings.heading_color }}; font-size: {{ section.settings.heading_size }}px;">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+    
+    {% if section.blocks.size > 0 %}
+      <div class="collection-tabs" x-data="{ scrollPosition: 0 }">
+        <!-- Tab Navigation with Swiper -->
+        <div class="tabs-navigation-wrapper relative mb-6">
+          <div class="tabs-navigation swiper">
+            <div class="swiper-wrapper">
+              {% for block in section.blocks %}
+                {% assign collection = collections[block.settings.collection] %}
+                {% if collection %}
+                  <div class="swiper-slide">
+                    <button 
+                      class="tab-button py-2 px-4 whitespace-nowrap flex-shrink-0 {% if forloop.first %}active{% endif %}" 
+                      data-tab="tab-{{ block.id }}" 
+                      role="tab" 
+                      aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-controls="tabpanel-{{ block.id }}"
+                      style="color: {{ section.settings.tab_text_color }}; 
+                             background-color: {{ section.settings.tab_background_color }}; 
+                             border-radius: {{ section.settings.tab_border_radius }}px;
+                             border: 1px solid {{ section.settings.tab_text_color }};"
+                    >
+                      {{ collection.title }}
+                    </button>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          
+          <!-- Navigation arrows -->
+          <button 
+            class="tab-nav-prev absolute left-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10 flex items-center justify-center" 
+            aria-label="Previous tabs"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="41" viewBox="0 0 40 41" fill="none">
+            <rect x="0.75" y="1.25" width="38.5" height="38.5" rx="19.25" fill="white"/>
+            <rect x="0.75" y="1.25" width="38.5" height="38.5" rx="19.25" stroke="#D9D9D9" stroke-width="1.5"/>
+            <g clip-path="url(#clip0_95_906)">
+            <path d="M23.7377 26.9792C24.0941 27.3346 24.0861 27.9011 23.7202 28.2461C23.353 28.5912 22.7679 28.5833 22.4114 28.2279L15.2649 21.0951L15.9281 20.4701L15.2623 21.0951C14.9058 20.7383 14.9139 20.1706 15.2824 19.8242C15.2932 19.8138 15.304 19.8047 15.3147 19.7956L22.4114 12.7721C22.7679 12.4167 23.353 12.4089 23.7202 12.7539C24.0874 13.099 24.0941 13.6667 23.7377 14.0208L17.2194 20.4727L23.7377 26.9792Z" fill="#090914"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_95_906">
+            <rect width="9" height="16" fill="white" transform="translate(15 12.5)"/>
+            </clipPath>
+            </defs>
+            </svg>
+          </button>
+          <button 
+            class="tab-nav-next absolute right-0 top-1/2 -translate-y-1/2 bg-white rounded-full p-2 shadow-md z-10 flex items-center justify-center" 
+            aria-label="Next tabs"
+          >
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="41" viewBox="0 0 40 41" fill="none" >
+          <rect x="-0.75" y="0.75" width="38.5" height="38.5" rx="19.25" transform="matrix(-1 0 0 1 38.5 0.5)" fill="white"/>
+          <rect x="-0.75" y="0.75" width="38.5" height="38.5" rx="19.25" transform="matrix(-1 0 0 1 38.5 0.5)" stroke="#D9D9D9" stroke-width="1.5"/>
+          <g clip-path="url(#clip0_95_922)">
+          <path d="M16.2622 26.9792C15.9058 27.3346 15.9138 27.9011 16.2797 28.2461C16.6469 28.5912 17.232 28.5833 17.5885 28.2279L24.7349 21.0951L24.0718 20.4701L24.7376 21.0951C25.0941 20.7383 25.086 20.1706 24.7174 19.8242C24.7067 19.8138 24.6959 19.8047 24.6852 19.7956L17.5885 12.7721C17.232 12.4167 16.6469 12.4089 16.2797 12.7539C15.9125 13.099 15.9058 13.6667 16.2622 14.0208L22.7805 20.4727L16.2622 26.9792Z" fill="#090914"/>
+          </g>
+          <defs>
+          <clipPath id="clip0_95_922">
+          <rect width="9" height="16" fill="white" transform="matrix(-1 0 0 1 25 12.5)"/>
+          </clipPath>
+          </defs>
+          </svg>
+          </button>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+          {% for block in section.blocks %}
+            {% assign collection = collections[block.settings.collection] %}
+            {% if collection %}
+              <div 
+                id="tabpanel-{{ block.id }}" 
+                class="tab-pane {% if forloop.first %}active{% endif %}" 
+                data-tab-id="tab-{{ block.id }}" 
+                role="tabpanel" 
+                aria-labelledby="tab-{{ block.id }}"
+                {% unless forloop.first %}hidden{% endunless %}
+              >
+                {% if collection.products.size > 0 %}
+                  <div class="product-grid grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    {% for product in collection.products limit: 4 %}
+                      <div class="product-card h-full">
+                        {% render 'card-product',
+                          card_product: product,
+                          show_vendor: true,
+                          lazy_load: true
+                        %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="text-center py-8">No products found in this collection</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="text-center py-12">
+        <p>Add collection blocks to display products</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .section-{{ section.id }} .tabs-navigation {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .section-{{ section.id }} .swiper-wrapper {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  
+  .section-{{ section.id }} .swiper-slide {
+    width: auto;
+  }
+  
+  .section-{{ section.id }} .tab-button {
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .section-{{ section.id }} .tab-button.active {
+    color: {{ section.settings.tab_active_text_color }} !important;
+    background-color: {{ section.settings.tab_active_background_color }} !important;
+    border-color: {{ section.settings.tab_active_background_color }} !important;
+  }
+  
+  .section-{{ section.id }} .tab-nav-prev,
+  .section-{{ section.id }} .tab-nav-next {
+    width: 36px;
+    height: 36px;
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .section-{{ section.id }} .tab-nav-prev:hover,
+  .section-{{ section.id }} .tab-nav-next:hover {
+    opacity: 1;
+  }
+  
+  .section-{{ section.id }} .tab-nav-prev.swiper-button-disabled,
+  .section-{{ section.id }} .tab-nav-next.swiper-button-disabled {
+    opacity: 0.35;
+    cursor: auto;
+    pointer-events: none;
+  }
+  
+  @media (max-width: 767px) {
+    .section-{{ section.id }} .tab-nav-prev,
+    .section-{{ section.id }} .tab-nav-next {
+      width: 30px;
+      height: 30px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tabs swiper
+    const tabsSwiper = new Swiper('.section-{{ section.id }} .tabs-navigation', {
+      slidesPerView: 'auto',
+      spaceBetween: 10,
+      freeMode: true,
+      navigation: {
+        nextEl: '.section-{{ section.id }} .tab-nav-next',
+        prevEl: '.section-{{ section.id }} .tab-nav-prev',
+      },
+    });
+    
+    // Initialize tabs functionality
+    initCollectionTabs('{{ section.id }}');
+  });
+  
+  function initCollectionTabs(sectionId) {
+    const tabButtons = document.querySelectorAll(`.section-${sectionId} .tab-button`);
+    const tabPanes = document.querySelectorAll(`.section-${sectionId} .tab-pane`);
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remove active class from all buttons and hide all panes
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabPanes.forEach(pane => {
+          pane.classList.remove('active');
+          pane.hidden = true;
+        });
+        
+        // Add active class to current button and show current pane
+        this.classList.add('active');
+        const currentPane = document.querySelector(`.section-${sectionId} .tab-pane[data-tab-id="${tabId}"]`);
+        if (currentPane) {
+          currentPane.classList.add('active');
+          currentPane.hidden = false;
+        }
+        
+        // Update aria attributes for accessibility
+        tabButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
+        this.setAttribute('aria-selected', 'true');
+      });
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Collection Tabs",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Collections"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tab_text_color",
+      "label": "Tab text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "tab_background_color",
+      "label": "Tab background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_text_color",
+      "label": "Active tab text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_background_color",
+      "label": "Active tab background color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "tab_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Tab border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Tabs",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

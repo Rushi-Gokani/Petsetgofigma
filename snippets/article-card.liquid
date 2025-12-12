@@ -1,0 +1,146 @@
+{% comment %}
+  Renders an article card for a given blog with settings to either show the image or not.
+
+  Accepts:
+  - class: {String} class for the card
+  - blog: {Object} Blog object
+  - article: {Object} Article object
+  - media_aspect_ratio: {String} The setting changes the aspect ratio of the article image, if shown
+  - show_image: {String} The setting either show the article image or not. If it's not included it will show the image by default
+  - show_date: {String} The setting either show the article date or not. If it's not included it will not show the image by default
+  - show_author: {String} The setting either show the article author or not. If it's not included it will not show the author by default
+  - show_excerpt: {Boolean} The setting either show the article excerpt or not.
+  - show_badge: {String} The setting either show the blog badge or not.
+  - lazy_load: {Boolean} Image should be lazy loaded. Default: true (optional)
+  - truncate_title: {Boolean} The setting either truncate the title or not.
+
+  Usage:
+  {% render 'article-card' blog: blog, article: article, show_image: section.settings.show_image %}
+{% endcomment %}
+
+{%- if article and article != empty -%}
+  <article class="{{ class }}">
+    <a
+      x-element-transition-trigger:article.animate="
+        {
+          'title': `{{ article.title | escape }}`,
+          'show_date': {{ show_date | default: false }},
+          'date': '{{ article.published_at | date: '%b %d, %Y' }}',
+          'tags': JSON.parse(`{{ article.tags | json | escape }}`)
+        }
+      "
+      href="{{ article.url }}"
+      class="contrast-border card-hover group inline-block h-full w-full rounded-md"
+    >
+      {%- if show_image == true and article.image -%}
+        {%- liquid
+          assign srcset = ''
+          if article.image.src.width >= 165
+            assign srcset = srcset | append: article.image.src | image_url: width: 165 | append: '165w, '
+          endif
+          if article.image.src.width >= 360
+            assign srcset = srcset | append: article.image.src | image_url: width: 360 | append: '360w, '
+          endif
+          if article.image.src.width >= 535
+            assign srcset = srcset | append: article.image.src | image_url: width: 535 | append: '535w, '
+          endif
+          if article.image.src.width >= 720
+            assign srcset = srcset | append: article.image.src | image_url: width: 720 | append: '720w, '
+          endif
+          if article.image.src.width >= 1000
+            assign srcset = srcset | append: article.image.src | image_url: width: 1000 | append: '1000w, '
+          endif
+          if article.image.src.width >= 1500
+            assign srcset = srcset | append: article.image.src | image_url: width: 1500 | append: '1500w, '
+          endif
+          assign srcset = srcset | append: article.image.src | image_url | append: article.image.src.width | append: 'w'
+
+          assign loading = ''
+          unless lazy_load == false
+            assign loading = 'lazy'
+          endunless
+        %}
+        <div class="overflow-hidden rounded-md bg-secondary-100">
+          {%- assign alt = article.image.alt | default: article.title -%}
+          {% render 'image',
+            src: article.image.src,
+            srcset: srcset,
+            sizes: '(min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)',
+            alt: alt,
+            loading: loading,
+            width: article.image.width,
+            height: article.image.height,
+            img_class: 'motion-reduce aspect-square w-full object-cover',
+            container_class: 'transition-transform md:group-hover:scale-105'
+          %}
+        </div>
+      {% else %}
+        <div class="col-span-2 overflow-hidden rounded-md md:col-auto">
+          <div
+            class="motion-reduce relative aspect-square w-full rounded-md bg-secondary-100 px-5 py-2 pt-7 transition-transform md:group-hover:scale-105"
+          >
+            <div class="max-h-full overflow-hidden">
+              <div class="mb-4 text-center text-base font-semibold text-secondary-600">{{ article.title }}</div>
+              <div class="text-sm text-secondary-500">{{ article.content | strip_html }}</div>
+            </div>
+            <div
+              class="absolute bottom-0 left-0 right-0 h-1/2 rounded-b-md bg-gradient-to-t from-[#f5f5f5]"
+            ></div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="relative z-10 mt-5 contrast-more:px-3 contrast-more:pb-3">
+        <div class="mb-2 truncate text-[14px]">
+          {%- if show_date -%}
+            <span>{{ article.published_at | date: '%b %d, %Y' }}</span>
+          {%- endif -%}
+
+          {% for tag in article.tags %}
+            <span class="capitalize before:mx-3 before:inline-block before:text-gray-200 before:content-['/'] ">
+              {{- tag -}}
+            </span>
+          {% endfor %}
+
+          {%- if show_author -%}
+            <span class="capitalize before:mx-3 before:inline-block before:text-gray-200 before:content-['-'] ">
+              {{ article.author }}
+            </span>
+          {%- endif -%}
+        </div>
+        <h2 class="text-lg text-text-500">
+          {%- if truncate_title -%}
+            {{ article.title | truncate: 50 | escape }}
+          {%- else -%}
+            {{ article.title | escape }}
+          {%- endif -%}
+        </h2>
+        {%- if show_excerpt and article.excerpt_or_content.size > 0 -%}
+          <p class="text-[14px]">
+            {{ article.excerpt_or_content | strip_html | truncatewords: 30 }}
+          </p>
+        {%- endif -%}
+      </div>
+    </a>
+  </article>
+{% else %}
+  <article class="card-hover group inline-block h-full {{ class }}">
+    {%- if show_image == true -%}
+      <div class="contrast-border overflow-hidden rounded-md bg-secondary-100">
+        {%- assign placeholder_image_index = index | modulo: 3 | plus: 1 -%}
+        {{
+          'blog-apparel-'
+          | append: placeholder_image_index
+          | placeholder_svg_tag: 'motion-reduce aspect-square w-full h-full object-cover transition-transform md:group-hover:scale-105'
+        }}
+      </div>
+    {%- endif -%}
+
+    <div class="relative z-10 mt-5 contrast-more:px-3 contrast-more:pb-3">
+      <h3 class="text-lg">{{ 'sections.featured_blog.onboarding_title' | t }}</h3>
+      {%- if show_excerpt -%}
+        <p class="text-[14px]">{{ 'sections.featured_blog.onboarding_content' | t }}</p>
+      {%- endif -%}
+    </div>
+  </article>
+{%- endif -%}

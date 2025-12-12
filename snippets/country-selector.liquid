@@ -1,0 +1,54 @@
+{% comment %}
+  Renders country selector
+{% endcomment %}
+
+{% capture dropdownItems %}
+    {% for country in localization.available_countries %}
+        {%- capture label -%}
+            {{ country.name }}
+            <span>
+            {{ country.currency.iso_code }}
+            {{ country.currency.symbol }}
+            </span>
+        {%- endcapture -%}
+
+        {% liquid
+            assign isActive = false
+            if country.iso_code == localization.country.iso_code
+                assign isActive = true
+            endif
+        %}
+
+        {%
+            render 'dropdown-option',
+            isActive: isActive,
+            value: country.iso_code,
+            label: label,
+            on_click: "document.querySelector('[name=country_code]').value = $event.target.dataset.value; $event.target.closest('form').submit();"
+        %}
+    {% endfor %}
+{% endcapture %}
+
+{% liquid
+  assign label = localization.country.name
+  assign label = label | append: ' | '
+  assign label = label | append: localization.country.currency.iso_code
+  assign label = label | append: ' '
+  assign label = label | append: localization.country.currency.symbol
+%}
+
+{% if localization.available_countries.size > 1 %}
+  <localization-form>
+    {% form 'localization', id: 'country_localization' %}
+      <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}">
+
+      {% render 'dropdown',
+        id: 'country-selector',
+        placement: 'top',
+        label: label,
+        withSearch: true,
+        options: dropdownItems
+      %}
+    {% endform %}
+  </localization-form>
+{% endif %}

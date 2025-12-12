@@ -1,0 +1,471 @@
+{% comment %}
+  Accepts:
+  product: Product object
+  is_featured: Boolean, indicates if included in a featured product
+{% endcomment %}
+
+<div
+  class="relative flex flex-col"
+  :style="`--price-width: ${$refs.ProductPrice?.clientWidth}px`"
+>
+  {% if product != blank %}
+    {% form 'product', product, class: 'contents', x-ref: 'ProductForm' %}
+      <template x-if="isVariantAvailable && {{ product.selected_or_first_available_variant.available }}">
+        <div class="contents">
+          <input
+            type="hidden"
+            name="id"
+            value="{{ product.selected_or_first_available_variant.id }}"
+          >
+          <input
+            type="hidden"
+            name="quantity"
+            :value="variantQty"
+          >
+        </div>
+      </template>
+
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {%- when '@app' -%}
+            <div class="mb-8 max-md:px-4">
+              {% render block %}
+            </div>
+          {% when 'title' %}
+            <h1
+              class="heading mb-1 ps-4 text-2xl leading-tight text-text-500 md:px-0 md:text-5xl w-full"
+              {{ block.shopify_attributes }}
+            >
+              {{ product.title }}
+            </h1>
+          {% when 'text' %}
+            <p
+              class="animate-on-transition px-4 leading-tight md:px-0 md:text-base max-md:mb-4 max-md:pe-[--price-width]"
+              {{ block.shopify_attributes }}
+            >
+              {{- block.settings.text -}}
+            </p>
+  
+          {% when 'product_actions' %}
+            <div
+              class="mb-8 product_actions_wrapper flex flex-col flex-wrap gap-x-8 max-md:px-4"
+              {{ block.shopify_attributes }}
+            >
+              {% render 'product-actions', product: product, block: block, is_featured: is_featured, form: form %}
+            </div>
+
+          {% when 'coupon_display' %}
+            {% render 'coupon-display', block: block, product: product %}
+
+          {% when 'complementary' %}
+            <div
+              x-data="Slider()"
+              id="complementary-products-wrapper"
+              x-init="
+                () => {
+                  $data.fetchProductRecommendations('complementary-products', '{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ block.settings.product_list_limit }}&intent=complementary');
+                }
+              "
+              {{ block.shopify_attributes }}
+            >
+              {%- if recommendations.performed? and recommendations.products_count > 0 -%}
+                <div class="animate-on-transition mb-8 p-4 pt-0 md:p-0">
+                  <div class="flex items-center justify-between">
+                    <p class="font-semibold leading-tight md:text-base">{{ block.settings.block_heading }}</p>
+                    <div>
+                      {%- render 'slider-buttons', class: 'button--outline-secondary icon-button--size-xs' -%}
+                    </div>
+                  </div>
+
+                  <div class="mt-4">
+                    {%- assign slides_amount_in_view = '{xs: 2.2, sm: 2.2, md: 2.2, lg: 2.2, xl: 2.2, xxl: 2.2}' -%}
+
+                    {%- capture slides -%}
+                    {% for recommendation in recommendations.products %}
+                        {%- capture slideContent -%}
+                          {%- render 'card-product',
+                            card_product: recommendation,
+                            show_vendor: true,
+                            class: 'animate-fadeIn',
+                            truncate_title: true
+                          -%}
+                        {%- endcapture -%}
+                        {%- render 'slider-slide', content: slideContent -%}
+                      {%- endfor -%}
+                    {%- endcapture -%}
+
+                    {%- render 'slider',
+                      slides: slides,
+                      gap: 16,
+                      slides_amount_in_view: slides_amount_in_view,
+                      is_header_disabled: true,
+                      is_custom_slider_x_data: true
+                    -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </div>
+
+          {% when 'description' %}
+            {% if product.description != blank %}
+              <div
+                class="product-accordion-wrapper"
+                x-data="Accordion(false, 300)"
+                {{ block.shopify_attributes }}
+              >
+                <button
+                  class="product-accordion-button"
+                  x-ref="AccordionButton"
+                  type="button"
+                  :aria-expanded="isExpanded"
+                  aria-controls="{{ block.id }}_panel"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  <p class="product-accordion-title" id="{{ block.id }}_label">
+                    {{ 'products.product.description' | t }}
+                  </p>
+
+                  <span
+                    x-ref="AccordionIcon"
+                    class="product-accordion-icon"
+                    :class="{ 'rotated': isExpanded }"
+                  >
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </button>
+
+                <div
+                  x-ref="AccordionPanel"
+                  :inert="!isExpanded"
+                  id="{{ block.id }}_panel"
+                  role="region"
+                  aria-labelledby="{{ block.id }}_label"
+                  class="product-accordion-panel"
+                >
+                  <div class="product-accordion-content">
+                  {% if product.description contains '[' and product.description contains ']' %}
+                    {% assign desc_array = product.description | remove: '[' | remove: ']' | remove: '"' | split: ',' %}
+                    <ul class="list-disc pl-6 space-y-2">
+                      {% for desc_item in desc_array %}
+                        <li>{{ desc_item | strip }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    {{ product.description }}
+                  {% endif %}
+                </div>
+
+                  {% if is_featured %}
+                    <a href="{{ product.url }}" class="mt-3 inline-block" x-element-transition-trigger>
+                      <span class="me-3 capitalize text-text-500 underline ">
+                        {{- 'products.product.view_full_details' | t -}}
+                      </span>
+                      <span class="inline-block ">
+                        {% render 'breadcrumb-arrow' %}
+                      </span>
+                    </a>
+                  {% endif %}
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'details_care' %}
+            {% if product.metafields.custom.details_care != blank %}
+              <div
+                class="product-accordion-wrapper"
+                x-data="Accordion(false, 300)"
+                {{ block.shopify_attributes }}
+              >
+                <button
+                  class="product-accordion-button"
+                  x-ref="AccordionButton"
+                  type="button"
+                  :aria-expanded="isExpanded"
+                  aria-controls="{{ block.id }}_panel"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  <p class="product-accordion-title" id="{{ block.id }}_label">
+                    Details & Care
+                  </p>
+
+                  <span
+                    x-ref="AccordionIcon"
+                    class="product-accordion-icon"
+                    :class="{ 'rotated': isExpanded }"
+                  >
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </button>
+
+                <div
+                  x-ref="AccordionPanel"
+                  :inert="!isExpanded"
+                  id="{{ block.id }}_panel"
+                  role="region"
+                  aria-labelledby="{{ block.id }}_label"
+                  class="product-accordion-panel"
+                >
+                  <div class="product-accordion-content">
+                  {% assign content = product.metafields.custom.details_care %}
+
+                  {% if content != blank %}
+                    {% comment %}Render rich text metafield properly{% endcomment %}
+                    {{ content | metafield_tag }}
+                  {% endif %}
+                </div>
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'pickup_availability' %}
+            {%- assign pick_up_availabilities = product.selected_or_first_available_variant.store_availabilities
+              | where: 'pick_up_enabled', true
+            -%}
+            {%- if pick_up_availabilities.size > 0 -%}
+              <div
+                class="mb-8 px-4 md:p-0"
+                x-data="Accordion(false, 300)"
+                {{ block.shopify_attributes }}
+              >
+                <button
+                  class="group flex w-full items-center justify-between"
+                  x-ref="AccordionButton"
+                  type="button"
+                  :aria-expanded="isExpanded"
+                  aria-controls="{{ block.id }}_panel"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  <p class="text-base font-semibold leading-tight text-text-500" id="{{ block.id }}_label">
+                    {{ 'products.product.pickup_availability.pickup_availability' | t }}
+                  </p>
+
+                  <span
+                    x-ref="AccordionIcon"
+                    class="button button--outline-secondary icon-button icon-button--size-xs group-hoverable"
+                  >
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </button>
+
+                <div
+                  x-ref="AccordionPanel"
+                  class="overflow-hidden"
+                  :inert="!isExpanded"
+                  x-cloak
+                  id="{{ block.id }}_panel"
+                  role="region"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  {% render 'pickup-availability-list', pick_up_availabilities: pick_up_availabilities %}
+                </div>
+              </div>
+            {% endif %}
+
+          {% when 'collapsible_tab' %}
+            {% if block.settings.heading != blank and block.settings.content != blank %}
+              <div
+                class="product-accordion-wrapper"
+                x-data="Accordion(false, 300)"
+                {{ block.shopify_attributes }}
+              >
+                <button
+                  class="product-accordion-button"
+                  x-ref="AccordionButton"
+                  type="button"
+                  :aria-expanded="isExpanded"
+                  aria-controls="{{ block.id }}_panel"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  <p class="product-accordion-title" id="{{ block.id }}_label">
+                    {{ block.settings.heading | escape }}
+                  </p>
+
+                  <span
+                    x-ref="AccordionIcon"
+                    class="product-accordion-icon"
+                    :class="{ 'rotated': isExpanded }"
+                  >
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </button>
+
+                <div
+                  x-ref="AccordionPanel"
+                  class="product-accordion-panel"
+                  :inert="!isExpanded"
+                  x-cloak
+                  id="{{ block.id }}_panel"
+                  role="region"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  <div class="product-accordion-content">
+                    {{ block.settings.content }}
+                  </div>
+                </div>
+              </div>
+            {% endif %}
+
+          {%- when 'delivery_and_return' -%}
+            <div
+              class="product-accordion-wrapper"
+              x-data="Accordion(false, 300)"
+              {{ block.shopify_attributes }}
+            >
+              <button
+                class="product-accordion-button"
+                x-ref="AccordionButton"
+                type="button"
+                :aria-expanded="isExpanded"
+                aria-controls="{{ block.id }}_panel"
+                aria-labelledby="{{ block.id }}_label"
+              >
+                <p class="product-accordion-title" id="{{ block.id }}_label">
+                  {{ 'accessibility.free_delivery_and_returns' | t }}
+                </p>
+
+                <span
+                  x-ref="AccordionIcon"
+                  class="product-accordion-icon"
+                  :class="{ 'rotated': isExpanded }"
+                >
+                  {% render 'icon-chevron-down' %}
+                </span>
+              </button>
+
+              <div
+                x-ref="AccordionPanel"
+                class="product-accordion-panel"
+                :inert="!isExpanded"
+                x-cloak
+                id="{{ block.id }}_panel"
+                role="region"
+                aria-labelledby="{{ block.id }}_label"
+              ></div>
+            </div>
+
+          {%- when 'rating' -%}
+            <div
+              class="mb-4 max-md:px-4"
+              x-data="Accordion(true, 300)"
+              {{ block.shopify_attributes }}
+            >
+              <div class="flex items-center justify-between">
+                <button
+                  class="group flex w-full items-center justify-between"
+                  x-ref="AccordionButton"
+                  type="button"
+                  :aria-expanded="isExpanded"
+                  aria-controls="{{ block.id }}_panel"
+                  aria-labelledby="{{ block.id }}_label"
+                >
+                  <p class="text-base font-semibold leading-tight text-text-500" id="{{ block.id }}_label">
+                    {{ 'accessibility.reviews' | t: reviews_count: 0 }}
+                  </p>
+
+                  <span
+                    x-ref="AccordionIcon"
+                    class="group-hoverable button button--outline-secondary icon-button icon-button--size-xs"
+                  >
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </button>
+              </div>
+
+              <div
+                x-ref="AccordionPanel"
+                class="overflow-hidden"
+                :inert="!isExpanded"
+                x-cloak
+                id="{{ block.id }}_panel"
+                role="region"
+                aria-labelledby="{{ block.id }}_label"
+              >
+                <!-- Judge.me Review Widget -->
+                {% if product.metafields.judgeme.widget %}
+                  {{ product.metafields.judgeme.widget }}
+                {% else %}
+                  <div
+                    class="jdgm-widget jdgm-review-widget"
+                    data-id="{{ product.id }}"
+                    data-product-id="{{ product.id }}"
+                    data-handle="{{ product.handle }}"
+                    data-product-title="{{ product.title | escape }}"
+                    data-product-url="{{ shop.url }}{{ product.url }}"
+                  ></div>
+                {% endif %}
+                <!-- End Judge.me Review Widget -->
+              </div>
+            </div>
+
+          {% when 'price' %}
+            <div
+              class="animate-on-transition px-4 ps-4 leading-tight md:mb-8 md:mt-3 md:px-0"
+              x-ref="ProductPrice"
+              {{ block.shopify_attributes }}
+            >
+              <div class="no-js-hidden" id="price-{{ section.id }}" role="status">
+                {%- render '_price-element',
+                  product: product.selected_or_first_available_variant,
+                  class: 'text-md md:text-lg',
+                  show_badge: true
+                -%}
+              </div>
+              {% if cart.taxes_included %}
+                <div class="text-nowrap text-[14px]">
+                  {{ 'products.product.include_taxes_html' | t }}
+                </div>
+              {% endif %}
+            </div>
+
+          {%- when 'share' -%}
+            <div class="mb-8 px-4 md:p-0" {{ block.shopify_attributes }}>
+              {% capture share_title %}
+            <div class="button button--ghost-primary animate-on-transition w-full  ">
+              {{ block.settings.share_label }}
+              <span class="ms-3 leading-none">
+                {% render 'icon-share' %}
+              </span>
+            </div>
+          {% endcapture %}
+              {% liquid
+                assign url = product.selected_variant.url | default: product.url | prepend: shop.url
+                assign id = section.id | append: '-share'
+
+                render 'share', title: share_title, url: url, id: id
+              %}
+            </div>
+
+          {%- when 'marquee_block' -%}
+            <div {{ block.shopify_attributes }}>
+              {% render 'marquee-text-block', block: block %}
+            </div>
+          {%- when 'product_marquee' -%}
+            <div class="mt-6 mb-4 max-md:mt-8" {{ block.shopify_attributes }}>
+              {% render 'product-marquee', block: block %}
+            </div>
+        {% endcase %}
+      {% endfor %}
+    {% endform %}
+  {% else %}
+    <h1
+      class="heading mb-1 ps-4 text-md leading-tight text-text-500 md:px-0 md:text-4xl max-md:pe-[--price-width]"
+    >
+      {{ 'onboarding.product_title' | t }}
+    </h1>
+  {% endif %}
+
+  <button
+    {% if request.page_type == 'product' %}
+      style="display: none"
+    {% endif %}
+    x-show="typeof hidePreview === 'function'"
+    class="button button--ghost-primary animate-on-transition   max-md:hidden"
+    @click="hidePreview"
+    type="button"
+  >
+    {{ 'products.product.hide_product' | t }}
+    <span class="button__icon button__icon--right text-lg">
+      {% render 'icon-close' %}
+    </span>
+  </button>
+</div>

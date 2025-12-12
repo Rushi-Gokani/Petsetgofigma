@@ -1,0 +1,47 @@
+{% comment %}
+  Play button overlay for videos
+  Usage:
+  {% render 'play-button-overlay' %}
+  or with custom color:
+  {% render 'play-button-overlay', color_scheme: section.settings.color_scheme %}
+{% endcomment %}
+
+<div class="absolute inset-0 flex items-center justify-center z-2">
+  <button 
+    type="button" 
+    class="play-video-button bg-white hover:bg-gray-100 rounded-full p-4 flex items-center justify-center shadow-lg cursor-pointer transition-transform duration-200 hover:scale-110" 
+    onclick="toggleVideoPlay(this)"
+    aria-label="Play video"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="black">
+      <path d="M8 5v14l11-7z"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  function toggleVideoPlay(button) {
+    const videoContainer = button.closest('.relative');
+    if (!videoContainer) return;
+    
+    const video = videoContainer.querySelector('video');
+    if (!video) return;
+    
+    if (video.paused) {
+      try{
+        video.play();
+        button.style.opacity = '0';
+        setTimeout(() => {
+          button.style.display = 'none';
+        }, 300);
+      }
+      catch(error) {
+        console.log('Video play failed');
+      }
+    } else {
+      video.pause();
+      button.style.display = 'flex';
+      button.style.opacity = '1';
+    }
+  }
+</script>

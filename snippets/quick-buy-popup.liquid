@@ -1,0 +1,110 @@
+{% comment %}
+  Custom Quick Buy Popup - No transform properties
+  Accepts:
+  - product: Product object
+  - popup_id: Unique ID for this popup
+{% endcomment %}
+
+<div
+  x-data="{
+    isOpen: false,
+    productId: {{ product.id }},
+    init() {
+      this.$watch('isOpen', value => {
+        if (value) {
+          document.body.style.overflow = 'hidden';
+        } else {
+          document.body.style.overflow = '';
+        }
+      });
+    },
+    open() {
+      this.isOpen = true;
+    },
+    close() {
+      this.isOpen = false;
+    }
+  }"
+  x-on:open-quick-buy-{{ popup_id }}.window="open()"
+  x-on:close-quick-buy-{{ popup_id }}.window="close()"
+  x-on:keydown.escape.window="if (isOpen) close()"
+  class="quick-buy-popup-container"
+>
+  <!-- Overlay -->
+  <div
+    x-show="isOpen"
+    x-cloak
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0"
+    x-transition:enter-end="opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100"
+    x-transition:leave-end="opacity-0"
+    @click="close()"
+    class="quick-buy-overlay"
+  ></div>
+
+  <!-- Popup Content -->
+  <div
+    x-show="isOpen"
+    x-cloak
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="translate-y-full opacity-0"
+    x-transition:enter-end="translate-y-0 opacity-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="translate-y-0 opacity-100"
+    x-transition:leave-end="translate-y-full opacity-0"
+    @click.stop
+    class="quick-buy-popup"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="quick-buy-title-{{ popup_id }}"
+  >
+    {% comment %}
+    <!-- Close Button --- its out of design, that's why it's hidden -->
+    <button
+      type="button"
+      @click="close()"
+      class="quick-buy-close"
+      aria-label="Close"
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 6L6 18M6 6l12 12"/>
+      </svg>
+    </button>
+    {% endcomment %}
+
+    <!-- Content Container -->
+    <div 
+      class="quick-buy-content-container"
+      x-data="ProductPage()"
+      x-init="
+        $data.setProductPageProps({
+          manuallySelectedVariantId: {{ product.selected_variant.id | default: 0 }},
+          selectedVariantId: {{ product.selected_or_first_available_variant.id }},
+          selectedOptions: {{ product.selected_or_first_available_variant.options | json | escape }},
+          productId: {{ product.id }},
+          productUrl: '{{ product.url }}',
+          isSyncedWithUrl: false,
+          isScrollingToTop: false,
+          variants: {{ product.variants | json | escape }}
+        })
+      "
+    >
+      <!-- Scrollable Content -->
+      <div class="quick-buy-content">
+        <div id="quick-buy-content-{{ popup_id }}">
+          {% render 'product-options', product: product %}
+        </div>
+      </div>
+
+      <!-- Fixed Action Buttons at Bottom -->
+      <div class="quick-buy-actions">
+        <div class="flex flex-grow justify-stretch gap-3">
+          {% render 'product-actions-button', product: product, is_popup: true %}
+          {% render 'product-actions-in-cart', product: product, is_popup: true %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

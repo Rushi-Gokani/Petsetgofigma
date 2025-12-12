@@ -1,0 +1,88 @@
+{% comment %}
+  Renders media
+
+  Accepts:
+    media: {Object} media to be rendered,
+    class: string,
+    container_class: string,
+    width: number,
+    height: number,
+    height: number,
+    autoplay: boolean,
+    loop: boolean,
+    muted: boolean,
+    title: string
+{% endcomment %}
+
+{% liquid
+  if index == 0
+    assign class = class | append: ' no-fade'
+  endif
+
+  assign width = width | default: 2048
+  assign height = height | default: 2048
+%}
+{% case media.media_type %}
+  {% when 'image' %}
+    {%- assign alt = media.alt | default: product.title -%}
+    {% render 'image',
+      src: media,
+      width: width,
+      height: height,
+      img_class: class,
+      container_class: container_class,
+      alt: alt,
+      is_mix: settings.card_gray_background
+    %}
+  {% when 'external_video' %}
+    {% assign class = class | append: ' !size-full' %}
+    {%- if media.host == 'youtube' -%}
+      {{
+        media
+        | external_video_url: autoplay: autoplay, loop: loop, playlist: media.external_id
+        | external_video_tag: class: class, loading: 'lazy'
+      }}
+    {%- else -%}
+      {{
+        media
+        | external_video_url: autoplay: autoplay, loop: loop
+        | external_video_tag: class: class, loading: 'lazy'
+      }}
+    {%- endif -%}
+
+  {% when 'video' %}
+    {% assign class = class | append: ' !size-full' %}
+    {{
+      media
+      | media_tag:
+        image_size: '2048x',
+        controls: true,
+        class: class,
+        autoplay: autoplay,
+        loop: loop,
+        muted: muted,
+        preload: 'none'
+    }}
+
+  {% when 'model' %}
+    <div class="flex size-full flex-col bg-[--fade-in-bg]">
+      {% assign class = class | append: ' !size-full' %}
+      {{ media | model_viewer_tag: class: class }}
+      <div class="m-4 md:hidden">
+        <button
+          class="button button--outline-primary w-full gap-2"
+          type="button"
+          aria-label="{{ 'products.product.xr_button_label' | t }}"
+          data-shopify-xr
+          data-shopify-model3d-id="{{ media.id }}"
+          data-shopify-title="{{ title }}"
+          data-shopify-xr-hidden
+        >
+          {% render 'icon-3d-model' %}
+          {{ 'products.product.xr_button' | t }}
+        </button>
+      </div>
+    </div>
+  {% else %}
+    {{ media | media_tag: class: class }}
+{% endcase %}

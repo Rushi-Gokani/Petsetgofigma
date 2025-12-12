@@ -1,0 +1,6 @@
+{% comment %}theme-check-disable UndefinedObject{% endcomment %}
+{%- assign pick_up_availabilities = product_variant.store_availabilities | where: 'pick_up_enabled', true -%}
+
+{%- if pick_up_availabilities.size > 0 -%}
+  {% render 'pickup-availability-list', pick_up_availabilities: pick_up_availabilities %}
+{%- endif -%}

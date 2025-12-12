@@ -1,0 +1,144 @@
+<div class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    class="content-wrapper mx-auto"
+    style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
+  >
+    <h1 class="heading mb-7 text-2xl md:text-4xl">{{ section.settings.heading | escape }}</h1>
+    <div class="flex flex-col gap-7">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'question' -%}
+            <div
+              x-data="Accordion({% if forloop.index == 1 %}true{% else %}false{% endif %}, 300)"
+              {{ block.shopify_attributes }}
+            >
+              <button
+                class="group flex w-full justify-between"
+                x-ref="AccordionButton"
+                :aria-expanded="isExpanded"
+                aria-controls="{{ block.id }}_panel"
+                aria-labelledby="{{ block.id }}_label"
+                type="button"
+              >
+                <h2 class="grow text-start text-lg font-semibold" id="{{ block.id }}_label">
+                  {{ block.settings.question | escape }}
+                </h2>
+                <div
+                  class="button button--outline-secondary icon-button icon-button--size-xs group-hoverable"
+                >
+                  <span x-ref="AccordionIcon">
+                    {% render 'icon-chevron-down' %}
+                  </span>
+                </div>
+              </button>
+              <div
+                x-cloak
+                x-ref="AccordionPanel"
+                class="overflow-hidden"
+                :class="
+                  {
+                    'transition-none': $store.main.isReducedMotion,
+                    'transition': $store.main.isReducedMotion,
+                  }
+                "
+                id="{{ block.id }}_panel"
+                role="region"
+                aria-labelledby="{{ block.id }}_label"
+              >
+                <div class="rte mt-3 text-text-500 [&>p]:m-0">
+                  {{ block.settings.text }}
+                </div>
+              </div>
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.faq.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Frequently asked questions",
+      "label": "t:sections.faq.settings.heading.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 64
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "t:sections.faq.blocks.question.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "default": "Frequently asked question",
+          "label": "t:sections.faq.blocks.question.settings.question.label"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>",
+          "label": "t:sections.faq.blocks.question.settings.text.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.faq.presets.name",
+      "blocks": [
+        {
+          "type": "question"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

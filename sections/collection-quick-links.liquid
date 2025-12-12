@@ -1,0 +1,204 @@
+{% comment %}
+  Collection Quick Links
+  A horizontal slider with collection links for quick access
+{% endcomment %}
+
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+  assign shape_style = section.settings.shape_style
+  assign slides_count = section.blocks | size
+%}
+
+{%- capture slides_amount_in_view -%}
+  {% render '_slider-amount-in-view',
+    xs: 3.5,
+    sm: 4.5,
+    md: 5.5,
+    lg: 6.5,
+    xl: 7.5,
+    xxl: 8.5,
+    is_stretch_full_width: section.settings.stretch_full_width,
+    slides_count: slides_count
+  %}
+{%- endcapture -%}
+
+{%- capture slides -%}
+  {% for block in section.blocks %}
+    {% assign collection = collections[block.settings.collection] %}
+    {% if collection != blank %}
+      {%- capture slideContent -%}
+        <div class="collection-quick-link" {{ block.shopify_attributes }}>
+          <a href="{{ collection.url }}" class="collection-quick-link__item {% if shape_style == 'circle' %}collection-quick-link__item--circle{% else %}collection-quick-link__item--square{% endif %}">
+            <div class="collection-quick-link__image-container">
+              {% if block.settings.custom_image != blank %}
+                {% render 'image',
+                  src: block.settings.custom_image,
+                  alt: block.settings.custom_image.alt | default: collection.title,
+                  img_class: 'collection-quick-link__image',
+                  loading: 'lazy',
+                  index: forloop.index0
+                %}
+              {% elsif collection.featured_image %}
+                {% render 'image',
+                  src: collection.featured_image,
+                  alt: collection.title,
+                  img_class: 'collection-quick-link__image',
+                  loading: 'lazy',
+                  index: forloop.index0
+                %}
+              {% else %}
+                {% render '_collection-missing-image' %}
+              {% endif %}
+            </div>
+            <div class="collection-quick-link__title">
+              {% if block.settings.custom_title != blank %}
+                {{ block.settings.custom_title }}
+              {% else %}
+                {{ collection.title }}
+              {% endif %}
+            </div>
+          </a>
+        </div>
+      {%- endcapture -%}
+
+      {%- render 'slider-slide', content: slideContent -%}
+    {% endif %}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- assign title = section.settings.title | escape -%}
+
+<div
+  class="collection-quick-links {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% endif %}"
+  style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px"
+>
+  {%- render 'slider',
+    slides: slides,
+    gap: 16,
+    slides_amount_in_view: slides_amount_in_view,
+    title: title,
+    is_full_page: true,
+    is_scrollbar_hidden: true,
+    class: 'collection-quick-links-slider'
+  -%}
+</div>
+
+
+
+{% schema %}
+{
+  "name": "Collection Quick Links",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Shop by category"
+    },
+    {
+      "type": "select",
+      "id": "shape_style",
+      "label": "Shape style",
+      "options": [
+        {
+          "value": "circle",
+          "label": "Circle"
+        },
+        {
+          "value": "square",
+          "label": "Square"
+        }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "checkbox",
+      "id": "stretch_full_width",
+      "label": "Stretch full width",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "label": "Use custom color scheme",
+      "default": false
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "info": "Only applied when custom color scheme is enabled"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Top padding",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Bottom padding",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        },
+        {
+          "type": "text",
+          "id": "custom_title",
+          "label": "Custom title",
+          "info": "Leave blank to use collection title"
+        },
+        {
+          "type": "image_picker",
+          "id": "custom_image",
+          "label": "Custom image",
+          "info": "Leave blank to use collection image"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Quick Links",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

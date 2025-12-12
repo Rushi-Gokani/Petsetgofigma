@@ -1,0 +1,215 @@
+<div
+  class="relative mt-4 h-full md:my-8 {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+  x-cloak
+  x-data="Address()"
+>
+  <div x-data="{ title: null}">
+    <div class="mb-7 flex flex-col justify-between md:flex-row md:items-center">
+      <a
+        x-element-transition-trigger
+        href="{{ routes.account_url }}"
+        class="relative text-lg font-semibold text-text-500 md:hover:text-primary-600 max-md:pb-4"
+      >
+        <span
+          class="absolute top-1 my-auto inline-block w-7 translate-x-[calc(var(--direction-factor)*-100%)] animate-slideIconIn motion-reduce:translate-x-0 motion-reduce:animate-none"
+        >
+          {% render 'icon-arrow-back' %}
+        </span>
+        <h1
+          class="inline-block animate-slideTitleIn motion-reduce:translate-x-[--translate-width] motion-reduce:animate-none"
+          style="--translate-width: 30px;"
+        >
+          {{ 'customer.addresses.title' | t }}
+        </h1>
+      </a>
+
+      <button
+        @click="showForm('create', 'add-new-address'); address = {}"
+        class="button button--filled button--filled-primary max-md:my-5 max-md:w-full"
+        type="button"
+      >
+        {{ 'customer.addresses.add_new' | t }}
+      </button>
+    </div>
+
+    <div class="grid-cols-addressForms gap-8 md:grid">
+      <div class="w-full">
+        <span class="mb-3 block px-5 ">
+          {{ 'customer.addresses.subtitle' | t }}
+        </span>
+        {% paginate customer.addresses by 10 %}
+          <div data-content-wrapper>
+            {% if customer.addresses != 0 %}
+              <!-- pagination-content -->
+              {% for address in customer.addresses %}
+                <div
+                  class="contrast-border mb-5 rounded-md bg-bg-500 p-5"
+                  :class="
+                    {
+                      'border !border-primary-500': renderedPage === 'edit' && editId === {{ address.id }} || renderedPage === 'delete' && deleteId === {{ address.id }}
+                    }
+                  "
+                >
+                  <div class="capitalize">
+                    <div class="mb-3 flex items-center justify-between">
+                      <p class="font-semibold">
+                        {{ address.name }}
+                        {% if address == customer.default_address %}
+                          (
+                          {{- 'customer.addresses.default' | t -}}
+                          )
+                        {% endif %}
+                      </p>
+                      <div class="flex gap-3">
+                        <button
+                          @click="showForm('edit', 'edit-address'); editId = {{ address.id }}; address = {{ address | json | escape }}"
+                          class="py-3 text-text-500"
+                          type="button"
+                        >
+                          {% render 'icon-edit' %}
+                        </button>
+
+                        <button
+                          @click="showForm('delete', 'delete-address'); renderedPage = 'delete'; deleteId = {{ address.id }}"
+                          class="p-3 text-text-500"
+                          x-show="!(renderedPage === 'edit' && editId === {{ address.id }} || renderedPage === 'delete' && deleteId === {{ address.id}})"
+                          type="button"
+                        >
+                          {% render 'icon-trash' %}
+                        </button>
+                      </div>
+                    </div>
+                    <p class="">{{ address.address1 }}</p>
+                    <p class="">{{ address.address2 }}</p>
+                    <p class="">
+                      {{ address.city }}
+                      {% if address.city %}, {% endif %}
+                      {{ address.zip }}
+                    </p>
+                    <p class="">{{ address.country_name }}</p>
+                  </div>
+
+                  <div
+                    class="mt-5"
+                    x-show="renderedPage === 'edit' && editId === {{ address.id }} || renderedPage === 'delete' && deleteId === {{ address.id}}"
+                    x-transition
+                  >
+                    <div class="flex gap-4">
+                      <button
+                        type="button"
+                        @click="editId = null; deleteId = null; renderedPage = '';"
+                        class="button button--outline button--outline-primary max-md:hidden"
+                      >
+                        {{ 'customer.addresses.cancel' | t }}
+                      </button>
+
+                      <button
+                        x-show="renderedPage === 'edit'"
+                        @click="showForm('delete', 'delete-address'); renderedPage = 'delete'; deleteId = {{ address.id }}"
+                        class="button button--filled button--filled-primary flex-1"
+                        type="button"
+                      >
+                        {{ 'customer.addresses.delete' | t }}
+                      </button>
+                      <button
+                        x-show="renderedPage === 'delete'"
+                        @click="showForm('edit', 'edit-address'); renderedPage = 'delete'; deleteId = {{ address.id }}"
+                        class="button button--filled button--filled-primary flex-1"
+                        type="button"
+                      >
+                        {{ 'customer.addresses.edit_address' | t }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+              <!-- end-pagination-content -->
+            {% else %}
+              <p class="">{{ 'customer.orders.none' | t }}</p>
+            {% endif %}
+          </div>
+
+          {%- if paginate.pages > 1 and paginate.next -%}
+            <div class="mt-5 w-full text-center">
+              <a
+                href="#"
+                x-pagination-trigger="{ 'lastPage': {{ paginate.pages }} }"
+                class="button button--filled button--filled-primary max-md:w-full"
+              >
+                {{ 'general.pagination.load_more' | t }}
+              </a>
+            </div>
+          {%- endif -%}
+        {% endpaginate %}
+      </div>
+
+      {% capture addAddress %}
+        {% render '_new-customer-address' %}
+      {% endcapture %}
+
+      {% capture editAddress %}
+        {% render '_edit-customer-address' %}
+      {% endcapture %}
+
+      {% capture deleteAddress %}
+        {% render '_delete-customer-address' %}
+      {% endcapture %}
+
+      {% comment %} Edit Address Form {% endcomment %}
+      <div
+        class="w-full"
+        x-show="renderedPage !== ''"
+        x-transition
+        id="addresses-form"
+      >
+        <div x-show="renderedPage === 'create'" id="add-new-address-desktop"></div>
+        <div x-show="renderedPage === 'edit'" id="edit-address-desktop"></div>
+        <div x-show="renderedPage === 'delete'" id="delete-address-desktop"></div>
+      </div>
+
+      {% render 'popup',
+        content: addAddress,
+        id: 'add-new-address',
+        desktopTarget: 'add-new-address-desktop',
+        isFocused: true
+      %}
+      {% render 'popup',
+        content: editAddress,
+        id: 'edit-address',
+        desktopTarget: 'edit-address-desktop',
+        isFocused: true
+      %}
+      {% render 'popup',
+        content: deleteAddress,
+        id: 'delete-address',
+        desktopTarget: 'delete-address-desktop',
+        isFocused: true
+      %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.addresses-page.name",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

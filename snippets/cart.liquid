@@ -1,0 +1,94 @@
+{% comment %}
+  - is_cart_page: {Boolean} - If the cart is being rendered on the cart page
+{% endcomment %}
+
+<div
+  {% unless is_cart_page %}
+    :inert="$store.main.isMobile ? $store.popup.currentPopup !== 'cart' : !$store.resizable.isVisible('cart-desktop')"
+  {% endunless %}
+  x-data="
+    {
+      get cartItems() { return $store.cart.cartItems },
+      get isCartEmpty() { return !$store.cart.cartItems.length },
+      get isRemoveContent() { return !$store.cart.cartItems.length },
+      isTotalsExpanded: false,
+      isNoteExpanded: false,
+    }
+  "
+  class="contents"
+>
+  <div
+    class="flex flex-col gap-5 rounded-md p-5 {% unless is_cart_page %}md:w-[--minicart-width] bg-bg-500{% endunless %} md:gap-0 md:px-0 md:py-0 max-md:py-0 [.popup\_\_main_&]:px-2"
+  >
+    {% render 'cart-heading', is_cart_page: is_cart_page %}
+    <div
+      class="max-h-0 pb-0 opacity-0"
+      :class="
+        {
+          'opacity-0 max-h-0 pb-0': !isCartEmpty,
+          'opacity-1 max-h-80 pb-4 md:px-6': isCartEmpty,
+          'hidden': !isRemoveContent
+        }
+      "
+    >
+      {% render 'cart-empty' %}
+    </div>
+    <div
+      class="transition-opacity duration-300"
+      :class="
+        {
+          'opacity-0': isCartEmpty,
+          'opacity-1': !isCartEmpty,
+          'hidden': isRemoveContent
+        }
+      "
+      @transitionend="isRemoveContent = isCartEmpty"
+    >
+      <form
+        id="CartForm"
+        action="{{ routes.cart_url }}"
+        method="post"
+        class="contents {% if is_cart_page %}md:flex md:justify-between md:gap-5 md:pt-4{% endif %}"
+        x-data="
+          {
+            CartTotalsHeight: 195
+          }
+        "
+        x-init="
+          () => {
+            $nextTick(() => {
+              if ($refs.CartTotals?.clientHeight) {
+                CartTotalsHeight = $refs.CartTotals.clientHeight + 95
+              }
+            })
+          }
+        "
+      >
+        {% render 'cart-items', is_cart_page: is_cart_page %}
+        <div
+          :style="`height: ${CartTotalsHeight}px`"
+        ></div>
+        {% if is_cart_page != true %}
+          <template x-portal="$store.main.isMobile ? document.getElementById('popup-fixed-content-portal') : document.getElementById('cart-desktop-fixed')">
+            <div
+              :inert="$store.main.isMobile ? $store.popup.currentPopup !== 'cart' : !$store.resizable.isVisible('cart-desktop')"
+              class="contents"
+              x-show="!$store.main.isMobile || $store.popup.currentPopup == 'cart'"
+            >
+              {% render 'cart-totals' %}
+            </div>
+          </template>
+        {% else %}
+          <div id="cart-totals" class="contents">
+            <template x-portal="$store.main.isMobile ? document.querySelector('body') : document.getElementById('cart-totals')">
+              {% render 'cart-totals',
+                class: 'max-md:fixed bottom-0 start-0 end-0 md:w-[--minicart-width] md:h-full md:border md:rounded-sm',
+                is_cart_page: is_cart_page
+              %}
+            </template>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+</div>

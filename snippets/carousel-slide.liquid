@@ -1,0 +1,126 @@
+{% comment %}
+  Carousel Slide for Product Media
+  Renders a single slide for the product carousel
+{% endcomment %}
+
+{% liquid
+  assign aspect_ratio_class = 'aspect-product'
+  if section.settings.carousel_aspect_ratio != 'adapt'
+    assign aspect_ratio_class = 'aspect-' | append: section.settings.carousel_aspect_ratio
+  endif
+
+  assign object_fit_class = 'object-center '
+  assign container_class = 'flex items-center justify-center size-full '
+
+  case section.settings.carousel_object_fit
+    when 'cover'
+      assign object_fit_class = object_fit_class | append: 'object-cover size-full'
+      assign container_class = container_class | append: 'size-full'
+    when 'contain'
+      assign object_fit_class = object_fit_class | append: 'object-contain rounded-[5%] md:rounded-[3%] max-h-full w-auto'
+      assign container_class = container_class | append: 'p-[4%] size-full'
+    when 'fill'
+      assign object_fit_class = object_fit_class | append: 'object-fill size-full'
+      assign container_class = container_class | append: 'size-full'
+    when 'none'
+      assign object_fit_class = object_fit_class | append: 'object-none'
+      assign container_class = container_class | append: 'size-full'
+    when 'scale-down'
+      assign object_fit_class = object_fit_class | append: 'object-scale-down'
+      assign container_class = container_class | append: 'size-full'
+  endcase
+%}
+
+<div
+  class="relative {{ aspect_ratio_class }} flex-shrink-0 cursor-zoom-in overflow-hidden"
+  style="{% if section.settings.carousel_aspect_ratio != 'adapt' %}aspect-ratio: {{ section.settings.carousel_aspect_ratio }};{% endif %}"
+  x-data="ImageZoom"
+  @click.stop="zoomImage"
+  @touchstart="onTouchStart"
+  @touchmove="onTouchMove"
+  @touchend="onTouchEnd"
+  @wheel="onWheel"
+  :style="`transform: translate(${translate.x}px, ${translate.y}px) scale(${scale})`"
+  :class="{
+    'transition-all duration-300': reset,
+    'z-50': scale > 1
+  }"
+>
+
+  {% if media.media_type == 'image' %}
+    {% liquid
+      assign alt = media.alt | default: product.title
+    %}
+    {% render 'image',
+      src: media,
+      width: 2048,
+      height: 2048,
+      img_class: object_fit_class,
+      container_class: container_class,
+      alt: alt,
+      is_mix: settings.card_gray_background
+    %}
+  {% elsif media.media_type == 'external_video' %}
+    {% assign video_class = object_fit_class | append: ' !size-full' %}
+    {%- if media.host == 'youtube' -%}
+      {{
+        media
+        | external_video_url: autoplay: autoplay, loop: loop, playlist: media.external_id
+        | external_video_tag: class: video_class, loading: 'lazy'
+      }}
+    {%- else -%}
+      {{
+        media
+        | external_video_url: autoplay: autoplay, loop: loop
+        | external_video_tag: class: video_class, loading: 'lazy'
+      }}
+    {%- endif -%}
+
+  {% elsif media.media_type == 'video' %}
+    {% assign video_class = object_fit_class | append: ' !size-full' %}
+    {{
+      media
+      | media_tag:
+        image_size: '2048x',
+        controls: true,
+        class: video_class,
+        autoplay: autoplay,
+        loop: loop,
+        muted: muted,
+        preload: 'none'
+    }}
+
+  {% elsif media.media_type == 'model' %}
+    <div class="flex size-full flex-col bg-[--fade-in-bg]">
+      {% assign model_class = object_fit_class | append: ' !size-full' %}
+      {{ media | model_viewer_tag: class: model_class }}
+      <div class="m-4 md:hidden">
+        <button
+          class="button button--outline-primary w-full gap-2"
+          type="button"
+          aria-label="{{ 'products.product.xr_button_label' | t }}"
+          data-shopify-xr
+          data-shopify-model3d-id="{{ media.id }}"
+          data-shopify-title="{{ product.title }}"
+          data-shopify-xr-hidden
+        >
+          {% render 'icon-3d-model' %}
+          {{ 'products.product.xr_button' | t }}
+        </button>
+      </div>
+    </div>
+  {% else %}
+    {% liquid
+      assign alt = media.alt | default: product.title
+    %}
+    {% render 'image',
+      src: media,
+      width: 2048,
+      height: 2048,
+      img_class: object_fit_class,
+      container_class: container_class,
+      alt: alt,
+      is_mix: settings.card_gray_background
+    %}
+  {% endif %}
+</div>

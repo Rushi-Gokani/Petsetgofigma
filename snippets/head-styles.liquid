@@ -1,0 +1,251 @@
+{%- liquid
+  assign bg_brightness = settings.color_scheme.settings.background | color_brightness
+%}
+
+{% style %}
+  {{ settings.display_font | font_face: font_display: 'swap' }}
+
+  {{ settings.body_font | font_modify: 'weight', '300' | font_face: font_display: 'swap' }}
+  {{ settings.body_font | font_modify: 'weight', '400' | font_face: font_display: 'swap' }}
+  {{ settings.body_font | font_modify: 'weight', '500' | font_face: font_display: 'swap' }}
+  {{ settings.body_font | font_modify: 'weight', '600' | font_face: font_display: 'swap' }}
+
+  :root {
+    --desktop-product-aspect-ratio: {{ settings.desktop_product_image_aspect_ratio | divided_by: 100.0 }};
+
+    --font-family-body: {{ settings.body_font.family }}, {{ settings.body_font.fallback_families }};
+    --font-weight-body: {{ settings.body_font.weight }};
+    --font-style-body: {{ settings.body_font.style }};
+
+    --font-family-display: {{ settings.display_font.family }}, {{ settings.display_font.fallback_families }};
+    --font-weight-display: {{ settings.display_font.weight }};
+    --font-style-display: {{ settings.display_font.style }};
+
+    --page-width: {{ settings.page_width | divided_by: 10 }}rem;
+    --page-width-margin: {% if settings.page_width == '1600' %}2{% else %}0{% endif %}rem;
+
+    --progress-bar-color: {{ settings.progress_bar_color }};
+    --progress-bar-height: {{ settings.progress_bar_height }}px;
+
+    --fade-in-bg: {{ settings.fade_in_bg_color }};
+
+    --color-primary-50: {{ settings.color_scheme.settings.primary | color_lighten: 40 }};
+    --color-primary-100: {{ settings.color_scheme.settings.primary | color_lighten: 20 }};
+    --color-primary-400: {{ settings.color_scheme.settings.primary | color_lighten: 5 }};
+    --color-primary-500: {{ settings.color_scheme.settings.primary }};
+    --color-primary-600: {{ settings.color_scheme.settings.primary | color_darken: 5 }};
+    --color-primary-700: {{ settings.color_scheme.settings.primary | color_darken: 10 }};
+
+    --color-background-50: {{ settings.color_scheme.settings.background | color_lighten: 40 }};
+    --color-background-100: {{ settings.color_scheme.settings.background | color_lighten: 20 }};
+    --color-background-400: {{ settings.color_scheme.settings.background | color_lighten: 5 }};
+    --color-background-500: {{ settings.color_scheme.settings.background }};
+    --color-background-600: {{ settings.color_scheme.settings.background | color_darken: 5 }};
+    --color-background-700: {{ settings.color_scheme.settings.background | color_darken: 10 }};
+
+    /* On dark bg, ligher color is lighter */
+    /* On light bg, lighter color is darker */
+
+    {% if bg_brightness < 128 %}
+      /* bg_is_darker: true; */
+      --color-primary-800: {{ settings.color_scheme.settings.primary | color_darken: 20 }};
+      --color-text-50: {{ settings.color_scheme.settings.text | color_lighten: 40 }};
+      --color-text-100: {{ settings.color_scheme.settings.text | color_lighten: 20 }};
+      --color-text-400: {{ settings.color_scheme.settings.text | color_lighten: 5 }};
+      --color-text-500: {{ settings.color_scheme.settings.text }};
+      --color-text-600: {{ settings.color_scheme.settings.text | color_darken: 5 }};
+      --color-text-700: {{ settings.color_scheme.settings.text | color_darken: 10 }};
+      --color-overlay: #18181899;
+      --color-overlay-dark: #18181899;
+      --header-shadow: 0 10px 8px rgba(0, 0, 0, 0.3);
+    {% else %}
+      /* bg_is_darker: false; */
+      --color-primary-800: {{ settings.color_scheme.settings.primary }};
+      --color-text-50: {{ settings.color_scheme.settings.text | color_darken: 40 }};
+      --color-text-100: {{ settings.color_scheme.settings.text | color_darken: 20 }};
+      --color-text-400: {{ settings.color_scheme.settings.text | color_darken: 5 }};
+      --color-text-500: {{ settings.color_scheme.settings.text }};
+      --color-text-600: {{ settings.color_scheme.settings.text | color_lighten: 5 }};
+      --color-text-700: {{ settings.color_scheme.settings.text | color_lighten: 10 }};
+      --color-overlay: #18181833;
+      --color-overlay-dark: #18181866;
+      --header-shadow: 0 10px 8px rgb(0 0 0 / 0.04);
+    {% endif %}
+
+    --color-secondary-50: {{ settings.color_scheme.settings.secondary | color_lighten: 40 }};
+    --color-secondary-100: {{ settings.color_scheme.settings.secondary | color_lighten: 20 }};
+    --color-secondary-400: {{ settings.color_scheme.settings.secondary | color_lighten: 5 }};
+    --color-secondary-500: {{ settings.color_scheme.settings.secondary }};
+    --color-secondary-600: {{ settings.color_scheme.settings.secondary | color_darken: 5 }};
+    --color-secondary-700: {{ settings.color_scheme.settings.secondary | color_darken: 10 }};
+  }
+
+  /* On dark bg, ligher color should become even lighter */
+  /* On light bg, lighter color should become darker */
+
+  @media (prefers-contrast: more) {
+    :root {
+      {% if bg_brightness < 128 %}
+        /* bg_is_darker: true; */
+        --color-text-50: {{ settings.color_scheme.settings.text | color_lighten: 50 }};
+        --color-text-100: {{ settings.color_scheme.settings.text | color_lighten: 30 }};
+        --color-text-400: {{ settings.color_scheme.settings.text | color_lighten: 15 }};
+        --color-text-500: {{ settings.color_scheme.settings.text | color_lighten: 10 }};
+        --color-text-600: {{ settings.color_scheme.settings.text | color_lighten: 5 }};
+        --color-text-700: {{ settings.color_scheme.settings.text }};
+
+        --color-primary-50: {{ settings.color_scheme.settings.primary | color_lighten: 50 }};
+        --color-primary-100: {{ settings.color_scheme.settings.primary | color_lighten: 30 }};
+        --color-primary-400: {{ settings.color_scheme.settings.primary | color_lighten: 15 }};
+        --color-primary-500: {{ settings.color_scheme.settings.primary | color_lighten: 10}};
+        --color-primary-600: {{ settings.color_scheme.settings.primary | color_lighten: 5 }};
+        --color-primary-700: {{ settings.color_scheme.settings.primary }};
+        --color-primary-800: {{ settings.color_scheme.settings.primary | color_darken: 5 }};
+      {% else %}
+        /* bg_is_darker: false; */
+        --color-text-50: {{ settings.color_scheme.settings.text | color_darken: 50 }};
+        --color-text-100: {{ settings.color_scheme.settings.text | color_darken: 30 }};
+        --color-text-400: {{ settings.color_scheme.settings.text | color_darken: 15 }};
+        --color-text-500: {{ settings.color_scheme.settings.text | color_darken: 10 }};
+        --color-text-600: {{ settings.color_scheme.settings.text | color_darken: 5 }};
+        --color-text-700: {{ settings.color_scheme.settings.text }};
+
+        --color-primary-50: {{ settings.color_scheme.settings.primary | color_darken: 50 }};
+        --color-primary-100: {{ settings.color_scheme.settings.primary | color_darken: 30 }};
+        --color-primary-400: {{ settings.color_scheme.settings.primary | color_darken: 15 }};
+        --color-primary-500: {{ settings.color_scheme.settings.primary | color_darken: 10 }};
+        --color-primary-600: {{ settings.color_scheme.settings.primary | color_darken: 5 }};
+        --color-primary-700: {{ settings.color_scheme.settings.primary }};
+        --color-primary-800: {{ settings.color_scheme.settings.primary | color_lighten: 5 }};
+      {% endif %}
+    }
+  }
+
+  {% for scheme in settings.color_schemes %}
+    {%- liquid
+      assign bg_brightness = scheme.settings.background | color_brightness
+    %}
+
+    .color-{{ scheme.id }} {
+      --color-primary-50: {{ scheme.settings.primary | color_lighten: 40 }};
+      --color-primary-100: {{ scheme.settings.primary | color_lighten: 20 }};
+      --color-primary-400: {{ scheme.settings.primary | color_lighten: 5 }};
+      --color-primary-500: {{ scheme.settings.primary }};
+      --color-primary-600: {{ scheme.settings.primary | color_darken: 5 }};
+      --color-primary-700: {{ scheme.settings.primary | color_darken: 10 }};
+      {% if bg_brightness < 128 %}
+        --color-primary-800: {{ scheme.settings.primary | color_darken: 20 }};
+      {% else %}
+        --color-primary-800: {{ scheme.settings.primary }};
+      {% endif %}
+
+      --color-background-50: {{ scheme.settings.background | color_lighten: 40 }};
+      --color-background-100: {{ scheme.settings.background | color_lighten: 20 }};
+      --color-background-400: {{ scheme.settings.background | color_lighten: 5 }};
+      --color-background-500: {{ scheme.settings.background }};
+      --color-background-600: {{ scheme.settings.background | color_darken: 5 }};
+      --color-background-700: {{ scheme.settings.background | color_darken: 10 }};
+
+      /* On dark bg, ligher color is lighter */
+      /* On light bg, lighter color is darker */
+
+      {% if bg_brightness < 128 %}
+        /* bg_is_darker: true; */
+        --color-text-50: {{ scheme.settings.text | color_lighten: 40 }};
+        --color-text-100: {{ scheme.settings.text | color_lighten: 20 }};
+        --color-text-400: {{ scheme.settings.text | color_lighten: 5 }};
+        --color-text-500: {{ scheme.settings.text }};
+        --color-text-600: {{ scheme.settings.text | color_darken: 5 }};
+        --color-text-700: {{ scheme.settings.text | color_darken: 10 }};
+      {% else %}
+        /* bg_is_darker: false; */
+        --color-text-50: {{ scheme.settings.text | color_darken: 40 }};
+        --color-text-100: {{ scheme.settings.text | color_darken: 20 }};
+        --color-text-400: {{ scheme.settings.text | color_darken: 5 }};
+        --color-text-500: {{ scheme.settings.text }};
+        --color-text-600: {{ scheme.settings.text | color_lighten: 5 }};
+        --color-text-700: {{ scheme.settings.text | color_lighten: 10 }};
+      {% endif %}
+
+      --color-secondary-50: {{ scheme.settings.secondary | color_lighten: 40 }};
+      --color-secondary-100: {{ scheme.settings.secondary | color_lighten: 20 }};
+      --color-secondary-400: {{ scheme.settings.secondary | color_lighten: 5 }};
+      --color-secondary-500: {{ scheme.settings.secondary }};
+      --color-secondary-600: {{ scheme.settings.secondary | color_darken: 5 }};
+      --color-secondary-700: {{ scheme.settings.secondary | color_darken: 10 }};
+      color: var(--color-text-700);
+    }
+
+    @media (prefers-contrast: more) {
+      .color-{{ scheme.id }} {
+      {% if bg_brightness < 128 %}
+        /* bg_is_darker: true; */
+        --color-text-50: {{ scheme.settings.text | color_lighten: 50 }};
+        --color-text-100: {{ scheme.settings.text | color_lighten: 30 }};
+        --color-text-400: {{ scheme.settings.text | color_lighten: 15 }};
+        --color-text-500: {{ scheme.settings.text | color_lighten: 10 }};
+        --color-text-600: {{ scheme.settings.text | color_lighten: 5 }};
+        --color-text-700: {{ scheme.settings.text }};
+
+        --color-primary-50: {{ scheme.settings.primary | color_lighten: 50 }};
+        --color-primary-100: {{ scheme.settings.primary | color_lighten: 30 }};
+        --color-primary-400: {{ scheme.settings.primary | color_lighten: 15 }};
+        --color-primary-500: {{ scheme.settings.primary | color_lighten: 10}};
+        --color-primary-600: {{ scheme.settings.primary | color_lighten: 5 }};
+        --color-primary-700: {{ scheme.settings.primary }};
+        --color-primary-800: {{ scheme.settings.primary | color_darken: 5 }};
+      {% else %}
+        /* bg_is_darker: false; */
+        --color-text-50: {{ scheme.settings.text | color_darken: 50 }};
+        --color-text-100: {{ scheme.settings.text | color_darken: 30 }};
+        --color-text-400: {{ scheme.settings.text | color_darken: 15 }};
+        --color-text-500: {{ scheme.settings.text | color_darken: 10 }};
+        --color-text-600: {{ scheme.settings.text | color_darken: 5 }};
+        --color-text-700: {{ scheme.settings.text }};
+
+        --color-primary-50: {{ scheme.settings.primary | color_darken: 50 }};
+        --color-primary-100: {{ scheme.settings.primary | color_darken: 30 }};
+        --color-primary-400: {{ scheme.settings.primary | color_darken: 15 }};
+        --color-primary-500: {{ scheme.settings.primary | color_darken: 10 }};
+        --color-primary-600: {{ scheme.settings.primary | color_darken: 5 }};
+        --color-primary-700: {{ scheme.settings.primary }};
+        --color-primary-800: {{ scheme.settings.primary | color_lighten: 5 }};
+      {% endif %}
+    }
+  }
+  {% endfor %}
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: inherit;
+  }
+
+  html {
+    box-sizing: border-box;
+    height: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    min-height: 100%;
+    margin: 0;
+    font-size: 1rem;
+    line-height: calc(1 + 0.8 / var(--font-body-scale));
+  }
+
+  {% if request.design_mode %}
+    /* Header must be always contents to stick while scrolling */
+    .shopify-section:has(header) {
+      display: contents;
+    }
+  {% else %}
+    .shopify-section {
+      display: contents;
+    }
+  {% endif %}
+{% endstyle %}

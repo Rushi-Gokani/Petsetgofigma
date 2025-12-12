@@ -1,0 +1,663 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "current": {
+    "logo": "shopify://shop_images/logo190px.png",
+    "with_logo_border": true,
+    "navigation_type": "mpa",
+    "progress_bar_height": 2,
+    "color_scheme": "scheme-2",
+    "body_font": "nunito_sans_n4",
+    "display_font": "poppins_n7",
+    "product_card_behavior": "preview",
+    "fade_in_bg_color": "#ffffff",
+    "card_gray_background": true,
+    "fit_products_media": "cover",
+    "desktop_product_image_aspect_ratio": 90,
+    "social_facebook_link": "https://m.facebook.com/petsetgo.co.in",
+    "social_instagram_link": "https://www.instagram.com/petsetgo.co.in",
+    "predictive_search_enabled": true,
+    "currency_code_enabled": true,
+    "cart_type": "drawer",
+    "show_collection_image": false,
+    "sections": {
+      "announcement-bar": {
+        "type": "announcement-bar",
+        "blocks": {
+          "announcement-bar-0": {
+            "type": "announcement",
+            "settings": {}
+          }
+        },
+        "block_order": [
+          "announcement-bar-0"
+        ],
+        "settings": {}
+      },
+      "header": {
+        "type": "header",
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "blocks": {
+          "footer-about": {
+            "type": "link_list",
+            "settings": {
+              "heading": "About",
+              "menu": "footer-about"
+            }
+          },
+          "footer-categories": {
+            "type": "link_list",
+            "settings": {
+              "heading": "Popular categories",
+              "menu": "footer-categories"
+            }
+          },
+          "footer-social": {
+            "type": "link_list",
+            "settings": {
+              "heading": "Follow us",
+              "menu": "footer-social"
+            }
+          }
+        },
+        "block_order": [
+          "footer-about",
+          "footer-categories",
+          "footer-social"
+        ],
+        "settings": {}
+      },
+      "main-password-header": {
+        "type": "main-password-header",
+        "settings": {}
+      },
+      "main-password-footer": {
+        "type": "main-password-footer",
+        "settings": {}
+      }
+    },
+    "content_for_index": [],
+    "blocks": {
+      "14060646107696862457": {
+        "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {}
+      },
+      "12120936241911852800": {
+        "type": "shopify://apps/judge-me-reviews/blocks/reviews_tab/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": true,
+        "settings": {
+          "position": "right"
+        }
+      },
+      "17985673643287205206": {
+        "type": "shopify://apps/c-edd-estimated-delivery-date/blocks/app_setting/4a0685bc-c234-45b2-8382-5ad6a8e3e3fd",
+        "disabled": false,
+        "settings": {}
+      },
+      "15181020662106344915": {
+        "type": "shopify://apps/judge-me-reviews/blocks/popup_widget/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
+        "disabled": false,
+        "settings": {}
+      }
+    },
+    "color_schemes": {
+      "scheme-1": {
+        "settings": {
+          "text": "#424242",
+          "background": "#ffffff",
+          "primary": "#181818",
+          "secondary": "#f5f5f5"
+        }
+      },
+      "scheme-2": {
+        "settings": {
+          "text": "#363030",
+          "background": "#f5f8f6",
+          "primary": "#f68e02",
+          "secondary": "#c4c6bf"
+        }
+      },
+      "scheme-3": {
+        "settings": {
+          "text": "#32312d",
+          "background": "#e6e1de",
+          "primary": "#5b4a40",
+          "secondary": "#bcaca1"
+        }
+      },
+      "scheme-4": {
+        "settings": {
+          "text": "#e2e2e2",
+          "background": "#212121",
+          "primary": "#f68e02",
+          "secondary": "#303030"
+        }
+      },
+      "scheme-5": {
+        "settings": {
+          "text": "#9b5e62",
+          "background": "#f2e0d6",
+          "primary": "#b45b55",
+          "secondary": "#e9beb5"
+        }
+      }
+    }
+  },
+  "presets": {
+    "Satoshi": {
+      "logo_width": 190,
+      "with_logo_border": false,
+      "navigation_type": "spa",
+      "progress_bar_height": 2,
+      "color_scheme": "scheme-1",
+      "body_font": "sans-serif",
+      "display_font": "sans-serif",
+      "product_card_behavior": "preview",
+      "fade_in_bg_color": "#ffffff",
+      "card_gray_background": true,
+      "fit_products_media": "cover",
+      "desktop_product_image_aspect_ratio": 90,
+      "predictive_search_enabled": false,
+      "currency_code_enabled": false,
+      "cart_type": "drawer",
+      "sections": {
+        "main-password-header": {
+          "type": "main-password-header",
+          "settings": {
+            "enable_sticky_header": true,
+            "custom_color_scheme": false,
+            "color_scheme": ""
+          }
+        },
+        "main-password-footer": {
+          "type": "main-password-footer",
+          "settings": {
+            "country_selector_enable": true,
+            "language_selector_enable": true,
+            "copyright_text": "",
+            "payment_enable": true,
+            "custom_color_scheme": false,
+            "color_scheme": ""
+          }
+        }
+      },
+      "content_for_index": [],
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "text": "#424242",
+            "background": "#ffffff",
+            "primary": "#181818",
+            "secondary": "#e8e8e8"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "text": "#363030",
+            "background": "#f5f8f6",
+            "primary": "#6a7a66",
+            "secondary": "#c4c6bf"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "text": "#32312d",
+            "background": "#e6e1de",
+            "primary": "#5b4a40",
+            "secondary": "#bcaca1"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "text": "#e2e2e2",
+            "background": "#413d3d",
+            "primary": "#8ba88a",
+            "secondary": "#303030"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "text": "#553437",
+            "background": "#f7eee8",
+            "primary": "#b45b55",
+            "secondary": "#e9beb5"
+          }
+        },
+        "scheme-6": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f2f2f2",
+            "primary": "#3b1c8c",
+            "secondary": "#dbcbf2"
+          }
+        },
+        "scheme-7": {
+          "settings": {
+            "text": "#424242",
+            "background": "#faf7f3",
+            "primary": "#8b5e3c",
+            "secondary": "#a89f91"
+          }
+        },
+        "scheme-8": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f8f6f3",
+            "primary": "#8e8e8e",
+            "secondary": "#bfcab2"
+          }
+        }
+      }
+    },
+    "Luma": {
+      "logo_width": 100,
+      "with_logo_border": true,
+      "navigation_type": "spa",
+      "progress_bar_height": 2,
+      "color_scheme": "scheme-2",
+      "body_font": "sans-serif",
+      "display_font": "sans-serif",
+      "product_card_behavior": "preview",
+      "fade_in_bg_color": "#ffffff",
+      "card_gray_background": true,
+      "fit_products_media": "contain",
+      "desktop_product_image_aspect_ratio": 90,
+      "predictive_search_enabled": false,
+      "currency_code_enabled": false,
+      "cart_type": "drawer",
+      "sections": {
+        "main-password-header": {
+          "type": "main-password-header",
+          "settings": {
+            "enable_sticky_header": true,
+            "custom_color_scheme": false,
+            "color_scheme": ""
+          }
+        },
+        "main-password-footer": {
+          "type": "main-password-footer",
+          "settings": {
+            "country_selector_enable": true,
+            "language_selector_enable": true,
+            "copyright_text": "",
+            "payment_enable": true,
+            "custom_color_scheme": false,
+            "color_scheme": ""
+          }
+        }
+      },
+      "content_for_index": [],
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "text": "#424242",
+            "background": "#ffffff",
+            "primary": "#181818",
+            "secondary": "#f5f5f5"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "text": "#363030",
+            "background": "#f5f8f6",
+            "primary": "#6a7a66",
+            "secondary": "#c4c6bf"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "text": "#32312d",
+            "background": "#e6e1de",
+            "primary": "#5b4a40",
+            "secondary": "#bcaca1"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "text": "#e2e2e2",
+            "background": "#212121",
+            "primary": "#8ba88a",
+            "secondary": "#303030"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "text": "#9b5e62",
+            "background": "#f2e0d6",
+            "primary": "#b45b55",
+            "secondary": "#e9beb5"
+          }
+        },
+        "scheme-6": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f2f2f2",
+            "primary": "#3b1c8c",
+            "secondary": "#dbcbf2"
+          }
+        },
+        "scheme-7": {
+          "settings": {
+            "text": "#424242",
+            "background": "#faf7f3",
+            "primary": "#8b5e3c",
+            "secondary": "#a89f91"
+          }
+        },
+        "scheme-8": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f8f6f3",
+            "primary": "#8e8e8e",
+            "secondary": "#bfcab2"
+          }
+        }
+      }
+    },
+    "Solitaire": {
+      "logo_width": 150,
+      "with_logo_border": true,
+      "navigation_type": "mpa",
+      "progress_bar_color": "#3b1c8c",
+      "progress_bar_height": 2,
+      "color_scheme": "scheme-6",
+      "body_font": "sans-serif",
+      "display_font": "sans-serif",
+      "product_card_behavior": "preview",
+      "fade_in_bg_color": "#ffffff",
+      "card_gray_background": true,
+      "fit_products_media": "contain",
+      "desktop_product_image_aspect_ratio": 90,
+      "predictive_search_enabled": true,
+      "currency_code_enabled": false,
+      "cart_type": "drawer",
+      "sections": {
+        "main-password-header": {
+          "type": "main-password-header",
+          "settings": {
+            "enable_sticky_header": true,
+            "custom_color_scheme": false,
+            "color_scheme": ""
+          }
+        },
+        "main-password-footer": {
+          "type": "main-password-footer",
+          "settings": {
+            "country_selector_enable": true,
+            "language_selector_enable": true,
+            "copyright_text": "",
+            "payment_enable": true,
+            "custom_color_scheme": false,
+            "color_scheme": ""
+          }
+        }
+      },
+      "content_for_index": [],
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "text": "#424242",
+            "background": "#ffffff",
+            "primary": "#181818",
+            "secondary": "#f5f5f5"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "text": "#363030",
+            "background": "#f5f8f6",
+            "primary": "#6a7a66",
+            "secondary": "#c4c6bf"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "text": "#32312d",
+            "background": "#e6e1de",
+            "primary": "#5b4a40",
+            "secondary": "#bcaca1"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "text": "#e2e2e2",
+            "background": "#212121",
+            "primary": "#8ba88a",
+            "secondary": "#303030"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "text": "#9b5e62",
+            "background": "#f2e0d6",
+            "primary": "#b45b55",
+            "secondary": "#e9beb5"
+          }
+        },
+        "scheme-6": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f2f2f2",
+            "primary": "#3b1c8c",
+            "secondary": "#dbcbf2"
+          }
+        },
+        "scheme-7": {
+          "settings": {
+            "text": "#424242",
+            "background": "#faf7f3",
+            "primary": "#8b5e3c",
+            "secondary": "#a89f91"
+          }
+        },
+        "scheme-8": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f8f6f3",
+            "primary": "#8e8e8e",
+            "secondary": "#bfcab2"
+          }
+        }
+      }
+    },
+    "Leather": {
+      "logo_width": 90,
+      "with_logo_border": true,
+      "navigation_type": "mpa",
+      "progress_bar_height": 2,
+      "color_scheme": "scheme-7",
+      "body_font": "sans-serif",
+      "display_font": "sans-serif",
+      "product_card_behavior": "preview",
+      "fade_in_bg_color": "#ffffff",
+      "card_gray_background": true,
+      "fit_products_media": "contain",
+      "desktop_product_image_aspect_ratio": 90,
+      "predictive_search_enabled": false,
+      "currency_code_enabled": false,
+      "cart_type": "drawer",
+      "sections": {
+        "main-password-header": {
+          "type": "main-password-header",
+          "settings": {}
+        },
+        "main-password-footer": {
+          "type": "main-password-footer",
+          "settings": {}
+        }
+      },
+      "content_for_index": [],
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "text": "#424242",
+            "background": "#ffffff",
+            "primary": "#181818",
+            "secondary": "#f5f5f5"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "text": "#363030",
+            "background": "#f5f8f6",
+            "primary": "#6a7a66",
+            "secondary": "#c4c6bf"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "text": "#32312d",
+            "background": "#e6e1de",
+            "primary": "#5b4a40",
+            "secondary": "#bcaca1"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "text": "#e2e2e2",
+            "background": "#212121",
+            "primary": "#8ba88a",
+            "secondary": "#303030"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "text": "#9b5e62",
+            "background": "#f2e0d6",
+            "primary": "#b45b55",
+            "secondary": "#e9beb5"
+          }
+        },
+        "scheme-6": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f9f6f2",
+            "primary": "#3b2f2f",
+            "secondary": "#ddd0c8"
+          }
+        },
+        "scheme-7": {
+          "settings": {
+            "text": "#424242",
+            "background": "#faf7f3",
+            "primary": "#8b5e3c",
+            "secondary": "#a89f91"
+          }
+        },
+        "scheme-8": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f8f6f3",
+            "primary": "#8e8e8e",
+            "secondary": "#bfcab2"
+          }
+        }
+      }
+    },
+    "Chalet": {
+      "logo_width": 170,
+      "with_logo_border": true,
+      "navigation_type": "mpa",
+      "progress_bar_height": 2,
+      "color_scheme": "scheme-8",
+      "body_font": "sans-serif",
+      "display_font": "sans-serif",
+      "product_card_behavior": "preview",
+      "fade_in_bg_color": "#ffffff",
+      "card_gray_background": true,
+      "fit_products_media": "contain",
+      "desktop_product_image_aspect_ratio": 90,
+      "predictive_search_enabled": false,
+      "currency_code_enabled": false,
+      "cart_type": "drawer",
+      "sections": {
+        "main-password-header": {
+          "type": "main-password-header",
+          "settings": {}
+        },
+        "main-password-footer": {
+          "type": "main-password-footer",
+          "settings": {}
+        }
+      },
+      "content_for_index": [],
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "text": "#424242",
+            "background": "#ffffff",
+            "primary": "#181818",
+            "secondary": "#f5f5f5"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "text": "#363030",
+            "background": "#f5f8f6",
+            "primary": "#6a7a66",
+            "secondary": "#c4c6bf"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "text": "#32312d",
+            "background": "#e6e1de",
+            "primary": "#5b4a40",
+            "secondary": "#bcaca1"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "text": "#e2e2e2",
+            "background": "#212121",
+            "primary": "#8ba88a",
+            "secondary": "#303030"
+          }
+        },
+        "scheme-5": {
+          "settings": {
+            "text": "#9b5e62",
+            "background": "#f2e0d6",
+            "primary": "#b45b55",
+            "secondary": "#e9beb5"
+          }
+        },
+        "scheme-6": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f2f2f2",
+            "primary": "#3b1c8c",
+            "secondary": "#dbcbf2"
+          }
+        },
+        "scheme-7": {
+          "settings": {
+            "text": "#424242",
+            "background": "#faf7f3",
+            "primary": "#8b5e3c",
+            "secondary": "#a89f91"
+          }
+        },
+        "scheme-8": {
+          "settings": {
+            "text": "#424242",
+            "background": "#f8f6f3",
+            "primary": "#8e8e8e",
+            "secondary": "#bfcab2"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{% comment %}
+  Renders a slide
+
+  Accepts:
+  - content: {Object} content to render.
+  - class: {String} custom class (Optional).
+
+  Usage:
+  {% render 'slider-slide',
+    content: content_rendered_by_liquid,
+    class: 'my-custom-class'
+  %}
+{% endcomment %}
+
+<div
+  class="slider__slide"
+  :class="'{{ class }}'"
+>
+  {{ content }}
+</div>

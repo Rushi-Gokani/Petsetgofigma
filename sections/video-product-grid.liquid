@@ -1,0 +1,312 @@
+<section class="video-product-grid color-{{ section.settings.color_scheme }} gradient" id="{{section.id}}">
+  <div class="container mx-auto px-4">
+    {% if section.settings.title != blank %}
+      <h2 class="text-center section-title text-2xl md:text-3xl font-bold mb-6">{{ section.settings.title }}</h2>
+    {% endif %}
+    <div class="video-product-grid flex flex-row cols-1 md:cols-2 lg:cols-3 gap-4">
+      {% for block in section.blocks %}
+        <div class="item video-product-card">
+          <div class="video-product-video-container relative h-full">
+            {% if block.settings.video != blank %}
+              {% assign poster = block.settings.video.preview_image | image_url: width: 500 %}
+              {{ block.settings.video | video_tag: autoplay: section.settings.video_autoplay, muted: true, controls: section.settings.video_controls, loop: section.settings.video_loop, class: 'w-full h-full rounded-lg object-cover', poster: poster, preload: 'metadata' }}
+              {% render 'play-button-overlay' %}
+            {% else %}
+              <div class="category-image-placeholder bg-gray-200 rounded-lg aspect-square flex items-center justify-center">
+                {{ 'image' | placeholder_svg_tag: 'w-16 h-16 text-gray-400' }}
+              </div>
+            {% endif %}
+          </div>
+          {% if block.settings.product != blank %}
+            <div class="video-product-product flex gap-1 justify-between absolute bottom-0 left-0 right-0">
+              {% if block.settings.product.featured_image %}
+                <div class="video-product-product-image max-w-[80px]">
+                  <img
+                    src="{{ block.settings.product.featured_image | image_url: width: 200 }}"
+                    alt="{{ block.settings.product.featured_image.alt }}"
+                    class="w-full rounded-lg object-cover"
+                    loading="lazy">
+                </div>
+              {% endif %}
+              <div class="video-product-product-content flex flex-col justify-between gap-4">
+
+                {% if block.settings.product.title %}
+                  <h3 class="video-product-product-title">
+                    {{ block.settings.product.title }}
+                  </h3>
+                {% endif %}
+                {% if block.settings.product.price %}
+                  <div class="video-product-product-price">
+                    <span class="video-product-product-price-regular video-card-price-item">
+                      {{ block.settings.product.price | money }}
+                    </span>
+                    {% if block.settings.product.compare_at_price %}
+                      <span class="video-product-product-price-sale video-card-price-item ">
+                        {{ block.settings.product.compare_at_price | money }}
+                      </span>
+                      <span class="video-product-product-price-discount video-card-discount">
+                        {{ block.settings.product.compare_at_price | minus: block.settings.product.price | times: 100 | divided_by: block.settings.product.compare_at_price | round | append: '% OFF' }}
+                      </span>
+                    {% endif %}
+                  </div>
+                {% endif %}
+                <div class="video-product-product-actions flex gap-1 justify-between items-stretch">
+                  {% if product.has_only_default_variant %}
+                    {% form 'product'
+                      , product: block.settings.product %}
+                      <input
+                        type="hidden"
+                        name="id"
+                        value="{{ block.settings.product.selected_or_first_available_variant.id }}">
+                      <button type="submit" class="video-product-product-action add-to-cart button button--outline-primary">
+                        Add To Cart
+                      </button>
+                    {% endform %}
+                  {% else %}
+                    <a href="{{ block.settings.product.url }}" class="video-product-product-action quickview-btn button button--outline-primary">
+                      Quick View
+                    </a>
+                  {% endif %}
+                  {% if block.settings.product.url %}
+                    <a href="{{ block.settings.product.url }}" class="video-product-product-action redirect-btn button button--outline-primary">
+                      <span class="video-product-product-action-icon">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 15 15"
+                          fill="none">
+                          <path d="M14.3943 0.605654C14.1015 0.312764 13.6266 0.312764 13.3337 0.605654L0.605765 13.3336C0.312865 13.6265 0.312865 14.1013 0.605765 14.3942C0.898665 14.6871 1.37347 14.6871 1.66637 14.3942L14.3943 1.66631C14.6872 1.37342 14.6872 0.898544 14.3943 0.605654Z" fill="{{ section.settings.color_scheme.settings.text }}" />
+                          <path d="M14.614 1.13599C14.614 0.721776 14.2782 0.385986 13.864 0.385986L4.86401 0.385986C4.44981 0.385986 4.11401 0.721776 4.11401 1.13599C4.11401 1.5502 4.44981 1.88599 4.86401 1.88599L13.114 1.88599L13.114 10.136C13.114 10.5502 13.4498 10.886 13.864 10.886C14.2782 10.886 14.614 10.5502 14.614 10.136L14.614 1.13599Z" fill="{{ section.settings.color_scheme.settings.text }}" />
+                        </svg>
+                      </span>
+                    </a>
+                  {% endif %}
+
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  #{{section.id}}
+{
+  --color-background-500: {{ section.settings.color_scheme.settings.background }};
+  padding-top: {{ section.settings.padding_top }}px;
+  padding-bottom: {{ section.settings.padding_bottom }}px;
+
+  & .section-title {
+    color: {{ section.settings.color_scheme.settings.text }};
+  }
+
+  & .video-product-grid {
+    gap: 20px;
+    grid-row: 1;
+    max-width: 100%;
+    padding: 10px 0;
+    overflow: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scroll-snap-stop: always;
+    scroll-snap-type: mandatory;
+    scrollbar-width: none;
+  }
+  & .video-product-grid::-webkit-scrollbar {
+    display: none;
+  }
+  & .video-product-grid::-webkit-scrollbar-track {
+    display: none;
+  }
+  & .video-product-grid::-webkit-scrollbar-thumb {
+    display: none;
+  }
+  & .video-product-grid::-webkit-scrollbar-track {
+    display: none;
+  }
+  & .video-product-grid::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
+  & .video-product-card {
+    position: relative;
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--color-background-500, {{ section.settings.color_scheme.settings.background }});
+    flex: 1 0 300px;
+    padding: 5px;
+    border: 1px solid #0000004D;
+  }
+  & .video-product-video-container {
+    transition: transform 0.3s ease;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+   & .video-product-card:hover .video-product-video-container {
+    transform: scale(1.05);
+  }
+  & .video-product-product {
+    padding: 10px;
+    background: var(--color-background-500, {{ section.settings.color_scheme.settings.background }});
+    border-radius: 10px;
+    margin: 10px;
+    gap: 10px;
+    align-items:flex-start;
+  }
+  & .video-product-product-image {
+    max-width: 80px;
+    min-width: 60px;
+    width: 100%;
+    border-radius: 10px;
+    aspect-ratio: 1/1; 
+    overflow: hidden;
+    object-fit: cover;
+  }
+  & .video-product-product-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    overflow: hidden;
+    flex: 1 1 auto;
+    gap: 8px;
+
+  }
+  & .video-product-product-title {
+    font-family: Satoshi;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 1.2;
+    letter-spacing: normal;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 100%;
+  }
+
+  & .video-product-product-price {
+    font-family: Satoshi;
+    font-weight: 700;
+    font-size: 13px;
+    line-height: 1.0;
+    letter-spacing: normal;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+  & .video-product-product-price-sale {
+    text-decoration: line-through;
+    font-size: 11px;
+    color: #21212199;
+
+  }
+  & .video-product-product-price-discount {
+    color: #2F8B32;
+    font-size: 11px;
+  }
+  & .video-product-product-actions {
+    padding: 10px 0;
+    gap: 10px;
+    align-items: stretch;
+  }
+
+  & .video-product-product-action {
+    padding: 10px;
+    font-family: Satoshi;
+    flex: 1 1 auto;
+
+    font-weight: 500;
+    font-size: 11px;
+    line-height: 1.0;
+    letter-spacing: normal;
+    text-transform: uppercase;
+    border-color: #949292;
+    border-radius: 0;
+    height: auto;
+  }
+  & .video-product-product-action.redirect-btn {
+    background-color: transparent;
+    color: {{ section.settings.color_scheme.settings.text }};
+    max-width: 30px;
+  }
+  .cols-1 .item {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .md\:cols-2 .item {
+    width: 50%; /* 2 columns */
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:cols-3 .item {
+    width: 33.3333%; /* 3 columns */
+  }
+}
+
+}
+</style>
+
+{% schema %}
+  {
+    "name": "Video Product Grid",
+    "settings": [
+      {
+        "type": "text",
+        "id": "title",
+        "label": "Heading",
+        "default": "Video Product Grid"
+      }, {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "default": "scheme-1"
+      }, {
+        "type": "range",
+        "id": "padding_top",
+        "label": "Top padding",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 36
+      }, {
+        "type": "range",
+        "id": "padding_bottom",
+        "label": "Bottom padding",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "default": 36
+      }
+    ],
+    "blocks": [
+      {
+        "type": "video-product",
+        "name": "Video Product",
+        "settings": [
+          {
+            "type": "video",
+            "id": "video",
+            "label": "Video"
+          }, {
+            "type": "product",
+            "id": "product",
+            "label": "Product"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Video Product Grid"
+      }
+    ]
+  }
+{% endschema %}

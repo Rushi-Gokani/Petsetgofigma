@@ -1,0 +1,88 @@
+<article
+  class="{% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %} max-md:hidden"
+  aria-label="{{ 'sections.collection_template.category_details' | t }}"
+>
+  <div
+    class="content-wrapper mx-auto flex flex-col items-start gap-3 py-5 pb-6 pt-3"
+  >
+    {%- if settings.show_collection_image and collection.image -%}
+      <div class="disable-fade contents">
+        {%- liquid
+          assign srcset = ''
+          if collection.image.width >= 165
+            assign srcset = srcset | append: collection.image | image_url: width: 165 | append: '165w, '
+          endif
+          if collection.image.width >= 360
+            assign srcset = srcset | append: collection.image | image_url: width: 360 | append: '360w, '
+          endif
+          if collection.image.width >= 535
+            assign srcset = srcset | append: collection.image | image_url: width: 535 | append: '535w, '
+          endif
+          if collection.image.width >= 750
+            assign srcset = srcset | append: collection.image | image_url: width: 750 | append: '750w, '
+          endif
+          if collection.image.width >= 1070
+            assign srcset = srcset | append: collection.image | image_url: width: 1070 | append: '1070w, '
+          endif
+          if collection.image.width >= 1500
+            assign srcset = srcset | append: collection.image | image_url: width: 1500 | append: '1500w, '
+          endif
+          assign srcset = srcset | append: collection.image | image_url | append: collection.image.width | append: 'w'
+        %}
+        {%- assign alt = collection.image.alt | default: collection.title -%}
+        {% render 'image',
+          src: collection.image,
+          srcset: srcset,
+          sizes: '(min-width: 750px) calc(50vw - 130px), calc(50vw - 55px)',
+          alt: alt,
+          width: collection.image.width,
+          height: collection.image.height,
+          img_class: 'w-full h-[40vh] object-cover rounded-md',
+          container_class: 'w-full mb-2 rounded-md overflow-hidden'
+        %}
+      </div>
+    {%- endif -%}
+    <div class="flex w-full items-end justify-between">
+      <div class="flex flex-col gap-3">
+        <h1 class="heading text-lg text-text-500">
+          {{- collection.title | escape -}}
+        </h1>
+
+        {%- if settings.show_collection_description and collection.description != blank -%}
+          <div class="rte">
+            {{- collection.description -}}
+          </div>
+        {%- endif -%}
+      </div>
+      <div
+        class="button button--filled-primary invisible ms-8 hidden w-[275px] min-w-[275px] md:inline-flex md:ps-2"
+      ></div>
+    </div>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "t:sections.main-collection-banner.name",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ]
+}
+{% endschema %}

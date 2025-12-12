@@ -1,0 +1,39 @@
+<div class="flex items-center justify-between max-md:px-2 max-md:pt-2">
+  <span class="mb-2 block md:mb-3 md:px-5 md:text-text-500 max-md:font-semibold">
+    {{ 'customer.addresses.delete_title' | t }}
+  </span>
+
+  <button
+    class="border-text-text-500 rounded-sm border p-3  md:hidden"
+    @click="$store.popup.hidePopup('delete-address')"
+  >
+    {% render 'icon-close' %}
+  </button>
+</div>
+<div class="md:contrast-border rounded-md bg-bg-500 px-2 pb-3  pt-5 md:px-5 md:py-5">
+  <p class="text-base">
+    {{ 'customer.addresses.delete_confirm' | t }}
+  </p>
+
+  <div class="mt-5 flex items-center justify-center gap-4">
+    <form
+      data-address-delete-form
+      method="post"
+      :action="'{{ routes.account_addresses_url }}/'+deleteId"
+      data-confirm-message="{{ 'customer.addresses.delete_confirm' | t }}"
+      class="contents"
+    >
+      <input type="hidden" name="_method" value="delete">
+      <button
+        type="button"
+        @click="hideForm()"
+        class="button button--outline button--outline-primary max-md:hidden"
+      >
+        {{ 'customer.addresses.cancel' | t }}
+      </button>
+      <button type="submit" class="button button--filled button--filled-primary inline w-full flex-1">
+        {{ 'customer.addresses.delete' | t }}
+      </button>
+    </form>
+  </div>
+</div>

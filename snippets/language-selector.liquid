@@ -1,0 +1,46 @@
+{% comment %}
+  Renders language selector
+{% endcomment %}
+
+{% capture dropdownItems %}
+    {% for language in localization.available_languages %}
+        {%- capture label -%}
+            {{ language.endonym_name | capitalize }}
+        {%- endcapture -%}
+
+        {% liquid
+            assign isActive = false
+            if language.iso_code == localization.language.iso_code
+                assign isActive = true
+            endif
+        %}
+
+        {%
+            render 'dropdown-option',
+            isActive: isActive,
+            value: language.iso_code,
+            label: label,
+            on_click: "document.querySelector('[name=language_code]').value = $event.target.dataset.value; $event.target.closest('form').submit();"
+        %}
+    {% endfor %}
+{% endcapture %}
+
+{% liquid
+  assign label = localization.language.endonym_name | capitalize
+%}
+
+{% if localization.available_languages.size > 1 %}
+  <localization-form>
+    {% form 'localization', id: 'language_localization' %}
+      <input type="hidden" name="language_code" value="{{ localization.language.iso_code }}">
+
+      {% render 'dropdown',
+        id: 'language-selector',
+        placement: 'top',
+        label: label,
+        withSearch: false,
+        options: dropdownItems
+      %}
+    {% endform %}
+  </localization-form>
+{% endif %}

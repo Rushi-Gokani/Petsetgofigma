@@ -1,0 +1,1249 @@
+{% doc %}
+  @prompt
+    Create an announcement bar which has options for multiple announcements. Attach link. It should even work as a marquee and scrolling with speed settings. It should be very neat, clean with all the other settings that you can think of for font, lines, icon after the announcement and just make it neat and clean with all settings and even a countdown timer for each announcement. So make this section with best practices of Shopify and make sure it is responsive both on desktop and mobile., you need to debug this the background colour is not working and i think even some other things when annoucement changes is broken kindly check and debug it properly as per the best practices
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-announcement-bar-{{ ai_gen_id }} {
+    background-color: {{ block.settings.background_color }};
+    color: {{ block.settings.text_color }};
+    font-family: {{ block.settings.font_family.family }}, {{ block.settings.font_family.fallback_families }};
+    font-weight: {{ block.settings.font_family.weight }};
+    font-size: {{ block.settings.font_size }}px;
+    line-height: {{ block.settings.line_height }};
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  .ai-announcement-bar__container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: {{ block.settings.bar_height }}px;
+    padding: {{ block.settings.padding_vertical }}px {{ block.settings.padding_horizontal }}px;
+    position: relative;
+  }
+
+  .ai-announcement-bar__content-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.item_spacing }}px;
+    white-space: nowrap;
+  }
+
+  .ai-announcement-bar__item-{{ ai_gen_id }} {
+    display: none;
+    align-items: center;
+    gap: {{ block.settings.icon_spacing }}px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .ai-announcement-bar__item-{{ ai_gen_id }}.active {
+    display: flex;
+    opacity: 1;
+    position: relative;
+    left: auto;
+    transform: none;
+  }
+
+  .ai-announcement-bar--marquee-{{ ai_gen_id }} .ai-announcement-bar__item-{{ ai_gen_id }} {
+    display: flex;
+    opacity: 1;
+    position: relative;
+    left: auto;
+    transform: none;
+  }
+
+  .ai-announcement-bar__link-{{ ai_gen_id }} {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: {{ block.settings.icon_spacing }}px;
+  }
+
+  .ai-announcement-bar__link-{{ ai_gen_id }}:hover {
+    opacity: 0.8;
+  }
+
+  .ai-announcement-bar__icon-{{ ai_gen_id }} {
+    width: {{ block.settings.icon_size }}px;
+    height: {{ block.settings.icon_size }}px;
+    flex-shrink: 0;
+  }
+
+  .ai-announcement-bar__icon-{{ ai_gen_id }} svg {
+    width: 100%;
+    height: 100%;
+    fill: currentColor;
+  }
+
+  .ai-announcement-bar__countdown-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: 12px;
+    font-weight: 600;
+  }
+
+  .ai-announcement-bar__countdown-segment-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .ai-announcement-bar__countdown-number-{{ ai_gen_id }} {
+    background-color: {{ block.settings.countdown_bg_color }};
+    color: {{ block.settings.countdown_text_color }};
+    padding: 2px 6px;
+    border-radius: 4px;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .ai-announcement-bar__countdown-label-{{ ai_gen_id }} {
+    font-size: 0.85em;
+    opacity: 0.9;
+  }
+
+  .ai-announcement-bar__separator-{{ ai_gen_id }} {
+    margin: 0 {{ block.settings.separator_spacing }}px;
+    opacity: 0.5;
+  }
+
+  .ai-announcement-bar--marquee-{{ ai_gen_id }} .ai-announcement-bar__content-{{ ai_gen_id }} {
+    animation: ai-marquee-{{ ai_gen_id }} var(--marquee-duration) linear infinite;
+    will-change: transform;
+  }
+
+  .ai-announcement-bar--marquee-{{ ai_gen_id }} .ai-announcement-bar__container-{{ ai_gen_id }} {
+    justify-content: flex-start;
+  }
+
+  @keyframes ai-marquee-{{ ai_gen_id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-announcement-bar-{{ ai_gen_id }} {
+      font-size: {{ block.settings.font_size_mobile }}px;
+    }
+
+    .ai-announcement-bar__container-{{ ai_gen_id }} {
+      min-height: {{ block.settings.bar_height_mobile }}px;
+      padding: {{ block.settings.padding_vertical_mobile }}px {{ block.settings.padding_horizontal_mobile }}px;
+    }
+
+    .ai-announcement-bar__icon-{{ ai_gen_id }} {
+      width: {{ block.settings.icon_size_mobile }}px;
+      height: {{ block.settings.icon_size_mobile }}px;
+    }
+
+    .ai-announcement-bar__countdown-number-{{ ai_gen_id }} {
+      padding: 2px 4px;
+      min-width: 20px;
+      font-size: 0.9em;
+    }
+  }
+{% endstyle %}
+
+<announcement-bar-{{ ai_gen_id }}
+  class="ai-announcement-bar-{{ ai_gen_id }} {% if block.settings.enable_marquee %}ai-announcement-bar--marquee-{{ ai_gen_id }}{% endif %}"
+  data-rotation-speed="{{ block.settings.rotation_speed }}"
+  data-marquee-speed="{{ block.settings.marquee_speed }}"
+  data-enable-marquee="{{ block.settings.enable_marquee }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-announcement-bar__container-{{ ai_gen_id }}">
+    <div class="ai-announcement-bar__content-{{ ai_gen_id }}">
+      {% for i in (1..5) %}
+        {% liquid
+          assign announcement_enabled_key = 'announcement_' | append: i | append: '_enabled'
+          assign announcement_text_key = 'announcement_' | append: i | append: '_text'
+          assign announcement_link_key = 'announcement_' | append: i | append: '_link'
+          assign announcement_icon_key = 'announcement_' | append: i | append: '_icon'
+          assign countdown_enabled_key = 'announcement_' | append: i | append: '_countdown_enabled'
+          assign countdown_date_key = 'announcement_' | append: i | append: '_countdown_date'
+          assign countdown_time_key = 'announcement_' | append: i | append: '_countdown_time'
+
+          assign announcement_enabled = block.settings[announcement_enabled_key]
+          assign announcement_text = block.settings[announcement_text_key]
+          assign announcement_link = block.settings[announcement_link_key]
+          assign announcement_icon = block.settings[announcement_icon_key]
+          assign countdown_enabled = block.settings[countdown_enabled_key]
+          assign countdown_date = block.settings[countdown_date_key]
+          assign countdown_time = block.settings[countdown_time_key]
+        %}
+
+        {% if announcement_enabled and announcement_text != blank %}
+          <div
+            class="ai-announcement-bar__item-{{ ai_gen_id }}"
+            data-announcement-index="{{ i }}"
+            data-countdown-enabled="{{ countdown_enabled }}"
+            data-countdown-date="{{ countdown_date }}"
+            data-countdown-time="{{ countdown_time }}"
+          >
+            {% if announcement_link != blank %}
+              <a href="{{ announcement_link }}" class="ai-announcement-bar__link-{{ ai_gen_id }}">
+            {% endif %}
+
+            {% if announcement_icon != 'none' %}
+              <span class="ai-announcement-bar__icon-{{ ai_gen_id }}">
+                {% case announcement_icon %}
+                  {% when 'star' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                  {% when 'fire' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+                    </svg>
+                  {% when 'gift' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+                    </svg>
+                  {% when 'tag' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
+                    </svg>
+                  {% when 'bell' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                    </svg>
+                  {% when 'truck' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-9l1.96 2.5H17V9.5h2.5m-11 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM20 8h-3V4H3c-1.11 0-2 .89-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/>
+                    </svg>
+                  {% when 'heart' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                  {% when 'sparkles' %}
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                      <path d="M7 21q-.425 0-.713-.288T6 20v-4.5L2.5 12L6 8.5V4q0-.425.288-.713T7 3h4.5L15 .5L18.5 3H23q.425 0 .713.288T24 4v4.5L20.5 12L24 15.5V20q0 .425-.288.713T23 21h-4.5L15 23.5L11.5 21H7zm1-2h3.15L15 22.85L18.85 19H22v-3.15L25.85 12L22 8.15V5h-3.15L15 1.15L11.15 5H8v3.15L4.15 12L8 15.85V19z"/>
+                    </svg>
+                {% endcase %}
+              </span>
+            {% endif %}
+
+            <span class="ai-announcement-bar__text-{{ ai_gen_id }}">{{ announcement_text }}</span>
+
+            {% if countdown_enabled and countdown_date != blank %}
+              <span class="ai-announcement-bar__countdown-{{ ai_gen_id }}" data-countdown-container>
+                <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                  <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-days>00</span>
+                  <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">d</span>
+                </span>
+                <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                  <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-hours>00</span>
+                  <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">h</span>
+                </span>
+                <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                  <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-minutes>00</span>
+                  <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">m</span>
+                </span>
+                <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                  <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-seconds>00</span>
+                  <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">s</span>
+                </span>
+              </span>
+            {% endif %}
+
+            {% if announcement_link != blank %}
+              </a>
+            {% endif %}
+          </div>
+
+          {% unless forloop.last %}
+            {% if block.settings.enable_marquee and block.settings.show_separator %}
+              <span class="ai-announcement-bar__separator-{{ ai_gen_id }}">{{ block.settings.separator_symbol }}</span>
+            {% endif %}
+          {% endunless %}
+        {% endif %}
+      {% endfor %}
+
+      {% if block.settings.enable_marquee %}
+        {% for i in (1..5) %}
+          {% liquid
+            assign announcement_enabled_key = 'announcement_' | append: i | append: '_enabled'
+            assign announcement_text_key = 'announcement_' | append: i | append: '_text'
+            assign announcement_link_key = 'announcement_' | append: i | append: '_link'
+            assign announcement_icon_key = 'announcement_' | append: i | append: '_icon'
+            assign countdown_enabled_key = 'announcement_' | append: i | append: '_countdown_enabled'
+            assign countdown_date_key = 'announcement_' | append: i | append: '_countdown_date'
+            assign countdown_time_key = 'announcement_' | append: i | append: '_countdown_time'
+
+            assign announcement_enabled = block.settings[announcement_enabled_key]
+            assign announcement_text = block.settings[announcement_text_key]
+            assign announcement_link = block.settings[announcement_link_key]
+            assign announcement_icon = block.settings[announcement_icon_key]
+            assign countdown_enabled = block.settings[countdown_enabled_key]
+            assign countdown_date = block.settings[countdown_date_key]
+            assign countdown_time = block.settings[countdown_time_key]
+          %}
+
+          {% if announcement_enabled and announcement_text != blank %}
+            <div
+              class="ai-announcement-bar__item-{{ ai_gen_id }}"
+              data-announcement-index="{{ i }}"
+              data-countdown-enabled="{{ countdown_enabled }}"
+              data-countdown-date="{{ countdown_date }}"
+              data-countdown-time="{{ countdown_time }}"
+              aria-hidden="true"
+            >
+              {% if announcement_link != blank %}
+                <a href="{{ announcement_link }}" class="ai-announcement-bar__link-{{ ai_gen_id }}" tabindex="-1">
+              {% endif %}
+
+              {% if announcement_icon != 'none' %}
+                <span class="ai-announcement-bar__icon-{{ ai_gen_id }}">
+                  {% case announcement_icon %}
+                    {% when 'star' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    {% when 'fire' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.62 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29 0.59 2.65 0.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/>
+                      </svg>
+                    {% when 'gift' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/>
+                      </svg>
+                    {% when 'tag' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/>
+                      </svg>
+                    {% when 'bell' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+                      </svg>
+                    {% when 'truck' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M18 18.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm1.5-9l1.96 2.5H17V9.5h2.5m-11 9c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM20 8h-3V4H3c-1.11 0-2 .89-2 2v11h2c0 1.66 1.34 3 3 3s3-1.34 3-3h6c0 1.66 1.34 3 3 3s3-1.34 3-3h2v-5l-3-4z"/>
+                      </svg>
+                    {% when 'heart' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                      </svg>
+                    {% when 'sparkles' %}
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M7 21q-.425 0-.713-.288T6 20v-4.5L2.5 12L6 8.5V4q0-.425.288-.713T7 3h4.5L15 .5L18.5 3H23q.425 0 .713.288T24 4v4.5L20.5 12L24 15.5V20q0 .425-.288.713T23 21h-4.5L15 23.5L11.5 21H7zm1-2h3.15L15 22.85L18.85 19H22v-3.15L25.85 12L22 8.15V5h-3.15L15 1.15L11.15 5H8v3.15L4.15 12L8 15.85V19z"/>
+                      </svg>
+                  {% endcase %}
+                </span>
+              {% endif %}
+
+              <span class="ai-announcement-bar__text-{{ ai_gen_id }}">{{ announcement_text }}</span>
+
+              {% if countdown_enabled and countdown_date != blank %}
+                <span class="ai-announcement-bar__countdown-{{ ai_gen_id }}" data-countdown-container>
+                  <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                    <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-days>00</span>
+                    <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">d</span>
+                  </span>
+                  <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                    <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-hours>00</span>
+                    <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">h</span>
+                  </span>
+                  <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                    <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-minutes>00</span>
+                    <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">m</span>
+                  </span>
+                  <span class="ai-announcement-bar__countdown-segment-{{ ai_gen_id }}">
+                    <span class="ai-announcement-bar__countdown-number-{{ ai_gen_id }}" data-seconds>00</span>
+                    <span class="ai-announcement-bar__countdown-label-{{ ai_gen_id }}">s</span>
+                  </span>
+                </span>
+              {% endif %}
+
+              {% if announcement_link != blank %}
+                </a>
+              {% endif %}
+            </div>
+
+            {% unless forloop.last %}
+              {% if block.settings.show_separator %}
+                <span class="ai-announcement-bar__separator-{{ ai_gen_id }}">{{ block.settings.separator_symbol }}</span>
+              {% endif %}
+            {% endunless %}
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    </div>
+  </div>
+</announcement-bar-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class AnnouncementBar{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.items = [];
+        this.rotationInterval = null;
+        this.countdownIntervals = [];
+      }
+
+      connectedCallback() {
+        if (this.rotationInterval) {
+          clearInterval(this.rotationInterval);
+          this.rotationInterval = null;
+        }
+
+        this.clearCountdownIntervals();
+        this.currentIndex = 0;
+
+        this.enableMarquee = this.dataset.enableMarquee === 'true';
+        const rotationSpeedAttr = parseInt(this.dataset.rotationSpeed, 10);
+        const marqueeSpeedAttr = parseInt(this.dataset.marqueeSpeed, 10);
+        this.rotationSpeed = Number.isFinite(rotationSpeedAttr) && rotationSpeedAttr > 0 ? rotationSpeedAttr * 1000 : 5000;
+        this.marqueeSpeed = Number.isFinite(marqueeSpeedAttr) && marqueeSpeedAttr > 0 ? marqueeSpeedAttr : 50;
+
+        if (this.enableMarquee) {
+          this.items = Array.from(this.querySelectorAll('.ai-announcement-bar__item-{{ ai_gen_id }}'));
+          this.setupMarquee();
+        } else {
+          this.items = Array.from(this.querySelectorAll('.ai-announcement-bar__item-{{ ai_gen_id }}:not([aria-hidden="true"])'));
+          this.setupRotation();
+        }
+
+        this.setupCountdowns();
+      }
+
+      setupRotation() {
+        if (this.items.length === 0) return;
+
+        this.items.forEach((item) => item.classList.remove('active'));
+        this.items[0].classList.add('active');
+
+        if (this.items.length > 1) {
+          this.rotationInterval = setInterval(() => {
+            this.items[this.currentIndex].classList.remove('active');
+            this.currentIndex = (this.currentIndex + 1) % this.items.length;
+            this.items[this.currentIndex].classList.add('active');
+          }, this.rotationSpeed);
+        }
+      }
+
+      setupMarquee() {
+        const content = this.querySelector('.ai-announcement-bar__content-{{ ai_gen_id }}');
+        if (!content) return;
+
+        const speed = this.marqueeSpeed > 0 ? this.marqueeSpeed : 50;
+        const contentWidth = content.scrollWidth / 2;
+        if (!Number.isFinite(contentWidth) || contentWidth <= 0) return;
+
+        const duration = contentWidth / speed;
+        content.style.setProperty('--marquee-duration', duration + 's');
+      }
+
+      setupCountdowns() {
+        this.clearCountdownIntervals();
+        const allItems = this.querySelectorAll('.ai-announcement-bar__item-{{ ai_gen_id }}');
+
+        allItems.forEach((item) => {
+          const countdownEnabled = item.dataset.countdownEnabled === 'true';
+          if (!countdownEnabled) return;
+
+          const countdownDate = item.dataset.countdownDate;
+          const countdownTime = item.dataset.countdownTime || '00:00';
+          const countdownContainer = item.querySelector('[data-countdown-container]');
+
+          if (!countdownDate || !countdownContainer) return;
+
+          countdownContainer.style.removeProperty('display');
+          const targetDate = this.createTargetDate(countdownDate, countdownTime);
+
+          if (!targetDate) {
+            countdownContainer.style.display = 'none';
+            return;
+          }
+
+          let interval;
+          const daysEl = countdownContainer.querySelector('[data-days]');
+          const hoursEl = countdownContainer.querySelector('[data-hours]');
+          const minutesEl = countdownContainer.querySelector('[data-minutes]');
+          const secondsEl = countdownContainer.querySelector('[data-seconds]');
+
+          const updateCountdown = () => {
+            const distance = targetDate.getTime() - Date.now();
+
+            if (distance <= 0) {
+              countdownContainer.style.display = 'none';
+              if (interval) {
+                clearInterval(interval);
+              }
+              return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            if (daysEl) daysEl.textContent = String(days).padStart(2, '0');
+            if (hoursEl) hoursEl.textContent = String(hours).padStart(2, '0');
+            if (minutesEl) minutesEl.textContent = String(minutes).padStart(2, '0');
+            if (secondsEl) secondsEl.textContent = String(seconds).padStart(2, '0');
+          };
+
+          updateCountdown();
+          if (countdownContainer.style.display === 'none') {
+            return;
+          }
+
+          interval = window.setInterval(updateCountdown, 1000);
+          this.countdownIntervals.push(interval);
+        });
+      }
+
+      createTargetDate(dateStr, timeStr) {
+        if (!dateStr) return null;
+
+        const [rawYear, rawMonth, rawDay] = dateStr.trim().split(/[-\/]/);
+        const year = parseInt(rawYear, 10);
+        const month = parseInt(rawMonth, 10);
+        const day = parseInt(rawDay, 10);
+
+        if ([year, month, day].some((value) => Number.isNaN(value))) {
+          return null;
+        }
+
+        if (month < 1 || month > 12) {
+          return null;
+        }
+
+        const daysInMonth = new Date(year, month, 0).getDate();
+        if (day < 1 || day > daysInMonth) {
+          return null;
+        }
+
+        let hours = 0;
+        let minutes = 0;
+        let seconds = 0;
+
+        if (timeStr) {
+          const match = timeStr.trim().match(/^(\d{1,2})(?::(\d{2}))?(?::(\d{2}))?\s*(AM|PM)?$/i);
+
+          if (match) {
+            hours = parseInt(match[1], 10);
+            minutes = parseInt(match[2] || '0', 10);
+            seconds = parseInt(match[3] || '0', 10);
+
+            if (Number.isNaN(hours) || Number.isNaN(minutes) || Number.isNaN(seconds)) {
+              return null;
+            }
+
+            const period = match[4];
+            if (period) {
+              const upperPeriod = period.toUpperCase();
+              hours = hours % 12;
+              if (upperPeriod === 'PM') {
+                hours += 12;
+              }
+            }
+            if (hours > 23 || minutes > 59 || seconds > 59) {
+              return null;
+            }
+          } else {
+            return null;
+          }
+        }
+
+        const target = new Date(year, month - 1, day, hours, minutes, seconds);
+
+        return Number.isNaN(target.getTime()) ? null : target;
+      }
+
+      clearCountdownIntervals() {
+        if (!this.countdownIntervals.length) return;
+        this.countdownIntervals.forEach((interval) => clearInterval(interval));
+        this.countdownIntervals = [];
+      }
+
+      disconnectedCallback() {
+        if (this.rotationInterval) {
+          clearInterval(this.rotationInterval);
+          this.rotationInterval = null;
+        }
+        this.clearCountdownIntervals();
+      }
+    }
+
+    customElements.define('announcement-bar-{{ ai_gen_id }}', AnnouncementBar{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Display mode"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_marquee",
+      "label": "Enable marquee scrolling",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "rotation_speed",
+      "min": 2,
+      "max": 10,
+      "step": 1,
+      "unit": "s",
+      "label": "Rotation speed",
+      "info": "Time each announcement is displayed (when marquee is off)",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "marquee_speed",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "unit": "px",
+      "label": "Marquee speed",
+      "info": "Pixels per second (when marquee is on)",
+      "default": 50
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#f68e02"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "font_picker",
+      "id": "font_family",
+      "label": "Font",
+      "default": "assistant_n4"
+    },
+    {
+      "type": "range",
+      "id": "font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "min": 10,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Font size (mobile)",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "line_height",
+      "min": 1,
+      "max": 2,
+      "step": 0.1,
+      "label": "Line height",
+      "default": 1.5
+    },
+    {
+      "type": "range",
+      "id": "bar_height",
+      "min": 30,
+      "max": 80,
+      "step": 5,
+      "unit": "px",
+      "label": "Bar height",
+      "default": 45
+    },
+    {
+      "type": "range",
+      "id": "bar_height_mobile",
+      "min": 30,
+      "max": 70,
+      "step": 5,
+      "unit": "px",
+      "label": "Bar height (mobile)",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical_mobile",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Vertical padding (mobile)",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "min": 0,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal_mobile",
+      "min": 0,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Horizontal padding (mobile)",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Icons"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "icon_size_mobile",
+      "min": 10,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon size (mobile)",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "icon_spacing",
+      "min": 4,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Icon spacing",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "min": 10,
+      "max": 50,
+      "step": 5,
+      "unit": "px",
+      "label": "Space between items",
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "show_separator",
+      "label": "Show separator",
+      "info": "Only visible in marquee mode",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "separator_symbol",
+      "label": "Separator symbol",
+      "default": "•"
+    },
+    {
+      "type": "range",
+      "id": "separator_spacing",
+      "min": 5,
+      "max": 30,
+      "step": 5,
+      "unit": "px",
+      "label": "Separator spacing",
+      "default": 15
+    },
+    {
+      "type": "header",
+      "content": "Countdown timer"
+    },
+    {
+      "type": "color",
+      "id": "countdown_bg_color",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "countdown_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_1_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_1_text",
+      "label": "Text",
+      "default": "Free shipping on orders over ₹999"
+    },
+    {
+      "type": "url",
+      "id": "announcement_1_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "announcement_1_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "fire",
+          "label": "Fire"
+        },
+        {
+          "value": "gift",
+          "label": "Gift"
+        },
+        {
+          "value": "tag",
+          "label": "Tag"
+        },
+        {
+          "value": "bell",
+          "label": "Bell"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "sparkles",
+          "label": "Sparkles"
+        }
+      ],
+      "default": "truck"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_1_countdown_enabled",
+      "label": "Enable countdown",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_1_countdown_date",
+      "label": "Countdown date",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-12-31)"
+    },
+    {
+      "type": "text",
+      "id": "announcement_1_countdown_time",
+      "label": "Countdown time",
+      "info": "Format: HH:MM (e.g., 23:59)",
+      "default": "23:59"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_2_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_2_text",
+      "label": "Text",
+      "default": "New arrivals just dropped - Shop now"
+    },
+    {
+      "type": "url",
+      "id": "announcement_2_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "announcement_2_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "fire",
+          "label": "Fire"
+        },
+        {
+          "value": "gift",
+          "label": "Gift"
+        },
+        {
+          "value": "tag",
+          "label": "Tag"
+        },
+        {
+          "value": "bell",
+          "label": "Bell"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "sparkles",
+          "label": "Sparkles"
+        }
+      ],
+      "default": "sparkles"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_2_countdown_enabled",
+      "label": "Enable countdown",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_2_countdown_date",
+      "label": "Countdown date",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-12-31)"
+    },
+    {
+      "type": "text",
+      "id": "announcement_2_countdown_time",
+      "label": "Countdown time",
+      "info": "Format: HH:MM (e.g., 23:59)",
+      "default": "23:59"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 3"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_3_enabled",
+      "label": "Enable",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_3_text",
+      "label": "Text",
+      "default": "Limited time offer - 20% off everything"
+    },
+    {
+      "type": "url",
+      "id": "announcement_3_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "announcement_3_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "fire",
+          "label": "Fire"
+        },
+        {
+          "value": "gift",
+          "label": "Gift"
+        },
+        {
+          "value": "tag",
+          "label": "Tag"
+        },
+        {
+          "value": "bell",
+          "label": "Bell"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "sparkles",
+          "label": "Sparkles"
+        }
+      ],
+      "default": "tag"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_3_countdown_enabled",
+      "label": "Enable countdown",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_3_countdown_date",
+      "label": "Countdown date",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-12-31)"
+    },
+    {
+      "type": "text",
+      "id": "announcement_3_countdown_time",
+      "label": "Countdown time",
+      "info": "Format: HH:MM (e.g., 23:59)",
+      "default": "23:59"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 4"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_4_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_4_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "announcement_4_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "announcement_4_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "fire",
+          "label": "Fire"
+        },
+        {
+          "value": "gift",
+          "label": "Gift"
+        },
+        {
+          "value": "tag",
+          "label": "Tag"
+        },
+        {
+          "value": "bell",
+          "label": "Bell"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "sparkles",
+          "label": "Sparkles"
+        }
+      ],
+      "default": "bell"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_4_countdown_enabled",
+      "label": "Enable countdown",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_4_countdown_date",
+      "label": "Countdown date",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-12-31)"
+    },
+    {
+      "type": "text",
+      "id": "announcement_4_countdown_time",
+      "label": "Countdown time",
+      "info": "Format: HH:MM (e.g., 23:59)",
+      "default": "23:59"
+    },
+    {
+      "type": "header",
+      "content": "Announcement 5"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_5_enabled",
+      "label": "Enable",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_5_text",
+      "label": "Text"
+    },
+    {
+      "type": "url",
+      "id": "announcement_5_link",
+      "label": "Link"
+    },
+    {
+      "type": "select",
+      "id": "announcement_5_icon",
+      "label": "Icon",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "star",
+          "label": "Star"
+        },
+        {
+          "value": "fire",
+          "label": "Fire"
+        },
+        {
+          "value": "gift",
+          "label": "Gift"
+        },
+        {
+          "value": "tag",
+          "label": "Tag"
+        },
+        {
+          "value": "bell",
+          "label": "Bell"
+        },
+        {
+          "value": "truck",
+          "label": "Truck"
+        },
+        {
+          "value": "heart",
+          "label": "Heart"
+        },
+        {
+          "value": "sparkles",
+          "label": "Sparkles"
+        }
+      ],
+      "default": "heart"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_5_countdown_enabled",
+      "label": "Enable countdown",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "announcement_5_countdown_date",
+      "label": "Countdown date",
+      "info": "Format: YYYY-MM-DD (e.g., 2025-12-31)"
+    },
+    {
+      "type": "text",
+      "id": "announcement_5_countdown_time",
+      "label": "Countdown time",
+      "info": "Format: HH:MM (e.g., 23:59)",
+      "default": "23:59"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Announcement bar"
+    }
+  ]
+}
+{% endschema %}

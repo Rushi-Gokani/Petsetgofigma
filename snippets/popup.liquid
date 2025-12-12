@@ -1,0 +1,25 @@
+<div
+  class="block"
+  x-init="
+    $store.popup._registerPopup({
+      id: '{{ id }}',
+      isFocused: {{ isFocused | default: false }},
+      isFullScreen: {{ isFullScreen | default: false }},
+      isAlwaysVisible: {{ isAlwaysVisible | default: false }},
+      isPreventOverlayClose: {{ isPreventOverlayClose | default: false }}
+    });
+  "
+>
+  <template
+    x-portal="$store.main.isMobile ? document.getElementById('popup-content-portal') : document.getElementById('{{ desktopTarget | default: 'popup-content-portal' }}')"
+  >
+    <template x-if="$store.main.isMobile ? $store.popup._nextPopup === '{{ id }}' : true">
+      <div
+        class="block {{ class | default: '' }}"
+        id="{{ id }}"
+      >
+        {{ content }}
+      </div>
+    </template>
+  </template>
+</div>

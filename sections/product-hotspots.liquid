@@ -1,0 +1,33 @@
+<section id="shopify-section-{{ section.id }}" class="shopify-section color-{{ section.settings.background_color }} product-hostspots">
+<div class="container mx-auto px-4">
+    {% if section.settings.title != blank %}
+        <h2 class="text-center section-title text-2xl md:text-3xl font-bold mb-6">{{ section.settings.title }}</h2>
+    {% endif %}
+    {%if section.settings.image != blank %}
+        <div class="relative hotspots_main">
+            {% render 'image'
+            , src: section.settings.image
+            , alt: section.settings.image.alt
+            , img_class: 'w-full h-auto rounded-lg object-cover'
+            , container_class: 'overflow-hidden rounded-lg z-0 bg-transparent'
+            %}
+            {% if section.settings.mobile_image != blank %}
+                {% render 'image'
+                , src: section.settings.mobile_image
+                , alt: section.settings.mobile_image.alt
+                , img_class: 'w-full h-auto rounded-lg object-cover'
+                , container_class: 'overflow-hidden rounded-lg z-0 bg-transparent'
+                %}
+            {% endif %}
+            {% for block in section.blocks %}
+                <div class="product_hotspot_image" {{ block.shopify_attributes }}>
+                    <button type="button" data-popup-id="hotspot-popup--{{ block.id }}" class="hotspot_indicator hotspot-button">
+                        
+                    </button>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+</section>

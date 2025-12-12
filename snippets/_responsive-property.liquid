@@ -1,0 +1,25 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    {{ property }}: {{ value }}{{ unit }};
+    {%- if md_value -%}
+      @media (min-width: 768px) {
+        {{ property }}: {{ md_value }}{{ unit }};
+      }
+    {%- endif -%}
+    {%- if lg_value -%}
+      @media (min-width: 1024px) {
+        {{ property }}: {{ lg_value }}{{ unit }};
+      }
+    {%- endif -%}
+    {%- if xl_value -%}
+      @media (min-width: 1280px) {
+        {{ property }}: {{ xl_value }}{{ unit }};
+      }
+    {%- endif -%}
+    {%- if two_xl_value -%}
+      @media (min-width: 1536px) {
+        {{ property }}: {{ two_xl_value }}{{ unit }};
+      }
+    {%- endif -%}
+  }
+{%- endstyle -%}

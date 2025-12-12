@@ -1,0 +1,329 @@
+{% liquid
+  assign top_padding = section.settings.padding_top | round: 0
+  assign bottom_padding = section.settings.padding_bottom | round: 0
+%}
+
+<div class="section-{{ section.id }} collection-tabs-section" id="section-{{ section.id }}"
+  style="padding-top: {{ top_padding }}px; padding-bottom: {{ bottom_padding }}px; background-color: {{ section.settings.background_color }};">
+  <div class="container mx-auto px-4">
+    {% if section.settings.title != blank %}
+      <h2 class="section-title text-center mb-8" style="color: {{ section.settings.heading_color }}; font-size: {{ section.settings.heading_size }}px;">
+        {{ section.settings.title }}
+      </h2>
+    {% endif %}
+    
+    {% if section.blocks.size > 0 %}
+      <div class="collection-tabs">
+        <!-- Tab Navigation with Swiper -->
+        <div class="tabs-navigation-wrapper relative mb-6">
+          <!-- Swiper container for tabs -->
+          <div class="swiper tabs-swiper">
+            <div class="swiper-wrapper">
+              {% for block in section.blocks %}
+                {% assign collection = collections[block.settings.collection] %}
+                {% if collection %}
+                  <div class="swiper-slide">
+                    <button 
+                      class="tab-button py-2 px-4 whitespace-nowrap flex-shrink-0 {% if forloop.first %}active{% endif %}" 
+                      data-tab="tab-{{ block.id }}" 
+                      role="tab" 
+                      aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                      aria-controls="tabpanel-{{ block.id }}"
+                      style="color: {{ section.settings.tab_text_color }}; 
+                             background-color: {{ section.settings.tab_background_color }}; 
+                             border-radius: {{ section.settings.tab_border_radius }}px;
+                             border: 1px solid {{ section.settings.tab_text_color }};"
+                    >
+                      {{ collection.title }}
+                    </button>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          
+          <!-- Swiper Navigation Arrows -->
+          <div class="tabs-swiper-button-prev swiper-button-prev"></div>
+          <div class="tabs-swiper-button-next swiper-button-next"></div>
+        </div>
+        
+        <!-- Tab Content -->
+        <div class="tab-content">
+          {% for block in section.blocks %}
+            {% assign collection = collections[block.settings.collection] %}
+            {% if collection %}
+              <div 
+                id="tabpanel-{{ block.id }}" 
+                class="tab-pane {% if forloop.first %}active{% endif %}" 
+                data-tab-id="tab-{{ block.id }}" 
+                role="tabpanel" 
+                aria-labelledby="tab-{{ block.id }}"
+                {% unless forloop.first %}hidden{% endunless %}
+              >
+                {% if collection.products.size > 0 %}
+                  <div class="product-grid grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                    {% for product in collection.products limit: 4 %}
+                      <div class="product-card h-full">
+                        {% render 'card-product',
+                          card_product: product,
+                          show_vendor: true,
+                          lazy_load: true
+                        %}
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% else %}
+                  <p class="text-center py-8">No products found in this collection</p>
+                {% endif %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    {% else %}
+      <div class="text-center py-12">
+        <p>Add collection blocks to display products</p>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .section-{{ section.id }} .tabs-navigation-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  
+  .section-{{ section.id }} .tabs-swiper {
+    width: 100%;
+    overflow: visible;
+  }
+  
+  .section-{{ section.id }} .swiper-slide {
+    width: auto;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .section-{{ section.id }} .tab-button {
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  
+  .section-{{ section.id }} .tab-button.active {
+    color: {{ section.settings.tab_active_text_color }} !important;
+    background-color: {{ section.settings.tab_active_background_color }} !important;
+    border-color: {{ section.settings.tab_active_background_color }} !important;
+  }
+  
+  .section-{{ section.id }} .tabs-swiper-button-prev,
+  .section-{{ section.id }} .tabs-swiper-button-next {
+    width: 36px;
+    height: 36px;
+    color: #000;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .section-{{ section.id }} .tabs-swiper-button-prev:after,
+  .section-{{ section.id }} .tabs-swiper-button-next:after {
+    font-size: 18px;
+  }
+  
+  @media (max-width: 767px) {
+    .section-{{ section.id }} .tabs-swiper-button-prev,
+    .section-{{ section.id }} .tabs-swiper-button-next {
+      width: 30px;
+      height: 30px;
+    }
+    
+    .section-{{ section.id }} .tabs-swiper-button-prev:after,
+    .section-{{ section.id }} .tabs-swiper-button-next:after {
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tabs swiper
+    const tabsSwiper = new Swiper('.section-{{ section.id }} .tabs-swiper', {
+      slidesPerView: 'auto',
+      spaceBetween: 10,
+      freeMode: true,
+      navigation: {
+        nextEl: '.section-{{ section.id }} .tabs-swiper-button-next',
+        prevEl: '.section-{{ section.id }} .tabs-swiper-button-prev',
+      },
+    });
+    
+    // Initialize tabs functionality
+    initCollectionTabs('{{ section.id }}');
+  });
+  
+  function initCollectionTabs(sectionId) {
+    const tabButtons = document.querySelectorAll(`.section-${sectionId} .tab-button`);
+    const tabPanes = document.querySelectorAll(`.section-${sectionId} .tab-pane`);
+    
+    tabButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const tabId = this.getAttribute('data-tab');
+        
+        // Remove active class from all buttons and hide all panes
+        tabButtons.forEach(btn => btn.classList.remove('active'));
+        tabPanes.forEach(pane => {
+          pane.classList.remove('active');
+          pane.hidden = true;
+        });
+        
+        // Add active class to current button and show current pane
+        this.classList.add('active');
+        const currentPane = document.querySelector(`.section-${sectionId} .tab-pane[data-tab-id="${tabId}"]`);
+        if (currentPane) {
+          currentPane.classList.add('active');
+          currentPane.hidden = false;
+        }
+        
+        // Update aria attributes for accessibility
+        tabButtons.forEach(btn => btn.setAttribute('aria-selected', 'false'));
+        this.setAttribute('aria-selected', 'true');
+      });
+    });
+  }
+</script>
+
+{% schema %}
+{
+  "name": "Collection New Tabs",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Featured Collections"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 16,
+      "max": 60,
+      "step": 2,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 28
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tab_text_color",
+      "label": "Tab text color",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "tab_background_color",
+      "label": "Tab background color",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_text_color",
+      "label": "Active tab text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "tab_active_background_color",
+      "label": "Active tab background color",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "tab_border_radius",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Tab border radius",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 40
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection",
+      "name": "Collection",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection New Tabs",
+      "blocks": [
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        },
+        {
+          "type": "collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

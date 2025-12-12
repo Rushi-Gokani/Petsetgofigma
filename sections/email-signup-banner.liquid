@@ -1,0 +1,294 @@
+<div class="relative overflow-hidden {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}">
+  <div
+    class="absolute left-0 top-0 z-10 h-full w-full bg-black"
+    style="opacity: {{ section.settings.image_overlay_opacity | divided_by: 100.0 }}"
+  ></div>
+
+  {%- if section.settings.show_background_image -%}
+    {%- if section.settings.image != blank -%}
+      {%- capture srcset -%}
+        {%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+        {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+        {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+        {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+        {%- if section.settings.image.width >= 1780 -%}{{ section.settings.image | image_url: width: 1780 }} 1780w,{%- endif -%}
+        {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}
+        {%- if section.settings.image.width >= 3000 -%}{{ section.settings.image | image_url: width: 3000 }} 3000w,{%- endif -%}
+        {%- if section.settings.image.width >= 3840 -%}{{ section.settings.image | image_url: width: 3840 }} 3840w,{%- endif -%}
+        {{ section.settings.image | image_url }} {{ section.settings.image.width }}w
+      {%- endcapture -%}
+      {%- assign alt = section.settings.image.alt | default: 'sections.footer.newsletter' | t %}
+      {%- assign height = section.settings.image.width | divided_by: section.settings.image.aspect_ratio -%}
+
+      {% render 'image',
+        src: section.settings.image,
+        srcset: srcset,
+        sizes: '100vw',
+        alt: alt,
+        loading: 'lazy',
+        width: section.settings.image.width,
+        height: height,
+        img_class: 'absolute left-0 top-0 z-0 h-full w-full object-cover object-center'
+      %}
+    {%- endif -%}
+  {%- endif -%}
+
+  <div
+    class="
+      content-wrapper relative z-20 m-auto flex
+      {% case section.settings.image_height %}
+        {% when 'small' %}py-[5vh] h-[40vh]
+        {% when 'medium' %}py-[10vh] h-[60vh]
+        {% when 'large' %}py-[20vh] h-[80vh]
+        {% when 'full_page' %}py-[20vh] h-[100vh]
+      {% endcase %}
+      {% case section.settings.desktop_content_position %}
+        {% when 'top-left' %}md:items-start md:justify-start
+        {% when 'top-center' %}md:items-start md:justify-center
+        {% when 'top-right' %}md:items-start md:justify-end
+        {% when 'middle-left' %}md:items-center md:justify-start
+        {% when 'middle-center' %}md:items-center md:justify-center
+        {% when 'middle-right' %}md:items-center md:justify-end
+        {% when 'bottom-left' %}md:items-end md:justify-start
+        {% when 'bottom-center' %}md:items-end md:justify-center
+        {% when 'bottom-right' %}md:items-end md:justify-end
+      {% endcase %}
+    "
+  >
+    <div
+      class="
+        flex flex-col justify-center gap-10
+        {% if section.settings.desktop_content_position contains "left" %}
+          md:items-start md:text-start
+        {% elsif section.settings.desktop_content_position contains "right" %}
+          md:items-end md:text-end
+        {% else %}
+          md:items-center md:text-center
+        {% endif %}
+        {% case section.settings.mobile_content_alignment %}
+          {% when 'left' %}items-start text-start
+          {% when 'center' %}items-center text-center
+          {% when 'right' %}items-end text-end
+        {% endcase %}
+      "
+    >
+      <div class="flex flex-col items-stretch gap-5 rounded-md border-1 border-transparent bg-secondary-400 px-5 py-6 md:min-w-[35%] md:gap-4 md:bg-bg-500 md:p-7">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'heading' %}
+              <h2 class="text-4xl font-semibold leading-tight md:leading-tight" {{ block.shopify_attributes }}>
+                {{ block.settings.heading | escape }}
+              </h2>
+            {% when 'paragraph' %}
+              <div class="text-text-500 [&>p+p]:mt-5" {{ block.shopify_attributes }}>
+                {{ block.settings.text }}
+              </div>
+            {%- when 'email_form' -%}
+              <div class="contents" {{ block.shopify_attributes }}>
+                {% render 'newsletter-form' %}
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.email-signup-banner.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.email-signup-banner.settings.paragraph.content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.email-signup-banner.settings.image.label"
+    },
+    {
+      "type": "range",
+      "id": "image_overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "t:sections.email-signup-banner.settings.image_overlay_opacity.label",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "show_background_image",
+      "label": "t:sections.email-signup-banner.settings.show_background_image.label",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt-image",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__4.label"
+        },
+        {
+          "value": "full_page",
+          "label": "t:sections.email-signup-banner.settings.image_height.options__5.label"
+        }
+      ],
+      "default": "full_page",
+      "label": "t:sections.email-signup-banner.settings.image_height.label",
+      "info": "t:sections.email-signup-banner.settings.image_height.info"
+    },
+    {
+      "type": "select",
+      "id": "desktop_content_position",
+      "options": [
+        {
+          "value": "top-left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__1.label"
+        },
+        {
+          "value": "top-center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__2.label"
+        },
+        {
+          "value": "top-right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__3.label"
+        },
+        {
+          "value": "middle-left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__4.label"
+        },
+        {
+          "value": "middle-center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__5.label"
+        },
+        {
+          "value": "middle-right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__6.label"
+        },
+        {
+          "value": "bottom-left",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__7.label"
+        },
+        {
+          "value": "bottom-center",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__8.label"
+        },
+        {
+          "value": "bottom-right",
+          "label": "t:sections.email-signup-banner.settings.desktop_content_position.options__9.label"
+        }
+      ],
+      "default": "middle-center",
+      "label": "t:sections.email-signup-banner.settings.desktop_content_position.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.email-signup-banner.settings.header.content"
+    },
+    {
+      "type": "select",
+      "id": "mobile_content_alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.options__3.label"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.email-signup-banner.settings.mobile_content_alignment.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.colors.header"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "t:sections.all.custom_color_scheme.label",
+      "info": "t:sections.all.custom_color_scheme.info"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.email-signup-banner.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "heading",
+          "default": "Opening soon",
+          "label": "t:sections.email-signup-banner.blocks.heading.settings.heading.label"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "name": "t:sections.email-signup-banner.blocks.paragraph.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<p>Be the first to know when we launch.</p>",
+          "label": "t:sections.email-signup-banner.blocks.paragraph.settings.paragraph.label"
+        }
+      ]
+    },
+    {
+      "type": "email_form",
+      "name": "t:sections.email-signup-banner.blocks.email_form.name",
+      "limit": 1
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.email-signup-banner.presets.name",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "paragraph"
+        },
+        {
+          "type": "email_form"
+        }
+      ]
+    }
+  ],
+  "templates": ["password"]
+}
+{% endschema %}

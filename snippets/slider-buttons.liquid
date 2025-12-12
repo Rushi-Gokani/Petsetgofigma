@@ -1,0 +1,24 @@
+<div x-show="!isPrevBtnDisabled || !isNextBtnDisabled" x-transition>
+  <button
+    class="button button--outline-primary icon-button icon-button--size-sm {{ class }}"
+    @click.prevent="showPrevSlide()"
+    :class="isPrevBtnDisabled && 'button--disabled'"
+    :disabled="isPrevBtnDisabled"
+    aria-label="{{ 'general.slider.previous_slide' | t }}"
+    role="button"
+    type="button"
+  >
+    {% render 'icon-chevron-left' %}
+  </button>
+  <button
+    class="button button--outline-primary icon-button icon-button--size-sm {{ class }}"
+    @click.prevent="showNextSlide()"
+    :class="isNextBtnDisabled && 'button--disabled'"
+    :disabled="isNextBtnDisabled"
+    aria-label="{{ 'general.slider.next_slide' | t }}"
+    role="button"
+    type="button"
+  >
+    {% render 'icon-chevron-right' %}
+  </button>
+</div>
