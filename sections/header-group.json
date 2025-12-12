@@ -121,7 +121,8 @@
         "menu_width": 250,
         "enable_sticky_header": true,
         "custom_color_scheme": false,
-        "color_scheme": "scheme-1"
+        "color_scheme": "scheme-1",
+        "enable_transparent_header": true
       }
     }
   },
