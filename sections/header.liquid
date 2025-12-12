@@ -24,6 +24,12 @@
       $watch('$store.popup.currentPopup', (value) => {
         isMenuVisible = value === 'menu';
         isCartVisible = value === 'cart';
+      });
+      $watch('$store.resizable._current', (value) => {
+        if (!$store.main.isMobile) {
+          isMenuVisible = value && value['menu-desktop'];
+          isCartVisible = value && value['cart-desktop'];
+        }
       })
     "
     class="header {% if section.settings.enable_transparent_header and request.page_type == 'index' %}bg-transparent{% elsif section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }}{% else %}bg-white{% endif %} {% if section.settings.enable_sticky_header %}sticky{% endif %} end-0 start-0 top-0 z-[36] flex flex-col justify-items-stretch p-3 md:pointer-events-none"
