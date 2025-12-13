@@ -60,7 +60,67 @@
       "block_order": [
         "ai_gen_block_3d17aaa_XhM77i"
       ],
+      "disabled": true,
       "settings": {}
+    },
+    "hero_banner_JgQKUw": {
+      "type": "hero-banner",
+      "name": "Hero Banner",
+      "settings": {
+        "heading": "Discover our amazing collection",
+        "button_label": "Shop Now",
+        "button_link": "",
+        "button_color": "#FF8C42",
+        "video": "shopify://files/videos/2c6dc9ad-8b87-4948-a6e9-d63de64c9448.MP4",
+        "autoplay_video": true,
+        "loop_video": true,
+        "mute_video": true,
+        "background_color": "#D2691E",
+        "custom_color_scheme": false,
+        "color_scheme": ""
+      }
+    },
+    "shop_by_category_pfd4za": {
+      "type": "shop-by-category",
+      "blocks": {
+        "category_EMGf4D": {
+          "type": "category",
+          "settings": {
+            "title": "Pet Clothing",
+            "link": ""
+          }
+        },
+        "category_k4bK89": {
+          "type": "category",
+          "settings": {
+            "title": "Pet Cloths",
+            "link": ""
+          }
+        },
+        "category_BRMGiY": {
+          "type": "category",
+          "settings": {
+            "title": "Pet Bedding",
+            "link": ""
+          }
+        }
+      },
+      "block_order": [
+        "category_EMGf4D",
+        "category_k4bK89",
+        "category_BRMGiY"
+      ],
+      "name": "Shop by category",
+      "settings": {
+        "title_before": "Shop",
+        "title_accent": "by",
+        "title_after": "Category",
+        "subtitle": "Explore our curated collections designed for your furry friend's happiness.",
+        "accent_color": "#f7a600",
+        "color_scheme": "",
+        "padding_top": 48,
+        "padding_bottom": 48
+      }
     },
     "17613035610c130ffa": {
       "type": "_blocks",
@@ -427,43 +487,6 @@
         "padding_bottom": 36
       }
     },
-    "image_with_text_1": {
-      "type": "image-with-text",
-      "blocks": {
-        "heading": {
-          "type": "heading",
-          "settings": {
-            "heading": "Our Mission"
-          }
-        },
-        "text": {
-          "type": "text",
-          "settings": {
-            "text": "<p>We at Pet Set Go want to create a world where best quality Pet Products are within reach of all Pet Parents<br/><br/></p>"
-          }
-        },
-        "button": {
-          "type": "button",
-          "settings": {
-            "button_label": "Shop all",
-            "button_link": "shopify://collections/all"
-          }
-        }
-      },
-      "block_order": [
-        "heading",
-        "text",
-        "button"
-      ],
-      "settings": {
-        "image": "shopify://shop_images/5_ba1a6ebb-83d7-4d08-aaed-744d54caa262.png",
-        "layout": "image_first",
-        "custom_color_scheme": false,
-        "color_scheme": "",
-        "padding_top": 36,
-        "padding_bottom": 36
-      }
-    },
     "1762250003e4eb14c4": {
       "type": "_blocks",
       "blocks": {
@@ -569,6 +592,43 @@
       ],
       "settings": {}
     },
+    "image_with_text_1": {
+      "type": "image-with-text",
+      "blocks": {
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "Our Mission"
+          }
+        },
+        "text": {
+          "type": "text",
+          "settings": {
+            "text": "<p>We at Pet Set Go want to create a world where best quality Pet Products are within reach of all Pet Parents<br/><br/></p>"
+          }
+        },
+        "button": {
+          "type": "button",
+          "settings": {
+            "button_label": "Shop all",
+            "button_link": "shopify://collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "heading",
+        "text",
+        "button"
+      ],
+      "settings": {
+        "image": "shopify://shop_images/5_ba1a6ebb-83d7-4d08-aaed-744d54caa262.png",
+        "layout": "image_first",
+        "custom_color_scheme": false,
+        "color_scheme": "",
+        "padding_top": 36,
+        "padding_bottom": 36
+      }
+    },
     "17606932316adb44ef": {
       "type": "_blocks",
       "blocks": {
@@ -631,6 +691,8 @@
   },
   "order": [
     "1763105100a013aa04",
+    "hero_banner_JgQKUw",
+    "shop_by_category_pfd4za",
     "17613035610c130ffa",
     "image_banner",
     "collection_list_GXnwRU",
