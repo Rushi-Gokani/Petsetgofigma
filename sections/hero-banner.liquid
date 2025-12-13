@@ -1,5 +1,6 @@
 <div
-  class="relative overflow-hidden rounded-xl {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+  class="relative overflow-hidden rounded-xl mx-auto {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+  style="max-width: 1920px;"
   x-data="{
     isPlaying: {{ section.settings.autoplay_video | json }},
     isMuted: {{ section.settings.mute_video | json }},
