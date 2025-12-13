@@ -1,29 +1,141 @@
+{% style %}
+  #HeroBanner-{{ section.id }} {
+    --hero-fallback-bg: {{ section.settings.background_color }};
+    --hero-radius: {{ section.settings.border_radius }}px;
+    --hero-height-mobile: {{ section.settings.height_mobile }}px;
+    --hero-height-desktop: {{ section.settings.height_desktop }}px;
+    --hero-button-bg: {{ section.settings.button_color }};
+    --hero-button-color: {{ section.settings.button_text_color }};
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__outer {
+    padding-inline: 16px;
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__card {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--hero-radius);
+    max-width: 1920px;
+    margin-inline: auto;
+    background: var(--hero-fallback-bg);
+    min-height: var(--hero-height-mobile);
+  }
+
+  @media (min-width: 768px) {
+    #HeroBanner-{{ section.id }} .hero-banner__outer {
+      padding-inline: 24px;
+    }
+
+    #HeroBanner-{{ section.id }} .hero-banner__card {
+      min-height: var(--hero-height-desktop);
+    }
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__media,
+  #HeroBanner-{{ section.id }} .hero-banner__media > * {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__media img,
+  #HeroBanner-{{ section.id }} .hero-banner__media video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: clamp(20px, 4vw, 56px);
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__text {
+    max-width: 640px;
+    color: #fff;
+    text-shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__heading {
+    margin: 0;
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    font-size: clamp(2.2rem, 5vw, 4.4rem);
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__cta {
+    margin-top: 18px;
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    padding: 12px 28px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1;
+    background: var(--hero-button-bg);
+    color: var(--hero-button-color);
+    text-decoration: none;
+    transition: filter 150ms ease;
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__button:hover {
+    filter: brightness(0.95);
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__controls {
+    position: absolute;
+    z-index: 3;
+    inset-inline-end: 16px;
+    inset-block-end: 16px;
+    display: flex;
+    gap: 10px;
+  }
+
+  @media (min-width: 768px) {
+    #HeroBanner-{{ section.id }} .hero-banner__controls {
+      inset-inline-end: 18px;
+      inset-block-end: 18px;
+    }
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__control {
+    display: inline-flex;
+    height: 42px;
+    width: 42px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+  }
+
+  #HeroBanner-{{ section.id }} .hero-banner__control:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.7);
+    outline-offset: 2px;
+  }
+{% endstyle %}
+
 <div
-  class="relative overflow-hidden rounded-xl mx-auto {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
-  style="max-width: 1920px;"
+  id="HeroBanner-{{ section.id }}"
+  class="hero-banner {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
   x-data="{
     isPlaying: {{ section.settings.autoplay_video | json }},
     isMuted: {{ section.settings.mute_video | json }},
-    headerHeight: 0,
-    getHeaderHeight() {
-      const header = document.querySelector('header.header') || document.querySelector('header');
-      if (header) {
-        return header.offsetHeight;
-      }
-      return 80; // Default fallback
-    },
-    updateHeight() {
-      this.headerHeight = this.getHeaderHeight();
-      const banner = this.$el;
-      if (banner) {
-        const bgColor = '{{ section.settings.background_color }}';
-        banner.style.marginTop = this.headerHeight + 'px';
-        banner.style.height = 'calc(100vh - ' + this.headerHeight + 'px)';
-        banner.style.backgroundColor = bgColor;
-        banner.style.position = 'relative';
-        banner.style.zIndex = '1';
-      }
-    },
     getVideo() {
       return this.$refs.videoContainer ? this.$refs.videoContainer.querySelector('video') : null;
     },
@@ -46,160 +158,151 @@
       }
     }
   }"
-  x-init="
-    updateHeight();
-    $nextTick(() => {
-      updateHeight();
-      // Update on resize
-      window.addEventListener('resize', () => updateHeight(), { passive: true });
-      // Update after a short delay to ensure header is rendered
-      setTimeout(() => updateHeight(), 100);
-    });
-  "
-  style="position: relative; z-index: 1;"
 >
-  {% comment %} Background Image {% endcomment %}
-  {% if section.settings.image %}
-    {%- assign alt = section.settings.image.alt | default: 'Hero banner image' | t -%}
-    {% render 'image',
-      img_class: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center max-md:hidden rounded-xl',
-      src: section.settings.image,
-      width: '100%',
-      height: '100%',
-      alt: alt
-    %}
+  <div class="hero-banner__outer">
+    <div class="hero-banner__card">
+      {% comment %} Background Image {% endcomment %}
+      <div class="hero-banner__media" aria-hidden="true">
+        {% if section.settings.image %}
+          {%- assign alt = section.settings.image.alt | default: 'Hero banner image' | t -%}
+          {% render 'image',
+            img_class: 'max-md:hidden',
+            src: section.settings.image,
+            width: '100%',
+            height: '100%',
+            alt: alt
+          %}
 
-    {% liquid
-      assign alt = section.settings.image.alt | default: 'Hero banner image' | t
-      assign mobile_img = section.settings.mobile_image
-      unless section.settings.mobile_image
-        assign mobile_img = section.settings.image
-      endunless
-    %}
-    {% render 'image',
-      img_class: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center md:hidden rounded-xl',
-      src: mobile_img,
-      width: '100%',
-      height: '100%',
-      alt: alt
-    %}
-  {% else %}
-    {{ 'image' | placeholder_svg_tag: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center bg-secondary-400' }}
-  {% endif %}
-
-  {% comment %} Video Background (optional) {% endcomment %}
-  {% if section.settings.video %}
-    <div
-      x-ref="videoContainer"
-      x-init="
-        $nextTick(() => {
-          const video = $refs.videoContainer.querySelector('video');
-          if (video) {
-            $refs.heroVideo = video;
-            video.muted = {{ section.settings.mute_video | json }};
-            if ({{ section.settings.autoplay_video | json }}) {
-              video.play().catch(() => {});
-            }
-          }
-        })
-      "
-    >
-      {{ section.settings.video | video_tag: controls: false, class: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center rounded-xl', autoplay: section.settings.autoplay_video, loop: section.settings.loop_video, muted: section.settings.mute_video, playsinline: true }}
-    </div>
-  {% endif %}
-
-  {% comment %} Content Overlay {% endcomment %}
-  <div
-    class="content-wrapper relative z-20 m-auto flex h-full items-end justify-start py-8 md:py-12"
-  >
-    <div class="w-full pb-12 md:pb-16 md:ps-8 ps-4">
-      <div class="flex flex-col gap-6 text-white md:max-w-[600px]">
-        {% comment %} Heading Text {% endcomment %}
-        {% if section.settings.heading != blank %}
-          <h2 class="heading text-4xl md:text-6xl lg:text-7xl font-bold leading-tight text-white">
-            {{ section.settings.heading }}
-          </h2>
-        {% endif %}
-
-        {% comment %} Shop Now Button {% endcomment %}
-        {% if section.settings.button_label != blank %}
-          <a
-            {% render '_link-attributes', link: section.settings.button_link %}
-            class="button button--filled-secondary inline-flex w-fit items-center justify-center rounded-lg px-8 py-4 text-base font-semibold text-white transition-colors"
-            style="background-color: {{ section.settings.button_color }};"
-          >
-            {{ section.settings.button_label }}
-            <span class="button__icon ms-2">
-              {% render 'icon-circled-arrow-right-top' %}
-            </span>
-          </a>
+          {% liquid
+            assign alt = section.settings.image.alt | default: 'Hero banner image' | t
+            assign mobile_img = section.settings.mobile_image
+            unless section.settings.mobile_image
+              assign mobile_img = section.settings.image
+            endunless
+          %}
+          {% render 'image',
+            img_class: 'md:hidden',
+            src: mobile_img,
+            width: '100%',
+            height: '100%',
+            alt: alt
+          %}
+        {% else %}
+          {{ 'image' | placeholder_svg_tag: 'bg-secondary-400' }}
         {% endif %}
       </div>
+
+      {% comment %} Video Background (optional) {% endcomment %}
+      {% if section.settings.video %}
+        <div
+          class="hero-banner__media"
+          x-ref="videoContainer"
+          x-init="
+            $nextTick(() => {
+              const video = $refs.videoContainer.querySelector('video');
+              if (video) {
+                $refs.heroVideo = video;
+                video.muted = {{ section.settings.mute_video | json }};
+                if ({{ section.settings.autoplay_video | json }}) {
+                  video.play().catch(() => {});
+                }
+              }
+            })
+          "
+          aria-hidden="true"
+        >
+          {{ section.settings.video | video_tag: controls: false, autoplay: section.settings.autoplay_video, loop: section.settings.loop_video, muted: section.settings.mute_video, playsinline: true }}
+        </div>
+      {% endif %}
+
+      {% comment %} Content Overlay {% endcomment %}
+      <div class="hero-banner__content">
+        <div class="hero-banner__text">
+          {% comment %} Heading Text {% endcomment %}
+          {% if section.settings.heading != blank %}
+            <h2 class="heading hero-banner__heading">
+              {{ section.settings.heading }}
+            </h2>
+          {% endif %}
+
+          {% comment %} Shop Now Button {% endcomment %}
+          {% if section.settings.button_label != blank %}
+            <div class="hero-banner__cta">
+              <a
+                {% render '_link-attributes', link: section.settings.button_link %}
+                class="hero-banner__button"
+              >
+                {{ section.settings.button_label }}
+              </a>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      {% comment %} Video Controls (bottom-right) - Always visible {% endcomment %}
+      {% if section.settings.video %}
+        <div class="hero-banner__controls">
+          {% comment %} Play/Pause Button {% endcomment %}
+          <button
+            @click="togglePlay()"
+            class="hero-banner__control"
+            aria-label="Play/Pause video"
+            type="button"
+          >
+            <span x-show="!isPlaying" class="h-5 w-5 flex items-center justify-center">
+              {% render 'icon-play' %}
+            </span>
+            <span x-show="isPlaying" class="h-5 w-5 flex items-center justify-center">
+              {% render 'icon-pause' %}
+            </span>
+          </button>
+
+          {% comment %} Volume/Mute Button {% endcomment %}
+          <button
+            @click="toggleMute()"
+            class="hero-banner__control"
+            aria-label="Toggle volume"
+            type="button"
+          >
+            <svg
+              x-show="isMuted"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+              />
+            </svg>
+            <svg
+              x-show="!isMuted"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+              />
+            </svg>
+          </button>
+        </div>
+      {% endif %}
     </div>
-  </div>
-
-  {% comment %} Video Controls (bottom-right) - Always visible {% endcomment %}
-  <div class="absolute bottom-4 end-4 z-30 flex items-center gap-2">
-    {% comment %} Play/Pause Button {% endcomment %}
-    {% if section.settings.video %}
-      <button
-        @click="togglePlay()"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white transition-opacity hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-        aria-label="Play/Pause video"
-        type="button"
-      >
-        <span x-show="!isPlaying" class="h-5 w-5 flex items-center justify-center">
-          {% render 'icon-play' %}
-        </span>
-        <span x-show="isPlaying" class="h-5 w-5 flex items-center justify-center">
-          {% render 'icon-pause' %}
-        </span>
-      </button>
-
-      {% comment %} Volume/Mute Button {% endcomment %}
-      <button
-        @click="toggleMute()"
-        class="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white transition-opacity hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/50"
-        aria-label="Toggle volume"
-        type="button"
-      >
-        <svg
-          x-show="isMuted"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-          />
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
-          />
-        </svg>
-        <svg
-          x-show="!isMuted"
-          class="h-5 w-5"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-          />
-        </svg>
-      </button>
-    {% endif %}
   </div>
 </div>
 
@@ -235,6 +338,12 @@
       "id": "button_color",
       "label": "Button color",
       "default": "#FF8C42"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#000000"
     },
     {
       "type": "header",
@@ -278,6 +387,36 @@
     {
       "type": "header",
       "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "height_desktop",
+      "min": 300,
+      "max": 900,
+      "step": 10,
+      "unit": "px",
+      "label": "Height (desktop)",
+      "default": 560
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 240,
+      "max": 700,
+      "step": 10,
+      "unit": "px",
+      "label": "Height (mobile)",
+      "default": 420
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Border radius",
+      "default": 24
     },
     {
       "type": "color",
