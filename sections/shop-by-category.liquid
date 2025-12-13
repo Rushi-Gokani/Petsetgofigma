@@ -112,7 +112,7 @@
   }
 
   #shop-category-{{ section.id }} .shop-category__title {
-    font-size: 34px;
+    font-size: {{ section.settings.heading_size }}px;
     line-height: 1.1;
     font-weight: 800;
     color: var(--shop-category-text);
@@ -138,10 +138,10 @@
   }
 
   #shop-category-{{ section.id }} .shop-category__nav-btn {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    border: 1px solid transparent;
+    border: 1px solid #d7d9dc;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -151,19 +151,19 @@
 
   #shop-category-{{ section.id }} .shop-category__nav-btn--ghost {
     background: #ffffff;
-    border-color: #e2e4e8;
-    color: #1c1c1c;
+    color: #4b4f55;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
   }
 
   #shop-category-{{ section.id }} .shop-category__nav-btn--ghost:hover {
-    border-color: #c9cdd2;
+    border-color: #c2c6cc;
   }
 
   #shop-category-{{ section.id }} .shop-category__nav-btn--primary {
     background: var(--shop-category-accent);
     color: #ffffff;
     border-color: var(--shop-category-accent);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
   }
 
   #shop-category-{{ section.id }} .shop-category__nav-btn:disabled {
@@ -359,6 +359,16 @@
       "id": "title_after",
       "label": "Heading (last part)",
       "default": "Category"
+    },
+    {
+      "type": "range",
+      "id": "heading_size",
+      "min": 24,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "label": "Heading size",
+      "default": 34
     },
     {
       "type": "text",
