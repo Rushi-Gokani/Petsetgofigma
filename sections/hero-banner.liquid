@@ -1,0 +1,315 @@
+<div
+  class="relative overflow-hidden rounded-xl {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+  style="background-color: {{ section.settings.background_color }};"
+  x-data="{
+    isPlaying: {{ section.settings.autoplay_video | json }},
+    isMuted: {{ section.settings.mute_video | json }},
+    getVideo() {
+      return this.$refs.videoContainer ? this.$refs.videoContainer.querySelector('video') : null;
+    },
+    togglePlay() {
+      const video = this.getVideo();
+      if (video) {
+        if (this.isPlaying) {
+          video.pause();
+        } else {
+          video.play();
+        }
+        this.isPlaying = !this.isPlaying;
+      }
+    },
+    toggleMute() {
+      const video = this.getVideo();
+      if (video) {
+        video.muted = !this.isMuted;
+        this.isMuted = !this.isMuted;
+      }
+    }
+  }"
+>
+  {% comment %} Background Image {% endcomment %}
+  {% if section.settings.image %}
+    {%- assign alt = section.settings.image.alt | default: 'Hero banner image' | t -%}
+    {% render 'image',
+      img_class: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center max-md:hidden',
+      src: section.settings.image,
+      width: '100%',
+      height: '100%',
+      alt: alt
+    %}
+
+    {% liquid
+      assign alt = section.settings.image.alt | default: 'Hero banner image' | t
+      assign mobile_img = section.settings.mobile_image
+      unless section.settings.mobile_image
+        assign mobile_img = section.settings.image
+      endunless
+    %}
+    {% render 'image',
+      img_class: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center md:hidden',
+      src: mobile_img,
+      width: '100%',
+      height: '100%',
+      alt: alt
+    %}
+  {% else %}
+    {{ 'image' | placeholder_svg_tag: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center bg-secondary-400' }}
+  {% endif %}
+
+  {% comment %} Video Background (optional) {% endcomment %}
+  {% if section.settings.video %}
+    <div
+      x-ref="videoContainer"
+      x-init="
+        $nextTick(() => {
+          const video = $refs.videoContainer.querySelector('video');
+          if (video) {
+            $refs.heroVideo = video;
+            video.muted = {{ section.settings.mute_video | json }};
+            if ({{ section.settings.autoplay_video | json }}) {
+              video.play().catch(() => {});
+            }
+          }
+        })
+      "
+    >
+      {{ section.settings.video | video_tag: controls: false, class: 'absolute start-0 top-0 z-0 h-full w-full object-cover object-center', autoplay: section.settings.autoplay_video, loop: section.settings.loop_video, muted: section.settings.mute_video, playsinline: true }}
+    </div>
+  {% endif %}
+
+  {% comment %} Content Overlay {% endcomment %}
+  <div
+    class="
+      content-wrapper relative z-20 m-auto flex h-full items-end justify-start
+      {% case section.settings.banner_height %}
+        {% when 'small' %}min-h-[40vh] py-8
+        {% when 'medium' %}min-h-[60vh] py-12
+        {% when 'large' %}min-h-[80vh] py-16
+        {% when 'full_screen' %}min-h-screen py-20
+      {% endcase %}
+    "
+  >
+    <div class="w-full pb-8 md:pb-12 md:ps-8">
+      <div class="flex flex-col gap-6 text-white md:max-w-[500px]">
+        {% comment %} Heading Text {% endcomment %}
+        {% if section.settings.heading != blank %}
+          <h2 class="heading text-3xl leading-tight md:text-5xl md:leading-tight text-white">
+            {{ section.settings.heading }}
+          </h2>
+        {% endif %}
+
+        {% comment %} Shop Now Button {% endcomment %}
+        {% if section.settings.button_label != blank %}
+          <a
+            {% render '_link-attributes', link: section.settings.button_link %}
+            class="button button--filled-secondary inline-flex w-fit items-center justify-center rounded-lg px-6 py-3 text-sm font-medium text-white transition-colors"
+            style="background-color: {{ section.settings.button_color }};"
+          >
+            {{ section.settings.button_label }}
+            <span class="button__icon ms-2">
+              {% render 'icon-circled-arrow-right-top' %}
+            </span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% comment %} Video Controls (bottom-right) {% endcomment %}
+  {% if section.settings.video %}
+    <div class="absolute bottom-4 end-4 z-30 flex items-center gap-2">
+      {% comment %} Play/Pause Button {% endcomment %}
+      <button
+        @click="togglePlay()"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-opacity hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+        aria-label="Play/Pause video"
+        type="button"
+      >
+        <span x-show="!isPlaying" class="h-5 w-5">
+          {% render 'icon-play' %}
+        </span>
+        <span x-show="isPlaying" class="h-5 w-5">
+          {% render 'icon-pause' %}
+        </span>
+      </button>
+
+      {% comment %} Volume Button {% endcomment %}
+      <button
+        @click="toggleMute()"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-opacity hover:bg-black/70 focus:outline-none focus:ring-2 focus:ring-white/50"
+        aria-label="Toggle volume"
+        type="button"
+      >
+        <svg
+          x-show="isMuted"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+          />
+        </svg>
+        <svg
+          x-show="!isMuted"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+          />
+        </svg>
+      </button>
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "Hero Banner",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Discover our amazing collection",
+      "label": "Heading"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Shop Now",
+      "label": "Button label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button color",
+      "default": "#FF8C42"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "image_picker",
+      "id": "mobile_image",
+      "label": "Mobile image",
+      "info": "Optional. If not set, desktop image will be used."
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "info": "Optional. If set, video will play as background instead of image."
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay_video",
+      "label": "Autoplay video",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "loop_video",
+      "label": "Loop video",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "mute_video",
+      "label": "Mute video",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "banner_height",
+      "options": [
+        {
+          "value": "small",
+          "label": "Small"
+        },
+        {
+          "value": "medium",
+          "label": "Medium"
+        },
+        {
+          "value": "large",
+          "label": "Large"
+        },
+        {
+          "value": "full_screen",
+          "label": "Full screen"
+        }
+      ],
+      "default": "medium",
+      "label": "Banner height"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#D2691E",
+      "info": "Used as fallback if no image or video is set."
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "checkbox",
+      "id": "custom_color_scheme",
+      "default": false,
+      "label": "Use custom color scheme",
+      "info": "Override theme color scheme for this section."
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Banner"
+    }
+  ]
+}
+{% endschema %}
