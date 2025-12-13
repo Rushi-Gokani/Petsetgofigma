@@ -285,7 +285,7 @@
 
   @media (max-width: 640px) {
     #shop-category-{{ section.id }} .shop-category__title {
-      font-size: 28px;
+      font-size: {{ section.settings.heading_size }}px;
     }
 
     #shop-category-{{ section.id }} .shop-category__nav {

@@ -1,9 +1,28 @@
 <div
   class="relative overflow-hidden rounded-xl {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
-  style="background-color: {{ section.settings.background_color }}; height: 100vh; position: relative; z-index: 1;"
   x-data="{
     isPlaying: {{ section.settings.autoplay_video | json }},
     isMuted: {{ section.settings.mute_video | json }},
+    headerHeight: 0,
+    getHeaderHeight() {
+      const header = document.querySelector('header.header') || document.querySelector('header');
+      if (header) {
+        return header.offsetHeight;
+      }
+      return 80; // Default fallback
+    },
+    updateHeight() {
+      this.headerHeight = this.getHeaderHeight();
+      const banner = this.$el;
+      if (banner) {
+        const bgColor = '{{ section.settings.background_color }}';
+        banner.style.marginTop = this.headerHeight + 'px';
+        banner.style.height = 'calc(100vh - ' + this.headerHeight + 'px)';
+        banner.style.backgroundColor = bgColor;
+        banner.style.position = 'relative';
+        banner.style.zIndex = '1';
+      }
+    },
     getVideo() {
       return this.$refs.videoContainer ? this.$refs.videoContainer.querySelector('video') : null;
     },
@@ -26,6 +45,17 @@
       }
     }
   }"
+  x-init="
+    updateHeight();
+    $nextTick(() => {
+      updateHeight();
+      // Update on resize
+      window.addEventListener('resize', () => updateHeight(), { passive: true });
+      // Update after a short delay to ensure header is rendered
+      setTimeout(() => updateHeight(), 100);
+    });
+  "
+  style="position: relative; z-index: 1;"
 >
   {% comment %} Background Image {% endcomment %}
   {% if section.settings.image %}
