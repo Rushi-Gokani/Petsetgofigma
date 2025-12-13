@@ -1,6 +1,6 @@
 <div
-  class="relative overflow-hidden rounded-xl {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
-  style="background-color: {{ section.settings.background_color }};"
+  class="relative overflow-hidden {% if section.settings.custom_color_scheme %}color-{{ section.settings.color_scheme }} bg-bg-500{% endif %}"
+  style="background-color: {{ section.settings.background_color }}; height: 100vh; position: relative; z-index: 1;"
   x-data="{
     isPlaying: {{ section.settings.autoplay_video | json }},
     isMuted: {{ section.settings.mute_video | json }},
@@ -79,15 +79,7 @@
 
   {% comment %} Content Overlay {% endcomment %}
   <div
-    class="
-      content-wrapper relative z-20 m-auto flex h-full items-end justify-start
-      {% case section.settings.banner_height %}
-        {% when 'small' %}min-h-[40vh] py-8
-        {% when 'medium' %}min-h-[60vh] py-12
-        {% when 'large' %}min-h-[80vh] py-16
-        {% when 'full_screen' %}min-h-screen py-20
-      {% endcase %}
-    "
+    class="content-wrapper relative z-20 m-auto flex h-full items-end justify-start py-8 md:py-12"
   >
     <div class="w-full pb-8 md:pb-12 md:ps-8">
       <div class="flex flex-col gap-6 text-white md:max-w-[500px]">
@@ -256,30 +248,6 @@
     {
       "type": "header",
       "content": "Layout"
-    },
-    {
-      "type": "select",
-      "id": "banner_height",
-      "options": [
-        {
-          "value": "small",
-          "label": "Small"
-        },
-        {
-          "value": "medium",
-          "label": "Medium"
-        },
-        {
-          "value": "large",
-          "label": "Large"
-        },
-        {
-          "value": "full_screen",
-          "label": "Full screen"
-        }
-      ],
-      "default": "medium",
-      "label": "Banner height"
     },
     {
       "type": "color",
