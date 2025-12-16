@@ -53,6 +53,14 @@
                   widths: '360, 540, 720, 900',
                   sizes: '(min-width: 1200px) 480px, (min-width: 768px) 50vw, 90vw'
                 %}
+              {% elsif block.settings.collection != blank and block.settings.collection.image != blank %}
+                {% render 'image',
+                  src: block.settings.collection.image,
+                  alt: block.settings.collection.image.alt | default: block.settings.title | default: block.settings.collection.title,
+                  img_class: 'shop-category__img',
+                  widths: '360, 540, 720, 900',
+                  sizes: '(min-width: 1200px) 480px, (min-width: 768px) 50vw, 90vw'
+                %}
               {% else %}
                 <div class="shop-category__placeholder">
                   {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
@@ -418,6 +426,11 @@
           "type": "image_picker",
           "id": "image",
           "label": "Image"
+        },
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection (for default image)"
         },
         {
           "type": "text",
