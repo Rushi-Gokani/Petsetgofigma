@@ -156,7 +156,7 @@
         "image": "shopify://shop_images/SWEATER.png",
         "mobile_image": "shopify://shop_images/SWEATER.png",
         "image_overlay_opacity": 20,
-        "image_height": "medium",
+        "image_height": "small",
         "desktop_content_position": "bottom-center",
         "mobile_content_alignment": "center",
         "custom_color_scheme": true,
