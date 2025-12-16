@@ -388,6 +388,9 @@
       "block_order": [
         "ai_gen_block_16aef5f_cVmUiK"
       ],
+      "custom_css": [
+        ".ai-tabbed-products__tab-acnpisgtxqtnddgcxraigenblock16aef5fcvmuik {border-radius: 9999px; }"
+      ],
       "settings": {}
     },
     "1761292373cd4c424c": {
