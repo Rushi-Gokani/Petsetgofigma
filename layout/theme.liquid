@@ -169,7 +169,7 @@
             and request.page_type != 'customers/order'
           %}
             <div
-              class="{% case request.page_type %}{% when 'product' %} md:mt-[89px] {% when 'index' %} {% when 'cart' %} {% else %} mt-[72px] md:mt-[89px] {% endcase %}"
+              class="{% case request.page_type %}{% when 'product' %} md:mt-[89px] {% when 'index' %} mt-[72px] md:mt-[89px] {% when 'cart' %} {% else %} mt-[72px] md:mt-[89px] {% endcase %}"
             ></div>
           {% endif %}
 
