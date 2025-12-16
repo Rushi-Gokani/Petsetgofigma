@@ -149,6 +149,9 @@
       "block_order": [
         "button"
       ],
+      "custom_css": [
+        ".bg-bg-500 {width: 1200px; margin: 0 auto; border-radius: 20px;}"
+      ],
       "settings": {
         "image": "shopify://shop_images/SWEATER.png",
         "mobile_image": "shopify://shop_images/SWEATER.png",
