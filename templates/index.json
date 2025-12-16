@@ -65,17 +65,24 @@
     },
     "hero_banner_JgQKUw": {
       "type": "hero-banner",
+      "custom_css": [
+        ".hero-banner__outer {margin-top:5%;}"
+      ],
       "name": "Hero Banner",
       "settings": {
         "heading": "Discover our amazing collection",
         "button_label": "Shop Now",
         "button_link": "",
-        "button_color": "#FF8C42",
+        "button_color": "#ff8c42",
+        "button_text_color": "#000000",
         "video": "shopify://files/videos/2c6dc9ad-8b87-4948-a6e9-d63de64c9448.MP4",
         "autoplay_video": true,
         "loop_video": true,
         "mute_video": true,
-        "background_color": "#D2691E",
+        "height_desktop": 560,
+        "height_mobile": 420,
+        "border_radius": 24,
+        "background_color": "#d2691e",
         "custom_color_scheme": false,
         "color_scheme": ""
       }
@@ -115,6 +122,7 @@
         "title_before": "Shop",
         "title_accent": "by",
         "title_after": "Category",
+        "heading_size": 34,
         "subtitle": "Explore our curated collections designed for your furry friend's happiness.",
         "accent_color": "#f7a600",
         "color_scheme": "",
