@@ -165,7 +165,8 @@
       ],
       "custom_css": [
         ".bg-bg-500 {width: 1200px; margin: 0 auto; border-radius: 20px;}",
-        ".gap-10 {gap: 5px;}"
+        ".gap-10 {gap: 5px;}",
+        " h2{font-size: 2rem;}"
       ],
       "settings": {
         "image": "shopify://shop_images/SWEATER.png",
