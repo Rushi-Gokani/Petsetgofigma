@@ -164,7 +164,8 @@
         "button"
       ],
       "custom_css": [
-        ".bg-bg-500 {width: 1200px; margin: 0 auto; border-radius: 20px;}"
+        ".bg-bg-500 {width: 1200px; margin: 0 auto; border-radius: 20px;}",
+        ".gap-10 {gap: 5px;}"
       ],
       "settings": {
         "image": "shopify://shop_images/SWEATER.png",
