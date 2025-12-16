@@ -138,6 +138,18 @@
     "image_banner": {
       "type": "image-banner",
       "blocks": {
+        "heading_RcYJQ3": {
+          "type": "heading",
+          "settings": {
+            "heading": "Image banner"
+          }
+        },
+        "text_RRaget": {
+          "type": "text",
+          "settings": {
+            "text": "Give customers details about the banner image(s) or content on the template."
+          }
+        },
         "button": {
           "type": "button",
           "settings": {
@@ -147,6 +159,8 @@
         }
       },
       "block_order": [
+        "heading_RcYJQ3",
+        "text_RRaget",
         "button"
       ],
       "custom_css": [
