@@ -65,9 +65,7 @@
     },
     "hero_banner_JgQKUw": {
       "type": "hero-banner",
-      "custom_css": [
-        ".hero-banner__outer {margin-top: 5%;}"
-      ],
+      "custom_css": [],
       "name": "Hero Banner",
       "settings": {
         "heading": "Discover our amazing collection",
