@@ -91,6 +91,7 @@
         "category_EMGf4D": {
           "type": "category",
           "settings": {
+            "collection": "bedding",
             "title": "Bedding",
             "link": "shopify://collections/bedding"
           }
@@ -98,15 +99,17 @@
         "category_k4bK89": {
           "type": "category",
           "settings": {
-            "title": "Pet Cloths",
+            "collection": "clothing",
+            "title": "Clothing",
             "link": ""
           }
         },
         "category_BRMGiY": {
           "type": "category",
           "settings": {
-            "title": "Pet Bedding",
-            "link": ""
+            "collection": "t-shirts",
+            "title": "T-Shirts",
+            "link": "shopify://collections/t-shirts"
           }
         }
       },
