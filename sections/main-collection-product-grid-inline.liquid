@@ -335,14 +335,7 @@
                   <a href="{{ link.url }}" class="collection-sidebar__link {% if is_active %}is-active{% endif %}">
                     <span class="collection-sidebar__thumb{% if item_image == blank %} collection-sidebar__thumb--empty{% endif %}">
                       {% if item_image %}
-                        {% render 'image',
-                          src: item_image,
-                          alt: linked_collection.title | default: link.title,
-                          loading: 'lazy',
-                          index: forloop.index0,
-                          container_class: 'collection-sidebar__thumb-media',
-                          img_class: 'collection-sidebar__thumb-img'
-                        %}
+                        {% render 'image', src: item_image, alt: linked_collection.title, default: link.title, loading: 'lazy', index: forloop.index0, container_class: 'collection-sidebar__thumb-media', img_class: 'collection-sidebar__thumb-img' %}
                       {% else %}
                         <span class="collection-sidebar__thumb-fallback">
                           {{ link.title | slice: 0, 1 | upcase }}
@@ -649,3 +642,23 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'image',
+                              src: item_image,
+                              alt: linked_collection.title | default: link.title,
+                              loading: 'lazy',
+                              index: forloop.index0,
+                              container_class: 'collection-sidebar__thumb-media',
+                              img_class: 'collection-sidebar__thumb-img'
+                            %}
+  to: "{% render 'image', src: item_image, alt: linked_collection.title, default:
+    link.title, loading: 'lazy', index: forloop.index0, container_class: 'collection-sidebar__thumb-media',
+    img_class: 'collection-sidebar__thumb-img' %}"
+  position: 10912..11136
+{% endcomment %}

@@ -122,7 +122,7 @@
               {{ product.title }}
             </div>
 
-          {% when 'collection' and collection.handle %}
+          {% when 'collection' %}
             {% if current_tags %}
               <div role="listitem" class="breadcrumb">
                 {{ collection.title | link_to: collection.url }}
@@ -201,3 +201,13 @@
     </div>
   </nav>
 {% endif %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% when 'collection' and collection.handle %}"
+  to: "{% when 'collection' %}"
+  position: 4113..4136
+{% endcomment %}

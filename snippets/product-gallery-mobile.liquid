@@ -74,7 +74,7 @@
         {% endfor %}
       </scroll-carousel>
 
-        <button type="button" class="product-gallery-mobile__nav product-gallery-mobile__nav--next" data-gallery-next aria-controls="{{ product_gallery_carousel_id }}" aria-label="{{ 'general.slider.next_slide' | t }}" {% if default_media_index == total_media | minus: 1 %}disabled{% endif %}>
+        <button type="button" class="product-gallery-mobile__nav product-gallery-mobile__nav--next" data-gallery-next aria-controls="{{ product_gallery_carousel_id }}" aria-label="{{ 'general.slider.next_slide' | t }}" {% if default_media_index == total_media %}disabled{% endif %}>
           <svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 6l6 6-6 6" />
           </svg>
@@ -103,3 +103,13 @@
     {{ mobileFeaturedImage }}
   {% endif %}
 </div>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% if default_media_index == total_media | minus: 1 %}"
+  to: "{% if default_media_index == total_media %}"
+  position: 4221..4264
+{% endcomment %}

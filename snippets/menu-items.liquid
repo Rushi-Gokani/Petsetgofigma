@@ -146,82 +146,27 @@
                 <div class="flex items-center gap-3 w-full">
                   <div class="flex-shrink-0 w-12 h-12 rounded-md overflow-hidden bg-bg-600">
                     {% if collection_number == 1 and link.object.metafields.custom._featured_collection_1_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_1_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_1_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 2 and link.object.metafields.custom._featured_collection_2_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_2_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_2_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 3 and link.object.metafields.custom._featured_collection_3_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_3_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_3_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 4 and link.object.metafields.custom._featured_collection_4_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_4_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_4_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 5 and link.object.metafields.custom._featured_collection_5_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_5_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_5_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 6 and link.object.metafields.custom._featured_collection_6_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_6_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_6_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 7 and link.object.metafields.custom._featured_collection_7_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_7_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_7_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 8 and link.object.metafields.custom._featured_collection_8_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_8_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_8_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 9 and link.object.metafields.custom._featured_collection_9_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_9_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_9_image, loading: 'lazy', alt: link.title %}
                     {% elsif collection_number == 10 and link.object.metafields.custom._featured_collection_10_image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.metafields.custom._featured_collection_10_image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_10_image, loading: 'lazy', alt: link.title %}
                     {% elsif link.object.image %}
-                      {% render 'image',
-                        img_class: 'w-full h-full object-cover',
-                        src: link.object.image,
-                        loading: 'lazy',
-                        alt: link.title | escape
-                      %}
+                      {% render 'image', img_class: 'w-full h-full object-cover', src: link.object.image, loading: 'lazy', alt: link.title %}
                     {% else %}
                       <div class="w-full h-full flex items-center justify-center text-text-400 text-xs font-semibold">
                         {{ link.title | truncate: 1, "" }}
@@ -325,3 +270,120 @@
     {%- endif -%}
   </div>
 {%- endif -%}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_1_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_1_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 6904..7064
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_2_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_2_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 7205..7365
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_3_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_3_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 7506..7666
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_4_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_4_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 7807..7967
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_5_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_5_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 8108..8268
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_6_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_6_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 8409..8569
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_7_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_7_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 8710..8870
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_8_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_8_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 9011..9171
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_9_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_9_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 9312..9472
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.metafields.custom._featured_collection_10_image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.metafields.custom._featured_collection_10_image,
+    loading: 'lazy', alt: link.title %}"
+  position: 9615..9776
+- from: |-
+    {% render 'image',
+                            img_class: 'w-full h-full object-cover',
+                            src: link.object.image,
+                            loading: 'lazy',
+                            alt: link.title | escape
+                          %}
+  to: "{% render 'image', img_class: 'w-full h-full object-cover', src: link.object.image,
+    loading: 'lazy', alt: link.title %}"
+  position: 9849..9968
+{% endcomment %}

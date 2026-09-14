@@ -32,13 +32,7 @@
           <a href="{{ collection.url }}" class="collection-quick-link__item {% if shape_style == 'circle' %}collection-quick-link__item--circle{% else %}collection-quick-link__item--square{% endif %}">
             <div class="collection-quick-link__image-container">
               {% if block.settings.custom_image != blank %}
-                {% render 'image',
-                  src: block.settings.custom_image,
-                  alt: block.settings.custom_image.alt | default: collection.title,
-                  img_class: 'collection-quick-link__image',
-                  loading: 'lazy',
-                  index: forloop.index0
-                %}
+                {% render 'image', src: block.settings.custom_image, alt: block.settings.custom_image.alt, default: collection.title, img_class: 'collection-quick-link__image', loading: 'lazy', index: forloop.index0 %}
               {% elsif collection.featured_image %}
                 {% render 'image',
                   src: collection.featured_image,
@@ -202,3 +196,22 @@
   ]
 }
 {% endschema %}
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: |-
+    {% render 'image',
+                      src: block.settings.custom_image,
+                      alt: block.settings.custom_image.alt | default: collection.title,
+                      img_class: 'collection-quick-link__image',
+                      loading: 'lazy',
+                      index: forloop.index0
+                    %}
+  to: "{% render 'image', src: block.settings.custom_image, alt: block.settings.custom_image.alt,
+    default: collection.title, img_class: 'collection-quick-link__image', loading:
+    'lazy', index: forloop.index0 %}"
+  position: 1251..1453
+{% endcomment %}
